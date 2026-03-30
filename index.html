@@ -9,347 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-/* --- Template Styles (from template_index.html) --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background: #f8f9fa;
-    padding: 20px;
-}
-
-.size-bold-row {
-    display: flex;
-    gap: 5px;
-}
-
-.size-bold-row input[type="number"] {
-    flex: 1;
-}
-
-.size-bold-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.bold-toggle-input {
-    display: none;
-}
-
-.bold-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: #f8f9fa;
-    color: #495057;
-    font-family: "Times New Roman", serif;
-    font-weight: 700;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    user-select: none;
-}
-
-.bold-btn:hover {
-    background-color: #e2e6ea;
-    border-color: #adb5bd;
-}
-
-.bold-toggle-input:checked+.bold-btn {
-    background-color: #495057;
-    color: #fff;
-    border-color: #495057;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.container {
-    max-width: 1600px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-.app-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 20px;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.header-logo {
-    height: 60px;
-    width: auto;
-}
-
-.logo-text {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.app-title {
-    font-size: 24px;
-    color: #333;
-    margin: 0;
-    font-weight: 600;
-}
-
-.app-subtitle {
-    font-size: 16px;
-    color: #555;
-    margin: 5px 0 0 0;
-}
-
-.main-grid {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    /* Slightly wider for our controls */
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.main-grid>div:first-child {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.chart-container {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px;
-    position: relative;
-    width: 100%;
-    min-height: 600px;
-    /* Ensure height */
-}
-
-/* Control Panel Styles */
-.controls-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.control-group {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px;
-}
-
-.control-group h3 {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background: #00796b;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.3s;
-    margin-top: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-button:hover:not(:disabled) {
-    background: #004d40;
-}
-
-button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-button.button-secondary {
-    background: #546e7a;
-}
-
-button.button-secondary:hover:not(:disabled) {
-    background: #455a64;
-}
-
-button.button-danger {
-    background: #d32f2f;
-}
-
-button.button-danger:hover:not(:disabled) {
-    background: #b71c1c;
-}
-
-input[type="number"],
-input[type="text"],
-select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 13px;
-    background: white;
-}
-
-label {
-    font-size: 13px;
-    color: #555;
-    display: block;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-hr {
-    border: 0;
-    border-top: 1px solid #e0e0e0;
-    margin: 15px 0;
-}
-
-/* --- Custom App Styles --- */
-
-/* File List specific */
-.file-list {
-    list-style: none;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    max-height: 200px;
-    overflow-y: auto;
-    background: white;
-}
-
-.file-list li {
-    padding: 8px 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.file-list li:last-child {
-    border-bottom: none;
-}
-
-.file-list li:hover {
-    background-color: #f1f8e9;
-}
-
-.file-list li.active {
-    background-color: #e0f2f1;
-    color: #00796b;
-    font-weight: 600;
-    border-left: 3px solid #00796b;
-}
-
-.drop-zone {
-    border: 2px dashed #b0bec5;
-    border-radius: 4px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #fafafa;
-    color: #78909c;
-}
-
-.drop-zone:hover,
-.drop-zone.dragover {
-    border-color: #00796b;
-    background: #e0f2f1;
-    color: #00796b;
-}
-
-.drop-zone i {
-    font-size: 24px;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.stats-box {
-    margin-top: 10px;
-    padding: 10px;
-    background: #e8f5e9;
-    border: 1px solid #c8e6c9;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    color: #2e7d32;
-    white-space: pre-wrap;
-}
-
-.color-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-/* Footer & Responsive */
-footer {
-    text-align: center;
-    color: #6c757d;
-    margin-top: 40px;
-    padding-top: 20px;
-    font-size: 0.85rem;
-    border-top: 1px solid #ddd;
-}
-
-footer a {
-    color: #00796b;
-    text-decoration: none;
-}
-
-@media (min-width: 900px) {
-    .app-header {
-        flex-direction: row;
-        justify-content: space-between;
-        text-align: left;
-    }
-
-    .header-right {
-        text-align: right;
-    }
-
-    .app-title {
-        font-size: 28px;
-    }
-}
-</style>
+    
     <style>
         body{font-family:Arial,sans-serif;background:#f8f9fa;padding:20px;margin:0;}
         .container{max-width:1600px;margin:0 auto;background:white;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:20px;display:flex;flex-direction:column;gap:18px;}
@@ -361,14 +21,14 @@ footer a {
         /* Main grid */
         .main-grid{display:grid;grid-template-columns:1fr 335px;gap:18px;}
         .main-grid>div:first-child{display:flex;flex-direction:column;min-width:0;}
-        .main-grid>div:last-child{min-width:335px;max-width:335px;}
+        .main-grid>div:last-child,.main-grid>.controls-panel{min-width:335px;max-width:335px;}
         @media(max-width:900px){.main-grid{grid-template-columns:1fr;}}
         /* Chart */
         .chart-container{background:white;border:1px solid #ddd;border-radius:4px;padding:14px;}
         #plotly-div{width:100%;min-height:580px;}
         /* Controls panel with tabs */
         .controls-panel{display:flex;flex-direction:column;height:calc(100vh - 180px);min-height:520px;}
-        .tab-bar{display:grid;grid-template-columns:repeat(4,1fr);border-radius:6px 6px 0 0;overflow:hidden;border:1px solid #ddd;flex-shrink:0;}
+        .tab-bar{display:grid;grid-template-columns:repeat(5,1fr);border-radius:6px 6px 0 0;overflow:hidden;border:1px solid #ddd;flex-shrink:0;}
         .tab-btn{background:#f0f2f5;color:#555;border:none;border-right:1px solid #ddd;padding:8px 3px;font-size:10.5px;font-weight:700;cursor:pointer;width:auto;border-radius:0;text-transform:uppercase;letter-spacing:.4px;display:flex;flex-direction:column;align-items:center;gap:3px;transition:background .15s,color .15s;}
         .tab-btn:last-child{border-right:none;}
         .tab-btn i{font-size:12px;}
@@ -443,8 +103,8 @@ footer a {
     <div class="app-header">
         <div style="display:flex;align-items:center;gap:14px;">
             <div>
-                <h1 class="app-title">Advanced Data Analyzer</h1>
-                <p class="app-subtitle">Interactive visualization and analysis of chromatography &amp; scientific data.</p>
+                <h1 class="app-title">Advanced Data Analyzer <span style="font-size:13px;font-weight:400;color:#00796b;vertical-align:middle;background:#e0f2f1;border-radius:3px;padding:2px 7px;">v2.00</span></h1>
+                <p class="app-subtitle">Universal interactive plotter &amp; data analysis tool — XY, bar, area, box, histogram &amp; more.</p>
             </div>
         </div>
         <img src="logo.png" alt="Lab Logo" class="header-logo" onerror="this.style.display='none'">
@@ -458,495 +118,494 @@ footer a {
                 <div id="plotly-div"></div>
             </div>
             <div id="statusBar" style="margin-top:10px;padding:7px 11px;background:#e8f4f8;border-radius:4px;color:#555;font-size:12px;">Ready.</div>
+
+            <!-- ── Drag Labels Mode (outside tabs, easy to toggle) ── -->
+            <!-- Drag Labels Mode toggle (outside tabs) -->
+            <div id="drag-labels-bar" style="margin-top:10px;display:flex;align-items:center;gap:12px;padding:9px 14px;background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:1px solid #ffb74d;border-radius:8px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;">
+                    <input type="checkbox" id="dragLabelsModeCheck" onchange="toggleDragLabelsMode()" style="width:16px;height:16px;cursor:pointer;">
+                    <span style="font-weight:bold;color:#e65100;font-size:13px;">✏️ Drag Labels Mode</span>
+                </label>
+                <span id="dragLabelsModeHint" style="font-size:11px;color:#bf360c;display:none;">
+                    <strong>Click</strong> a label to edit text &amp; position &nbsp;•&nbsp; <strong>Drag</strong> labels &amp; legend freely
+                </span>
+                <div id="drag-undo-redo" style="margin-left:auto;display:none;gap:6px;">
+                    <button onclick="undoDragEdit()" id="dragUndoBtn" disabled style="width:auto;padding:4px 10px;font-size:12px;margin-top:0;background:#00796b;">↩ Undo</button>
+                    <button onclick="redoDragEdit()" id="dragRedoBtn" disabled style="width:auto;padding:4px 10px;font-size:12px;margin-top:0;background:#00796b;">↪ Redo</button>
+                </div>
+            </div><!-- /drag-labels-bar -->
+
             <div style="margin-top:10px;">
                 <button id="view-table-btn" class="btn-b" style="width:auto;" onclick="openDataTable()">
                     <i class="fa-solid fa-table-cells"></i> View / Edit Data Table
                 </button>
             </div>
-        </div>
+        </div><!-- /left column -->
 
         <!-- Right: Tabbed Controls -->
         <div class="controls-panel">
             <div class="tab-bar" style="grid-template-columns:repeat(5,1fr);">
-                <button class="tab-btn active" id="tabbtn-data"      onclick="switchTab('data')">
-                    <i class="fa-solid fa-folder-open"></i>Data
-                </button>
-                <button class="tab-btn" id="tabbtn-configure"        onclick="switchTab('configure')">
-                    <i class="fa-solid fa-sliders"></i>Configure
-                </button>
-                <button class="tab-btn" id="tabbtn-analysis"         onclick="switchTab('analysis')">
-                    <i class="fa-solid fa-chart-line"></i>Analysis
-                </button>
-                <button class="tab-btn" id="tabbtn-export"           onclick="switchTab('export')">
-                    <i class="fa-solid fa-download"></i>Export
-                </button>
-            <button class="tab-btn" id="tabbtn-stats" onclick="switchTab('stats')">
-                    <i class="fa-solid fa-calculator"></i>Stats
-                </button>
+                <button class="tab-btn active" id="tabbtn-data"     onclick="switchTab('data')"><i class="fa-solid fa-folder-open"></i>Data</button>
+                <button class="tab-btn"        id="tabbtn-series"   onclick="switchTab('series')"><i class="fa-solid fa-chart-column"></i>Series</button>
+                <button class="tab-btn"        id="tabbtn-axis"     onclick="switchTab('axis')"><i class="fa-solid fa-sliders"></i>Axis&amp;Style</button>
+                <button class="tab-btn"        id="tabbtn-analysis" onclick="switchTab('analysis')"><i class="fa-solid fa-flask"></i>Analysis</button>
+                <button class="tab-btn"        id="tabbtn-export"   onclick="switchTab('export')"><i class="fa-solid fa-download"></i>Export</button>
             </div>
             <div class="tab-content-area">
 
-                <!-- TAB: DATA -->
-                <div class="tab-pane active" id="tab-data">
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-file-import"></i>Import Data</div>
-                        <button onclick="openCustomImportModal()" class="btn-g" style="margin-bottom:5px;">
-                            <i class="fa-solid fa-file-csv"></i> Import CSV / Excel
-                        </button>
-                        <button onclick="openImageModal()" class="btn-p">
-                            <i class="fa-solid fa-image"></i> Import Image Spectrum
-                        </button>
-                    </div>
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-floppy-disk"></i>Session</div>
-                        <div class="g2">
-                            <button onclick="saveSession()" class="btn-b" style="font-size:11px;">
-                                <i class="fa-solid fa-floppy-disk"></i> Save
-                            </button>
-                            <button onclick="document.getElementById('loadSessionInput').click()" class="btn-b" style="font-size:11px;">
-                                <i class="fa-solid fa-upload"></i> Load
-                            </button>
-                        </div>
-                        <input type="file" id="loadSessionInput" accept=".json" style="display:none;" onchange="loadSession(this)">
-                    </div>
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-arrows-left-right"></i>Global X-Axis Range</div>
-                        <div class="g2">
-                            <div><label>Start</label><input type="number" id="xAxisStart" placeholder="Min" onchange="updateGlobalXRange()"></div>
-                            <div><label>End</label><input type="number" id="xAxisEnd" placeholder="Max" onchange="updateGlobalXRange()"></div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-list"></i>Loaded Files</div>
-                        <ul id="file-list" class="file-list">
-                            <li style="color:#999;font-style:italic;text-align:center;padding:10px;">No files loaded</li>
-                        </ul>
-                    </div>
-                </div>
+<!-- ══ TAB: DATA ══ -->
+<div class="tab-pane active" id="tab-data">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-file-import"></i>Import Data</div>
+    <button onclick="openCustomImportModal()" class="btn-g" style="margin-bottom:5px;"><i class="fa-solid fa-file-csv"></i> Import CSV / Excel</button>
+    <button onclick="openImageModal()" class="btn-p"><i class="fa-solid fa-image"></i> Import Image Spectrum</button>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-keyboard"></i>Quick Data Entry</div>
+    <p style="font-size:10.5px;color:#888;margin-bottom:6px;">Type label:value pairs or paste tab/comma data.</p>
+    <div style="margin-bottom:5px;"><label>Dataset Name</label><input type="text" id="quickDataName" value="Dataset 1" placeholder="My Dataset"></div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>X Label</label><input type="text" id="quickDataXLabel" placeholder="Category"></div>
+      <div><label>Y Label</label><input type="text" id="quickDataYLabel" placeholder="Value"></div>
+    </div>
+    <textarea id="quickDataInput" style="width:100%;height:90px;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:11px;font-family:monospace;resize:vertical;" placeholder="apples: 5&#10;bananas: 8&#10;&#10;or&#10;1, 10&#10;2, 25"></textarea>
+    <div style="margin-top:5px;display:flex;gap:5px;">
+      <select id="quickDataChartType" style="flex:1;">
+        <option value="bar">Bar</option><option value="scatter_line">Line</option><option value="scatter_point">Scatter</option><option value="scatter_both">Line+Points</option><option value="area">Area</option>
+      </select>
+      <button onclick="importQuickData()" class="btn-g" style="flex:1;margin:0;"><i class="fa-solid fa-chart-bar"></i> Plot</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-list"></i>Loaded Datasets</div>
+    <ul id="file-list" class="file-list"><li style="color:#999;font-style:italic;text-align:center;padding:10px;">No files loaded</li></ul>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-floppy-disk"></i>Session</div>
+    <div class="g2">
+      <button onclick="saveSession()" class="btn-b" style="font-size:11px;"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+      <button onclick="document.getElementById('loadSessionInput').click()" class="btn-b" style="font-size:11px;"><i class="fa-solid fa-upload"></i> Load</button>
+    </div>
+    <input type="file" id="loadSessionInput" accept=".json" style="display:none;" onchange="loadSession(this)">
+  </div>
+</div>
 
-                <!-- TAB: CONFIGURE -->
-                <div class="tab-pane" id="tab-configure">
-                    <div id="cfg-empty" style="color:#999;font-style:italic;font-size:12px;text-align:center;padding:24px 0;">Load a file to configure.</div>
-                    <div id="cfg-content" style="display:none;flex-direction:column;gap:10px;">
-                        <div class="afbadge">
-                            <strong id="active-file-name">-</strong>
-                            <label><input type="checkbox" id="showTraceCheck" checked onchange="toggleTraceVisibility()"> Visible</label>
-                        </div>
-                        <!-- Trace style -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-palette"></i>Trace Style</div>
-                            <div class="g2" style="margin-bottom:7px;">
-                                <div><label>Name</label><input type="text" id="styleTraceName" onchange="applyStyleSettings()"></div>
-                                <div><label>Color</label><input type="color" id="styleColor" style="height:28px;cursor:pointer;" onchange="applyStyleSettings()"></div>
-                            </div>
-                            <div class="g2" style="margin-bottom:7px;">
-                                <div><label>Mode</label>
-                                    <select id="styleMode" onchange="applyStyleSettings()">
-                                        <option value="lines">Lines</option>
-                                        <option value="markers">Points</option>
-                                        <option value="lines+markers">Both</option>
-                                    </select>
-                                </div>
-                                <div><label>Width</label><input type="number" id="styleLineWidth" value="2" min="1" max="20" onchange="applyStyleSettings()"></div>
-                            </div>
-                            <div><label>Dash</label>
-                                <select id="styleLineDash" onchange="applyStyleSettings()">
-                                    <option value="solid">Solid</option><option value="dash">Dash</option>
-                                    <option value="dot">Dot</option><option value="dashdot">Dash-Dot</option>
-                                </select>
-                            </div>
-                        </div>
-                        <!-- Columns -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-table-columns"></i>Data Columns</div>
-                            <div style="margin-bottom:7px;"><label>X Column</label><select id="x-axis-select"></select></div>
-                            <div><label>Y Column</label><select id="y-axis-select"></select></div>
-                        </div>
+<!-- ══ TAB: SERIES ══ -->
+<div class="tab-pane" id="tab-series">
+  <div id="cfg-empty" style="color:#999;font-style:italic;font-size:12px;text-align:center;padding:24px 0;">Load a file to configure.</div>
+  <div id="cfg-content" style="display:none;flex-direction:column;gap:10px;">
+    <div class="afbadge"><strong id="active-file-name">-</strong><label><input type="checkbox" id="showTraceCheck" checked onchange="toggleTraceVisibility()"> Visible</label></div>
 
-                        <!-- Multi-Y columns for grouped plots -->
-                        <div style="margin-bottom:7px;">
-                            <label style="display:flex;justify-content:space-between;align-items:center;">
-                                <span>Y Columns (multi-select)</span>
-                                <span style="font-size:10px;color:#888;font-weight:400;">Ctrl/Cmd+click</span>
-                            </label>
-                            <select id="y-multi-select" multiple style="height:80px;font-size:11.5px;">
-                            </select>
-                        </div>
-                        <div style="margin-bottom:7px;">
-                            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
-                                <input type="checkbox" id="grouped-bar-mode" onchange="applyChartTypeSettings()">
-                                Auto mean±SD from replicates
-                            </label>
-                            <p style="font-size:10px;color:#888;margin:2px 0 0 18px;">Select replicate columns → plot mean bar + SD error</p>
-                        </div>
-                        <!-- Axis labels -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-tag"></i>Axis Labels &amp; Y2</div>
-                            <div style="margin-bottom:6px;"><label>X Title</label><input type="text" id="xAxisLabel" placeholder="e.g. m/z"></div>
-                            <div style="margin-bottom:6px;"><label>Y Title</label><input type="text" id="yAxisLabel" placeholder="e.g. Intensity"></div>
-                            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:6px;">
-                                <input type="checkbox" id="enableY2Check"> Enable Secondary Y-Axis
-                            </label>
-                            <div id="y2-settings" style="margin-top:6px;display:none;">
-                                <label>Y2 Title</label><input type="text" id="y2AxisLabel" placeholder="Secondary Y">
-                            </div>
-                        </div>
-                        <!-- Shift / rescale axes -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale Axes</div>
-                            <p style="font-size:10.5px;color:#888;margin-bottom:8px;">Offset adds a constant; Scale multiplies. Applied as: new = (old + offset) × scale.</p>
-                            <div class="sag" style="margin-bottom:5px;">
-                                <span style="font-size:10px;color:#888;text-align:center;"></span>
-                                <span style="font-size:10px;color:#888;text-align:center;">Offset (+)</span>
-                                <span style="font-size:10px;color:#888;text-align:center;">Scale (×)</span>
-                                <label>X</label>
-                                <input type="number" id="axisShiftXOffset" value="0" step="any" placeholder="0">
-                                <input type="number" id="axisShiftXScale"  value="1" step="any" placeholder="1">
-                                <label>Y</label>
-                                <input type="number" id="axisShiftYOffset" value="0" step="any" placeholder="0">
-                                <input type="number" id="axisShiftYScale"  value="1" step="any" placeholder="1">
-                            </div>
-                            <div class="g2" style="gap:5px;">
-                                <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;">
-                                    <i class="fa-solid fa-check"></i> Apply
-                                </button>
-                                <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;">
-                                    <i class="fa-solid fa-rotate-left"></i> Reset
-                                </button>
-                            </div>
-                        </div>
+    <!-- Chart Type -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-chart-column"></i>Chart Type</div>
+      <div class="g2" style="margin-bottom:7px;">
+        <div><label>Type</label>
+          <select id="chartType" onchange="applyChartTypeSettings()">
+            <option value="scatter_line">Line Chart</option>
+            <option value="scatter_point">Scatter (Points)</option>
+            <option value="scatter_both">Line + Points</option>
+            <option value="bar">Bar Chart</option>
+            <option value="area">Area</option>
+            <option value="step">Step Chart</option>
+            <option value="histogram">Histogram</option>
+            <option value="box">Box Plot</option>
+            <option value="violin">Violin Plot</option>
+          </select>
+        </div>
+        <div><label>Y-Axis Side</label>
+          <select id="yAxisAssign" onchange="applyChartTypeSettings()">
+            <option value="left">Left (primary)</option>
+            <option value="right">Right (Y2)</option>
+            <option value="right2">Far Right (Y3)</option>
+          </select>
+        </div>
+      </div>
+      <div id="histogram-opts" style="display:none;"><label>Bin size (blank=auto)</label><input type="number" id="histBinSize" placeholder="Auto" step="any" onchange="applyChartTypeSettings()"></div>
+    </div>
 
-                        <!-- Chart Type & Plot Options -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-chart-column"></i>Chart Type</div>
-                            <div style="margin-bottom:7px;">
-                                <label>Type</label>
-                                <select id="chartType" onchange="applyChartTypeSettings()">
-                                    <option value="scatter_line">Line</option>
-                                    <option value="scatter_point">Scatter (Points)</option>
-                                    <option value="scatter_both">Line + Points</option>
-                                    <option value="bar">Bar Chart</option>
-                                    <option value="area">Area Chart</option>
-                                    <option value="step">Step Chart</option>
-                                    <option value="box">Box Plot</option>
-                                    <option value="histogram">Histogram</option>
-                                </select>
-                            </div>
-                            <div id="histogram-opts" style="display:none;margin-bottom:7px;">
-                                <label>Bin Size</label>
-                                <input type="number" id="histBinSize" placeholder="Auto" step="any" onchange="applyChartTypeSettings()">
-                            </div>
-                            <div style="margin-bottom:7px;">
-                                <label>Y Axis Side</label>
-                                <select id="yAxisAssign" onchange="applyChartTypeSettings()">
-                                    <option value="left">Left (primary)</option>
-                                    <option value="right">Right (secondary)</option>
-                                </select>
-                            </div>
-                            <hr>
-                            <div style="font-size:10.5px;font-weight:700;color:#00796b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;">
-                                <i class="fa-solid fa-arrows-up-down"></i> Error Bars
-                            </div>
-                            <div style="margin-bottom:6px;">
-                                <label>Type</label>
-                                <select id="errorBarType" onchange="applyChartTypeSettings()">
-                                    <option value="none">None</option>
-                                    <option value="fixed">Fixed ±</option>
-                                    <option value="percent">Percent %</option>
-                                    <option value="sqrt">Square Root</option>
-                                    <option value="column">From Column (SD/SEM)</option>
-                                </select>
-                            </div>
-                            <div id="errbar-fixed-row" style="display:none;margin-bottom:6px;">
-                                <label>± Value</label>
-                                <input type="number" id="errorBarValue" value="0.1" step="any" onchange="applyChartTypeSettings()">
-                            </div>
-                            <div id="errbar-pct-row" style="display:none;margin-bottom:6px;">
-                                <label>Percent (%)</label>
-                                <input type="number" id="errorBarPercent" value="5" step="any" min="0" onchange="applyChartTypeSettings()">
-                            </div>
-                            <div id="errbar-col-row" style="display:none;margin-bottom:6px;">
-                                <label>Error Column</label>
-                                <select id="errorBarColumn" onchange="applyChartTypeSettings()"></select>
-                            </div>
-                            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:4px;">
-                                <input type="checkbox" id="errorBarSymmetric" checked onchange="applyChartTypeSettings()"> Symmetric bars
-                            </label>
-                        </div>
+    <!-- Data Columns -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-table-columns"></i>Data Columns</div>
+      <div style="margin-bottom:6px;"><label>X Column</label><select id="x-axis-select" onchange="updateActiveConfig()"></select></div>
+      <div style="margin-bottom:6px;"><label>Primary Y Column</label><select id="y-axis-select" onchange="updateActiveConfig()"></select></div>
+      <div><label style="display:flex;justify-content:space-between;"><span>Additional Y Columns</span><span style="font-size:10px;color:#888;font-weight:400;">Ctrl+click</span></label>
+        <select id="y-multi-select" multiple style="height:60px;font-size:11.5px;" onchange="applyChartTypeSettings()"></select>
+      </div>
+    </div>
 
-                        <!-- Axis Calibration -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>Axis Calibration</div>
-                            <p style="font-size:10.5px;color:#888;margin-bottom:7px;">2-point linear calibration. Map two data values to real-world values.</p>
-                            <div style="font-size:10.5px;font-weight:700;color:#0288d1;margin-bottom:5px;">X Axis</div>
-                            <div style="display:grid;grid-template-columns:22px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:7px;">
-                                <span></span><span style="color:#888;text-align:center;">Data</span><span style="color:#888;text-align:center;">Real</span>
-                                <label style="margin:0;">P1</label>
-                                <input type="number" id="calXData1" placeholder="0"   step="any">
-                                <input type="number" id="calXReal1" placeholder="0"   step="any">
-                                <label style="margin:0;">P2</label>
-                                <input type="number" id="calXData2" placeholder="100" step="any">
-                                <input type="number" id="calXReal2" placeholder="100" step="any">
-                            </div>
-                            <div style="font-size:10.5px;font-weight:700;color:#e65100;margin-bottom:5px;">Y Axis</div>
-                            <div style="display:grid;grid-template-columns:22px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:8px;">
-                                <span></span><span style="color:#888;text-align:center;">Data</span><span style="color:#888;text-align:center;">Real</span>
-                                <label style="margin:0;">P1</label>
-                                <input type="number" id="calYData1" placeholder="0"   step="any">
-                                <input type="number" id="calYReal1" placeholder="0"   step="any">
-                                <label style="margin:0;">P2</label>
-                                <input type="number" id="calYData2" placeholder="1"   step="any">
-                                <input type="number" id="calYReal2" placeholder="1000" step="any">
-                            </div>
-                            <div class="g2" style="gap:5px;">
-                                <button onclick="applyAxisCalibration()" class="btn-g" style="font-size:11px;padding:6px;">
-                                    <i class="fa-solid fa-check"></i> Apply
-                                </button>
-                                <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;">
-                                    <i class="fa-solid fa-rotate-left"></i> Reset
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Update / Remove -->
-                        <div class="g2">
-                            <button id="update-plot-btn" class="btn-b" style="font-size:11px;padding:6px;">
-                                <i class="fa-solid fa-rotate"></i> Update
-                            </button>
-                            <button id="remove-file-btn" class="btn-r" style="font-size:11px;padding:6px;">
-                                <i class="fa-solid fa-trash"></i> Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <!-- Data Mode / Replicates -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-layer-group"></i>Data Mode &amp; Replicates</div>
+      <div style="margin-bottom:7px;"><label>Mode</label>
+        <select id="dataModeSelect" onchange="applyDataMode()">
+          <option value="single">Single series (normal)</option>
+          <option value="meansd">Mean ± SD/SEM from replicate columns</option>
+          <option value="grouped">Grouped / long-format bar chart</option>
+        </select>
+      </div>
 
-                <!-- TAB: ANALYSIS -->
-                <div class="tab-pane" id="tab-analysis">
-                    <!-- Smoothing -->
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-wave-square"></i>Smoothing</div>
-                        <div style="margin-bottom:7px;">
-                            <label>Method</label>
-                            <select id="smoothing-method" onchange="updateActiveSmoothing()">
-                                <option value="movingAverage">Moving Average</option>
-                                <option value="savitzkyGolay">Savitzky-Golay</option>
-                            </select>
-                        </div>
-                        <div class="sr">
-                            <div class="sr-hd"><label>Window (points)</label><span id="smoothing-value">0</span></div>
-                            <input type="range" id="smoothing-slider" min="0" max="400" value="0" step="1">
-                        </div>
-                        <div id="sg-poly-options" style="display:none;">
-                            <label>Polynomial Order</label>
-                            <input type="number" id="sg-poly-order" value="2" min="1" max="6" onchange="updateActiveSmoothing()">
-                        </div>
-                    </div>
-                    <!-- Peak detection -->
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-magnifying-glass-chart"></i>Peak Detection</div>
-                        <div style="display:flex;gap:14px;margin-bottom:7px;">
-                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;">
-                                <input type="checkbox" id="show-peaks-check" onchange="updatePeakAnalysis()"> Show
-                            </label>
-                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;">
-                                <input type="checkbox" id="highlight-peaks-check" onchange="updatePeakAnalysis()"> Highlight
-                            </label>
-                        </div>
-                        <div class="sr">
-                            <div class="sr-hd"><label>Min Prominence (%)</label><span id="peak-height-val">0</span></div>
-                            <input type="range" id="peakHeightSlider" min="0" max="100" step="1" value="0">
-                        </div>
-                        <div class="stats-box" id="peak-stats-box" style="display:none;">
-                            <div class="stats-row"><span>Peaks found</span><strong id="peak-count">0</strong></div>
-                            <div class="stats-row"><span>Max Y</span><strong id="peak-max-y">-</strong></div>
-                            <div class="stats-row" style="border:none;"><span>Max at X</span><strong id="peak-max-x">-</strong></div>
-                        </div>
-                    </div>
-                    <!-- Background correction -->
-                    <div class="card" id="bg-correction-panel">
-                        <div class="card-title"><i class="fa-solid fa-eraser"></i>Background Correction</div>
-                        <div style="margin-bottom:7px;">
-                            <label>Method</label>
-                            <select id="bg-method" onchange="updateBgCorrection()">
-                                <option value="none">None</option>
-                                <option value="linear">Linear (Endpoints)</option>
-                                <option value="rollingball">Rolling Ball</option>
-                                <option value="polynomial">Polynomial Envelope</option>
-                                <option value="als">Asymmetric LS (ALS)</option>
-                            </select>
-                        </div>
-                        <div id="bg-radius-row" style="display:none;">
-                            <div class="sr">
-                                <div class="sr-hd"><label>Radius / Window</label><span id="bg-radius-val">50</span></div>
-                                <input type="range" id="bg-radius" min="5" max="300" value="50"
-                                    oninput="document.getElementById('bg-radius-val').textContent=this.value;updateBgCorrection()">
-                            </div>
-                        </div>
-                        <div id="bg-order-row" style="display:none;margin-bottom:7px;">
-                            <label>Polynomial Order</label>
-                            <input type="number" id="bg-order" min="1" max="6" value="2" onchange="updateBgCorrection()">
-                        </div>
-                        <div id="bg-lam-row" style="display:none;">
-                            <div class="sr">
-                                <div class="sr-hd"><label>ALS Smoothness (log λ)</label><span id="bg-lam-val">5</span></div>
-                                <input type="range" id="bg-lam" min="1" max="9" value="5"
-                                    oninput="document.getElementById('bg-lam-val').textContent=this.value;updateBgCorrection()">
-                            </div>
-                        </div>
-                        <div class="sr">
-                            <div class="sr-hd"><label>Strength (%)</label><span id="bg-strength-val">100</span></div>
-                            <input type="range" id="bg-strength" min="0" max="100" value="100"
-                                oninput="document.getElementById('bg-strength-val').textContent=this.value;updateBgCorrection()">
-                        </div>
-                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:4px;">
-                            <input type="checkbox" id="bg-show-baseline" onchange="updateBgCorrection()"> Show baseline on plot
-                        </label>
-                    </div>
-                    <!-- Trendline -->
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-chart-simple"></i>Trendline Fit</div>
-                        <select id="trendline-type">
-                            <option value="none">None</option>
-                            <option value="linear">Linear (y=mx+b)</option>
-                            <option value="polynomial">Polynomial (Order 2)</option>
-                            <option value="power">Power (y=ax^b)</option>
-                            <option value="exponential">Exponential (y=ae^bx)</option>
-                            <option value="logarithmic">Logarithmic (y=a+bln(x))</option>
-                        </select>
-                        <div id="trendline-stats" class="stats-box" style="display:none;margin-top:7px;"></div>
-                    </div>
-                </div>
+      <!-- Replicate opts -->
+      <div id="replicate-opts" style="display:none;">
+        <label style="margin-bottom:3px;">Replicate Columns <span style="font-weight:400;color:#888;font-size:10px;">(select all rep cols)</span></label>
+        <select id="replicateColSelect" multiple style="height:60px;font-size:11.5px;margin-bottom:6px;" onchange="applyDataMode()"></select>
+        <div class="g2">
+          <div><label>Error bars</label>
+            <select id="replicateErrorType" onchange="applyDataMode()">
+              <option value="sd">SD</option>
+              <option value="sem">SEM</option>
+              <option value="ci95">95% CI</option>
+            </select>
+          </div>
+          <div style="padding-top:16px;"><label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input type="checkbox" id="replicateShowPoints" onchange="applyDataMode()"> Show points</label></div>
+        </div>
+      </div>
 
+      <!-- Grouped long-format opts -->
+      <div id="grouped-opts" style="display:none;">
+        <p style="font-size:10px;color:#888;margin-bottom:5px;">Long format: one row per observation. E.g. Group | Category | Value.</p>
+        <div style="margin-bottom:5px;"><label>Group column (e.g. Lane)</label><select id="groupColSelect" onchange="applyDataMode()"></select></div>
+        <div style="margin-bottom:5px;"><label>Category col (e.g. Band)</label><select id="categoryColSelect" onchange="applyDataMode()"></select></div>
+        <div style="margin-bottom:5px;"><label>Value column</label><select id="valueColSelect" onchange="applyDataMode()"></select></div>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="groupedBarStacked" onchange="applyDataMode()"> Stacked bars</label>
+        <div id="grouped-colors-container" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+    </div>
 
-                <!-- TAB: STATS -->
-                <div class="tab-pane" id="tab-stats">
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Descriptive Statistics</div>
-                        <div style="margin-bottom:7px;">
-                            <label>Column to analyze</label>
-                            <select id="stats-col-select"></select>
-                        </div>
-                        <button onclick="runDescriptiveStats()" class="btn-g" style="font-size:11px;padding:7px;margin-bottom:0;">
-                            <i class="fa-solid fa-play"></i> Compute
-                        </button>
-                        <div id="desc-stats-box" class="stats-box" style="display:none;margin-top:8px;font-family:monospace;font-size:11px;line-height:1.7;"></div>
-                    </div>
+    <!-- Error Bars -->
+    <div class="card" id="error-bar-card">
+      <div class="card-title"><i class="fa-solid fa-arrows-up-down"></i>Error Bars (single series)</div>
+      <div style="margin-bottom:6px;"><label>Type</label>
+        <select id="errorBarType" onchange="syncErrorBarRows()">
+          <option value="none">None</option>
+          <option value="fixed">Fixed ± value</option>
+          <option value="percent">Percent %</option>
+          <option value="sqrt">Square Root</option>
+          <option value="column_sd">From column (SD/SEM)</option>
+          <option value="column_raw">From column (raw ± values)</option>
+          <option value="asymmetric">Asymmetric (+ and − columns)</option>
+        </select>
+      </div>
+      <div id="errbar-fixed-row"  style="display:none;margin-bottom:6px;"><label>± Value</label><input type="number" id="errorBarValue" value="0.1" step="any" onchange="applyChartTypeSettings()"></div>
+      <div id="errbar-pct-row"   style="display:none;margin-bottom:6px;"><label>Percent (%)</label><input type="number" id="errorBarPercent" value="5" step="any" min="0" onchange="applyChartTypeSettings()"></div>
+      <div id="errbar-col-row"   style="display:none;margin-bottom:6px;"><label>Error Column</label><select id="errorBarColumn" onchange="applyChartTypeSettings()"></select></div>
+      <div id="errbar-plus-row"  style="display:none;margin-bottom:6px;"><label>+ Error Column</label><select id="errorBarPlusCol" onchange="applyChartTypeSettings()"></select></div>
+      <div id="errbar-minus-row" style="display:none;margin-bottom:6px;"><label>− Error Column</label><select id="errorBarMinusCol" onchange="applyChartTypeSettings()"></select></div>
+    </div>
 
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-not-equal"></i>Compare Groups</div>
-                        <p style="font-size:10.5px;color:#888;margin-bottom:8px;">Compare two columns using t-test, or ≥3 columns using one-way ANOVA.</p>
-                        <div style="margin-bottom:6px;">
-                            <label>Group A column</label>
-                            <select id="test-colA"></select>
-                        </div>
-                        <div style="margin-bottom:6px;">
-                            <label>Group B column (or more via multi-Y)</label>
-                            <select id="test-colB"></select>
-                        </div>
-                        <div style="margin-bottom:7px;">
-                            <label>Test</label>
-                            <select id="stats-test-type">
-                                <option value="ttest_unpaired">Unpaired t-test</option>
-                                <option value="ttest_paired">Paired t-test</option>
-                                <option value="welch">Welch t-test (unequal var)</option>
-                                <option value="mannwhitney">Mann-Whitney U</option>
-                                <option value="anova1">One-way ANOVA (all Y cols)</option>
-                            </select>
-                        </div>
-                        <button onclick="runStatTest()" class="btn-g" style="font-size:11px;padding:7px;margin-bottom:0;">
-                            <i class="fa-solid fa-flask"></i> Run Test
-                        </button>
-                        <div id="test-results-box" class="stats-box" style="display:none;margin-top:8px;font-size:11.5px;line-height:1.8;"></div>
-                    </div>
+    <!-- Trace Identity & Style -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-palette"></i>Trace Identity &amp; Style</div>
+      <div class="g2" style="margin-bottom:6px;">
+        <div><label>Dataset Name</label><input type="text" id="styleTraceName" oninput="applyStyleSettings()"></div>
+        <div><label>Color</label><input type="color" id="styleColor" style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"></div>
+      </div>
+      <div class="g2">
+        <div><label>Opacity (%)</label><input type="number" id="styleOpacity" value="100" min="0" max="100" step="5" oninput="applyStyleSettings()"></div>
+        <div><label>Line Width</label><input type="number" id="styleLineWidth" value="2" min="0.5" max="20" step="0.5" oninput="applyStyleSettings()"></div>
+      </div>
+    </div>
 
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-table-list"></i>Column Summary Table</div>
-                        <button onclick="runColumnSummary()" class="btn-b" style="font-size:11px;padding:7px;">
-                            <i class="fa-solid fa-table"></i> Summarize All Columns
-                        </button>
-                        <div id="col-summary-box" style="display:none;margin-top:8px;overflow-x:auto;font-size:11px;"></div>
-                    </div>
-                </div>
-                <!-- TAB: EXPORT -->
-                <div class="tab-pane" id="tab-export">
+    <!-- Line / Marker Style -->
+    <div class="card" id="line-style-card" style="flex-direction:column;gap:7px;">
+      <div class="card-title"><i class="fa-solid fa-pen-nib"></i>Line / Marker Style</div>
+      <div class="g2">
+        <div><label>Draw Mode</label>
+          <select id="styleMode" onchange="applyStyleSettings()">
+            <option value="lines">Lines only</option><option value="markers">Points only</option><option value="lines+markers">Lines + Points</option>
+          </select>
+        </div>
+        <div><label>Dash Style</label>
+          <select id="styleLineDash" onchange="applyStyleSettings()">
+            <option value="solid">Solid</option><option value="dash">Dashed</option><option value="dot">Dotted</option><option value="dashdot">Dash-Dot</option><option value="longdash">Long Dash</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-paintbrush"></i>Plot Appearance</div>
-                        <div class="g2" style="margin-bottom:6px;">
-                            <div>
-                                <label>Background</label>
-                                <input type="color" id="plotBgColor" value="#fcfcfc" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()">
-                            </div>
-                            <div>
-                                <label>Paper color</label>
-                                <input type="color" id="plotPaperColor" value="#ffffff" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()">
-                            </div>
-                        </div>
-                        <div class="g2" style="margin-bottom:6px;">
-                            <div>
-                                <label>Font size</label>
-                                <input type="number" id="plotFontSize" value="12" min="8" max="24" onchange="applyPlotAppearance()">
-                            </div>
-                            <div>
-                                <label>Font family</label>
-                                <select id="plotFont" onchange="applyPlotAppearance()">
-                                    <option value="Arial">Arial</option>
-                                    <option value="'Times New Roman'">Times New Roman</option>
-                                    <option value="Helvetica">Helvetica</option>
-                                    <option value="'Courier New'">Courier New</option>
-                                    <option value="Georgia">Georgia</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
-                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;">
-                                <input type="checkbox" id="showGridX" checked onchange="applyPlotAppearance()"> X grid
-                            </label>
-                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;">
-                                <input type="checkbox" id="showGridY" checked onchange="applyPlotAppearance()"> Y grid
-                            </label>
-                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;">
-                                <input type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Legend
-                            </label>
-                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;">
-                                <input type="checkbox" id="plotZeroLine" checked onchange="applyPlotAppearance()"> Zero line
-                            </label>
-                        </div>
-                        <div style="margin-bottom:6px;">
-                            <label>Plot height (px)</label>
-                            <input type="number" id="plotHeight" value="580" min="200" max="1200" step="10" onchange="applyPlotAppearance()">
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-file-export"></i>Export Data</div>
-                        <button onclick="exportActiveCSV()" class="btn-b" style="margin-bottom:5px;font-size:11px;">
-                            <i class="fa-solid fa-file-csv"></i> Export Active Dataset (.csv)
-                        </button>
-                        <button onclick="exportSVG()" class="btn-b" style="font-size:11px;">
-                            <i class="fa-solid fa-bezier-curve"></i> Save Plot as SVG
-                        </button>
-                    </div>
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-image"></i>Save Plot as Image</div>
-                        <button onclick="Plotly.downloadImage('plotly-div',{format:'png',width:1200,height:800,filename:'plot'})" class="btn-g" style="margin-bottom:5px;">
-                            <i class="fa-solid fa-image"></i> Save as PNG
-                        </button>
-                        <button onclick="copyPlotToClipboard()" class="btn-b">
-                            <i class="fa-solid fa-copy"></i> Copy to Clipboard
-                        </button>
-                    </div>
-                    <div class="card">
-                        <div class="card-title" style="justify-content:space-between;">
-                            <span><i class="fa-solid fa-tags" style="color:#00796b;"></i> Custom Labels</span>
-                            <label style="margin:0;font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;">
-                                <input type="checkbox" id="showLabelsCheck" checked onchange="toggleAllLabels()"> Show
-                            </label>
-                        </div>
-                        <button id="toggleLabelBtn" onclick="toggleLabelMode()" class="btn-b" style="margin-bottom:5px;">🏷️ Add Labels (click plot)</button>
-                        <button onclick="openLabelManager()" class="btn-b" style="margin-bottom:5px;">📋 Manage Labels</button>
-                        <button onclick="clearLabels()" class="btn-r">✖ Clear All Labels</button>
-                        <p style="font-size:10.5px;color:#888;margin-top:6px;">Click on the plot to place labels.</p>
-                    </div>
-                </div>
+    <!-- Bar Style -->
+    <div class="card" id="bar-style-card" style="display:none;flex-direction:column;gap:8px;">
+      <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Bar Style</div>
+      <div class="g2">
+        <div><label>Fill Color</label><input type="color" id="barFillColor" style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+        <div><label>Pattern Fill</label>
+          <select id="barPatternShape" onchange="applyChartTypeSettings()">
+            <option value="solid">Solid</option>
+            <option value="/">Stripes (Right)</option>
+            <option value="\">Stripes (Left)</option>
+            <option value="x">Cross</option>
+            <option value="-">Horizontal Lines</option>
+            <option value="|">Vertical Lines</option>
+            <option value="+">Grid</option>
+            <option value=".">Dots</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div><label>Border Color</label><input type="color" id="barBorderColor" value="#000000" style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+        <div><label>Border Width</label><input type="number" id="barBorderWidth" value="0" min="0" max="6" step="0.5" oninput="applyChartTypeSettings()"></div>
+      </div>
+      <div class="g2">
+        <div><label>Fill Opacity (%)</label><input type="number" id="barOpacity" value="85" min="0" max="100" step="5" oninput="applyChartTypeSettings()"></div>
+        <div></div>
+      </div>
+      <hr style="margin:4px 0;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="barShowLabels" onchange="applyChartTypeSettings()">
+        <label style="margin:0;font-size:11.5px;cursor:pointer;" for="barShowLabels">Show value labels</label>
+      </div>
+      <div class="g2" style="margin-top:4px;">
+        <div><label>Position</label><select id="barLabelPosition" onchange="applyChartTypeSettings()"><option value="outside">Outside top</option><option value="inside">Inside top</option><option value="center">Inside center</option></select></div>
+        <div><label>Format</label><select id="barLabelFormat" onchange="applyChartTypeSettings()"><option value="value">Value</option><option value="percent">Percent</option><option value="scientific">Scientific</option></select></div>
+      </div>
+      <div class="g2">
+        <div><label>Font Size</label><input type="number" id="barLabelFontSize" value="11" min="7" max="24" oninput="applyChartTypeSettings()"></div>
+        <div><label>Font Color</label><input type="color" id="barLabelFontColor" value="#333333" style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+      </div>
+    </div>
+
+    <!-- Shift / Rescale -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale</div>
+      <p style="font-size:10px;color:#888;margin-bottom:6px;">new = (old + offset) × scale</p>
+      <div class="sag" style="margin-bottom:5px;">
+        <span></span><span style="font-size:10px;color:#888;text-align:center;">Offset (+)</span><span style="font-size:10px;color:#888;text-align:center;">Scale (×)</span>
+        <label>X</label><input type="number" id="axisShiftXOffset" value="0" step="any" placeholder="0"><input type="number" id="axisShiftXScale" value="1" step="any" placeholder="1">
+        <label>Y</label><input type="number" id="axisShiftYOffset" value="0" step="any" placeholder="0"><input type="number" id="axisShiftYScale" value="1" step="any" placeholder="1">
+      </div>
+      <div class="g2" style="gap:5px;">
+        <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
+        <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+      </div>
+    </div>
+
+    <!-- 2-Point Calibration -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>2-Point Calibration</div>
+      <div style="display:grid;grid-template-columns:60px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:6px;">
+        <span></span><span style="color:#0288d1;text-align:center;font-weight:600;">X axis</span><span style="color:#e65100;text-align:center;font-weight:600;">Y axis</span>
+        <label style="margin:0;">P1 data</label><input type="number" id="calXData1" placeholder="0" step="any"><input type="number" id="calYData1" placeholder="0" step="any">
+        <label style="margin:0;">P1 real</label><input type="number" id="calXReal1" placeholder="0" step="any"><input type="number" id="calYReal1" placeholder="0" step="any">
+        <label style="margin:0;">P2 data</label><input type="number" id="calXData2" placeholder="100" step="any"><input type="number" id="calYData2" placeholder="1" step="any">
+        <label style="margin:0;">P2 real</label><input type="number" id="calXReal2" placeholder="100" step="any"><input type="number" id="calYReal2" placeholder="1000" step="any">
+      </div>
+      <div class="g2" style="gap:5px;">
+        <button onclick="applyAxisCalibration()" class="btn-g" style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
+        <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+      </div>
+    </div>
+
+    <button id="remove-file-btn" class="btn-r" style="font-size:11px;padding:7px;"><i class="fa-solid fa-trash"></i> Remove This Dataset</button>
+  </div>
+</div>
+
+<!-- ══ TAB: AXIS & STYLE ══ -->
+<div class="tab-pane" id="tab-axis">
+  <!-- Axis Titles -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-tag"></i>Axis Titles</div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>X Title</label><input type="text" id="xAxisLabel" placeholder="e.g. m/z" oninput="updateActiveAxisLabels()"></div>
+      <div><label>Y Title</label><input type="text" id="yAxisLabel" placeholder="e.g. Intensity" oninput="updateActiveAxisLabels()"></div>
+    </div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>Y2 Title</label><input type="text" id="y2AxisLabel" placeholder="Secondary Y" oninput="updateActiveAxisLabels()"></div>
+      <div><label>Y3 Title</label><input type="text" id="y3AxisLabel" placeholder="Tertiary Y" oninput="updateActiveAxisLabels()"></div>
+    </div>
+    <div class="g2">
+      <div><label>Title Font Size (pt)</label><input type="number" id="axisTitleFontSize" value="13" min="8" max="28" oninput="applyPlotAppearance()"></div>
+      <div><label>Tick Font Size (pt)</label><input type="number" id="axisTickFontSize" value="11" min="6" max="24" oninput="applyPlotAppearance()"></div>
+    </div>
+  </div>
+
+  <!-- Axis Ranges -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-arrows-left-right"></i>Axis Ranges</div>
+    <div style="margin-bottom:5px;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;font-size:11.5px;">
+        <input type="checkbox" id="tightAxesCheck" onchange="applyPlotAppearance()">
+        <span><strong>Tight axes</strong> — X &amp; Y meet at data origin (0,0 corner)</span>
+      </label>
+    </div>
+    <hr style="margin:6px 0 5px;">
+    <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Range Override (blank = auto)</div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>X min</label><input type="number" id="xAxisMinOverride" placeholder="Auto" step="any" onchange="applyPlotAppearance()"></div>
+      <div><label>X max</label><input type="number" id="xAxisMaxOverride" placeholder="Auto" step="any" onchange="applyPlotAppearance()"></div>
+    </div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>Y min</label><input type="number" id="yAxisMin" placeholder="Auto" step="any" onchange="applyPlotAppearance()"></div>
+      <div><label>Y max</label><input type="number" id="yAxisMax" placeholder="Auto" step="any" onchange="applyPlotAppearance()"></div>
+    </div>
+    <hr style="margin:5px 0;">
+    <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Global X Clamp</div>
+    <div class="g2">
+      <div><label>Start</label><input type="number" id="xAxisStart" placeholder="Min" onchange="updateGlobalXRange()"></div>
+      <div><label>End</label><input type="number" id="xAxisEnd" placeholder="Max" onchange="updateGlobalXRange()"></div>
+    </div>
+  </div>
+
+  <!-- Grid & Axis Lines -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-border-all"></i>Grid &amp; Axis Lines</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showGridX" checked onchange="applyPlotAppearance()"> X grid</label>
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showGridY" checked onchange="applyPlotAppearance()"> Y grid</label>
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="plotZeroLine" checked onchange="applyPlotAppearance()"> Zero line</label>
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="mirrorAxes" onchange="applyPlotAppearance()"> Mirror</label>
+    </div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>Grid Color</label><input type="color" id="gridColor" value="#e0e0e0" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+      <div><label>Grid Width</label><input type="number" id="gridWidth" value="1" min="0.5" max="5" step="0.5" onchange="applyPlotAppearance()"></div>
+    </div>
+    <div style="margin-bottom:5px;"><label>Grid Dash</label>
+      <select id="gridDash" onchange="applyPlotAppearance()">
+        <option value="solid">Solid</option><option value="dot">Dotted</option><option value="dash">Dashed</option><option value="longdash">Long Dash</option><option value="dashdot">Dash-Dot</option>
+      </select>
+    </div>
+    <hr style="margin:5px 0;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px;">
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showAxisLineX" checked onchange="applyPlotAppearance()"> X axis line</label>
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showAxisLineY" checked onchange="applyPlotAppearance()"> Y axis line</label>
+    </div>
+    <div class="g2">
+      <div><label>Axis Line Color</label><input type="color" id="axisLineColor" value="#444444" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+      <div><label>Axis Line Width</label><input type="number" id="axisLineWidth" value="1" min="0.5" max="5" step="0.5" onchange="applyPlotAppearance()"></div>
+    </div>
+  </div>
+
+  <!-- Plot Appearance -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-paintbrush"></i>Plot Appearance</div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>Plot Background</label><input type="color" id="plotBgColor" value="#fcfcfc" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+      <div><label>Paper Color</label><input type="color" id="plotPaperColor" value="#ffffff" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+    </div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>Font Size</label><input type="number" id="plotFontSize" value="12" min="8" max="24" onchange="applyPlotAppearance()"></div>
+      <div><label>Font Family</label>
+        <select id="plotFont" onchange="applyPlotAppearance()">
+          <option value="Arial">Arial</option><option value="'Times New Roman'">Times New Roman</option><option value="Helvetica">Helvetica</option><option value="'Courier New'">Courier New</option><option value="Georgia">Georgia</option>
+        </select>
+      </div>
+    </div>
+    <div class="g2">
+      <div><label>Plot Height (px)</label><input type="number" id="plotHeight" value="580" min="200" max="1200" step="10" onchange="applyPlotAppearance()"></div>
+      <div style="padding-top:16px;"><label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Show Legend</label></div>
+    </div>
+  </div>
+
+  <!-- Quick Trace Override -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-palette"></i>Active Trace Quick Override</div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>Color</label><input type="color" id="quickTraceColor" value="#00796b" style="height:28px;cursor:pointer;" onchange="applyQuickTraceColor()"></div>
+      <div><label>Opacity (%)</label><input type="number" id="quickTraceOpacity" value="100" min="0" max="100" step="5" onchange="applyQuickTraceColor()"></div>
+    </div>
+    <div class="g2">
+      <div><label>Line Width (px)</label><input type="number" id="quickTraceWidth" value="2" min="0.5" max="20" step="0.5" onchange="applyQuickTraceColor()"></div>
+      <div><label>Dash Style</label>
+        <select id="quickTraceDash" onchange="applyQuickTraceColor()">
+          <option value="solid">Solid</option><option value="dash">Dashed</option><option value="dot">Dotted</option><option value="dashdot">Dash-Dot</option><option value="longdash">Long Dash</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB: ANALYSIS ══ -->
+<div class="tab-pane" id="tab-analysis">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-wave-square"></i>Smoothing</div>
+    <div style="margin-bottom:7px;"><label>Method</label>
+      <select id="smoothing-method" onchange="updateActiveSmoothing()"><option value="movingAverage">Moving Average</option><option value="savitzkyGolay">Savitzky-Golay</option></select>
+    </div>
+    <div class="sr"><div class="sr-hd"><label>Window (points)</label><span id="smoothing-value">0</span></div><input type="range" id="smoothing-slider" min="0" max="400" value="0" step="1"></div>
+    <div id="sg-poly-options" style="display:none;"><label>Polynomial Order</label><input type="number" id="sg-poly-order" value="2" min="1" max="6" onchange="updateActiveSmoothing()"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-magnifying-glass-chart"></i>Peak Detection</div>
+    <div style="display:flex;gap:14px;margin-bottom:7px;">
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input type="checkbox" id="show-peaks-check" onchange="updatePeakAnalysis()"> Show</label>
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input type="checkbox" id="highlight-peaks-check" onchange="updatePeakAnalysis()"> Highlight</label>
+    </div>
+    <div class="sr"><div class="sr-hd"><label>Min Prominence (%)</label><span id="peak-height-val">0</span></div><input type="range" id="peakHeightSlider" min="0" max="100" step="1" value="0"></div>
+    <div class="stats-box" id="peak-stats-box" style="display:none;">
+      <div class="stats-row"><span>Peaks found</span><strong id="peak-count">0</strong></div>
+      <div class="stats-row"><span>Max Y</span><strong id="peak-max-y">-</strong></div>
+      <div class="stats-row" style="border:none;"><span>Max at X</span><strong id="peak-max-x">-</strong></div>
+    </div>
+  </div>
+  <div class="card" id="bg-correction-panel">
+    <div class="card-title"><i class="fa-solid fa-eraser"></i>Background Correction</div>
+    <div style="margin-bottom:7px;"><label>Method</label>
+      <select id="bg-method" onchange="updateBgCorrection()"><option value="none">None</option><option value="linear">Linear (Endpoints)</option><option value="rollingball">Rolling Ball</option><option value="polynomial">Polynomial Envelope</option><option value="als">Asymmetric LS (ALS)</option></select>
+    </div>
+    <div id="bg-radius-row" style="display:none;"><div class="sr"><div class="sr-hd"><label>Radius/Window</label><span id="bg-radius-val">50</span></div><input type="range" id="bg-radius" min="5" max="300" value="50" oninput="document.getElementById('bg-radius-val').textContent=this.value;updateBgCorrection()"></div></div>
+    <div id="bg-order-row" style="display:none;margin-bottom:7px;"><label>Polynomial Order</label><input type="number" id="bg-order" min="1" max="6" value="2" onchange="updateBgCorrection()"></div>
+    <div id="bg-lam-row" style="display:none;"><div class="sr"><div class="sr-hd"><label>ALS Smoothness (log λ)</label><span id="bg-lam-val">5</span></div><input type="range" id="bg-lam" min="1" max="9" value="5" oninput="document.getElementById('bg-lam-val').textContent=this.value;updateBgCorrection()"></div></div>
+    <div class="sr"><div class="sr-hd"><label>Strength (%)</label><span id="bg-strength-val">100</span></div><input type="range" id="bg-strength" min="0" max="100" value="100" oninput="document.getElementById('bg-strength-val').textContent=this.value;updateBgCorrection()"></div>
+    <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:4px;"><input type="checkbox" id="bg-show-baseline" onchange="updateBgCorrection()"> Show baseline on plot</label>
+    <div id="bg-prev-plot" class="bg-prev" style="display:none;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-chart-simple"></i>Trendline Fit</div>
+    <select id="trendline-type"><option value="none">None</option><option value="linear">Linear (y=mx+b)</option><option value="polynomial">Polynomial (Order 2)</option><option value="power">Power (y=ax^b)</option><option value="exponential">Exponential (y=ae^bx)</option><option value="logarithmic">Logarithmic (y=a+bln(x))</option></select>
+    <div id="trendline-stats" class="stats-box" style="display:none;margin-top:7px;"></div>
+  </div>
+  <hr style="margin:4px 0;">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Descriptive Statistics</div>
+    <div style="margin-bottom:7px;"><label>Column to analyze</label><select id="stats-col-select"></select></div>
+    <button onclick="runDescriptiveStats()" class="btn-g" style="font-size:11px;padding:7px;margin-bottom:0;"><i class="fa-solid fa-play"></i> Compute</button>
+    <div id="desc-stats-box" class="stats-box" style="display:none;margin-top:8px;font-family:monospace;font-size:11px;line-height:1.7;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-not-equal"></i>Compare Groups</div>
+    <div class="g2" style="margin-bottom:6px;">
+      <div><label>Group A</label><select id="test-colA"></select></div>
+      <div><label>Group B</label><select id="test-colB"></select></div>
+    </div>
+    <div style="margin-bottom:7px;"><label>Test</label>
+      <select id="stats-test-type"><option value="ttest_unpaired">Unpaired t-test</option><option value="ttest_paired">Paired t-test</option><option value="welch">Welch t-test</option><option value="mannwhitney">Mann-Whitney U</option><option value="anova1">One-way ANOVA</option></select>
+    </div>
+    <button onclick="runStatTest()" class="btn-g" style="font-size:11px;padding:7px;margin-bottom:0;"><i class="fa-solid fa-flask"></i> Run Test</button>
+    <div id="test-results-box" class="stats-box" style="display:none;margin-top:8px;font-size:11.5px;line-height:1.8;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-table-list"></i>Column Summary</div>
+    <button onclick="runColumnSummary()" class="btn-b" style="font-size:11px;padding:7px;"><i class="fa-solid fa-table"></i> Summarize All Columns</button>
+    <div id="col-summary-box" style="display:none;margin-top:8px;overflow-x:auto;font-size:11px;"></div>
+  </div>
+</div>
+
+<!-- ══ TAB: EXPORT ══ -->
+<div class="tab-pane" id="tab-export">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-image"></i>Save Plot as Image</div>
+    <button onclick="Plotly.downloadImage('plotly-div',{format:'png',width:1600,height:900,filename:'plot',scale:2})" class="btn-g" style="margin-bottom:5px;"><i class="fa-solid fa-image"></i> Save PNG (high-res 2×)</button>
+    <button onclick="Plotly.downloadImage('plotly-div',{format:'png',width:800,height:600,filename:'plot'})" class="btn-b" style="margin-bottom:5px;"><i class="fa-solid fa-image"></i> Save PNG (screen)</button>
+    <button onclick="copyPlotToClipboard()" class="btn-b"><i class="fa-solid fa-copy"></i> Copy to Clipboard</button>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-bezier-curve"></i>Export Vector / Data</div>
+    <button onclick="exportSVG()" class="btn-b" style="margin-bottom:5px;"><i class="fa-solid fa-bezier-curve"></i> Save Plot as SVG</button>
+    <button onclick="exportActiveCSV()" class="btn-b"><i class="fa-solid fa-file-csv"></i> Export Active Dataset (.csv)</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between;">
+      <span><i class="fa-solid fa-tags" style="color:#00796b;"></i> Custom Labels</span>
+      <label style="margin:0;font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="showLabelsCheck" checked onchange="toggleAllLabels()"> Show all</label>
+    </div>
+    <button id="toggleLabelBtn" onclick="toggleLabelMode()" class="btn-b" style="margin-bottom:5px;">🏷️ Click anywhere to add label</button>
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0 0 6px;font-size:11px;padding:5px 8px;background:#f0f7f0;border-radius:4px;border:1px solid #c8e6c9;">
+      <input type="checkbox" id="labelSnapCheck"> <span><strong>Snap to nearest data point</strong> — auto-align label to trace</span>
+    </label>
+    <button onclick="openLabelManager()" class="btn-b" style="margin-bottom:5px;">📋 Manage Labels</button>
+    <button onclick="clearLabels()" class="btn-r">✖ Clear All Labels</button>
+  </div>
+</div>
 
             </div><!-- /tab-content-area -->
         </div><!-- /controls-panel -->
@@ -1143,44 +802,48 @@ footer a {
 
 <!-- ═══════════════════════════════ CSV IMPORT MODAL ═══════════════════════════════ -->
 <div id="customImportModal" class="modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);overflow:auto;">
-    <div class="modal-content" style="background-color:white;margin:5% auto;padding:22px;border-radius:8px;width:90%;max-width:800px;position:relative;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-            <h2 style="margin:0;">Import Files</h2>
-            <span onclick="closeCustomImportModal()" style="font-size:28px;cursor:pointer;color:#aaa;">&times;</span>
+    <div class="modal-content" style="background-color:white;margin:5% auto;padding:22px;border-radius:8px;width:90%;max-width:820px;position:relative;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 style="margin:0;font-size:16px;"><i class="fa-solid fa-file-import" style="color:#00796b;"></i> Import File</h2>
+            <span onclick="closeCustomImportModal()" style="font-size:28px;cursor:pointer;color:#aaa;line-height:1;">&times;</span>
         </div>
-        <div style="margin-bottom:13px;"><label>Select File:</label><input type="file" id="customFileInput" accept=".csv,.txt,.xlsx,.xls"></div>
-        <div style="margin-bottom:13px;">
-            <label>Delimiter:</label>
-            <select id="previewDelimiter">
-                <option value="auto">Auto-Detect</option>
-                <option value=",">Comma (,)</option>
-                <option value="&#9;">Tab</option>
-                <option value=";">Semicolon (;)</option>
-                <option value=" ">Space</option>
-            </select>
+
+        <!-- File + options row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+            <div><label>Select File:</label><input type="file" id="customFileInput" accept=".csv,.txt,.xlsx,.xls" style="font-size:11.5px;"></div>
+            <div><label>Delimiter:</label>
+                <select id="previewDelimiter">
+                    <option value="auto">Auto-Detect</option>
+                    <option value=",">Comma (,)</option>
+                    <option value="&#9;">Tab</option>
+                    <option value=";">Semicolon (;)</option>
+                    <option value=" ">Space</option>
+                </select>
+            </div>
+            <div><label>Header Row:</label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <input type="number" id="headerRowIndex" value="1" min="0" style="width:60px;">
+                    <span style="font-size:10px;color:#888;">(0 = none)</span>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom:13px;">
-            <label>Header Row:</label>
-            <input type="number" id="headerRowIndex" value="1" min="0" style="width:70px;">
-            <span style="font-size:11px;color:#666;margin-left:8px;">(0 = no header)</span>
-        </div>
-        <button onclick="previewCustomFile()" class="btn-b" style="width:auto;margin-bottom:10px;">
+        <button onclick="previewCustomFile()" class="btn-b" style="width:auto;margin-bottom:12px;">
             <i class="fa-solid fa-eye"></i> Preview Data
         </button>
 
         <!-- Sheet selector (shown for multi-sheet Excel files) -->
         <div id="sheetSelectorBar" style="display:none;flex-wrap:wrap;gap:5px;align-items:center;
             padding:8px 10px;background:#f0f7ff;border:1px solid #b3d4f5;border-radius:5px;margin-bottom:10px;">
-            <!-- populated by renderSheetTabs() -->
         </div>
 
         <div id="preview-section" style="display:none;">
-            <div style="max-height:230px;overflow:auto;border:1px solid #ddd;margin-bottom:16px;">
+            <div style="max-height:200px;overflow:auto;border:1px solid #ddd;margin-bottom:14px;border-radius:4px;">
                 <table id="previewTable" style="width:100%;border-collapse:collapse;font-size:11.5px;"></table>
             </div>
-            <div style="background:#f9f9f9;padding:13px;border-radius:4px;border:1px solid #eee;">
-                <h3 style="font-size:13px;margin-bottom:9px;">Column Mapping</h3>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <!-- Column Mapping + Chart Type -->
+            <div style="background:#f9f9f9;padding:13px;border-radius:4px;border:1px solid #eee;margin-bottom:12px;">
+                <h3 style="font-size:13px;margin-bottom:10px;"><i class="fa-solid fa-sliders" style="color:#00796b;"></i> Column Mapping &amp; Import Settings</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
                     <div>
                         <label>X Column:</label><select id="mapXSelect"></select>
                         <input type="text" id="mapXLabel" placeholder="Custom X Label" style="margin-top:5px;">
@@ -1194,10 +857,75 @@ footer a {
                         <select id="mapY2Select"><option value="">(None)</option></select>
                     </div>
                 </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+                    <div>
+                        <label><i class="fa-solid fa-chart-column" style="color:#00796b;"></i> Chart Type:</label>
+                        <select id="importChartType">
+                            <option value="scatter_line">Line Chart</option>
+                            <option value="scatter_point">Scatter (Points)</option>
+                            <option value="scatter_both">Line + Points</option>
+                            <option value="bar">Bar Chart</option>
+                            <option value="area">Area Chart</option>
+                            <option value="step">Step Chart</option>
+                            <option value="box">Box Plot</option>
+                            <option value="histogram">Histogram</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label><i class="fa-solid fa-tag" style="color:#00796b;"></i> Dataset Name:</label>
+                        <input type="text" id="importDatasetName" placeholder="Auto from filename">
+                    </div>
+                    <div>
+                        <label><i class="fa-solid fa-filter" style="color:#00796b;"></i> Row Filter:</label>
+                        <input type="text" id="importRowSelection" placeholder="e.g. 1-5, 8, 11-15" title="Leave blank to import all rows">
+                    </div>
+                </div>
+                <div style="margin-top:8px;padding:7px 9px;background:#e8f5e9;border-radius:3px;font-size:10.5px;color:#2e7d32;">
+                    <b>Tip for Bar Charts:</b> X column = category labels (text), Y column = values. Works great with "apples, 5" style data.
+                </div>
             </div>
-            <div style="margin-top:16px;display:flex;gap:9px;">
+            <!-- Data Mode at import -->
+            <div style="background:#f0f4ff;padding:13px;border-radius:4px;border:1px solid #c5cff5;margin-bottom:12px;">
+                <h3 style="font-size:13px;margin-bottom:10px;"><i class="fa-solid fa-layer-group" style="color:#1976d2;"></i> Data Mode &amp; Replicates (optional)</h3>
+                <div style="margin-bottom:8px;"><label>Data Mode:</label>
+                    <select id="importDataMode" onchange="toggleImportDataModeOpts()">
+                        <option value="single">Single series (normal)</option>
+                        <option value="meansd">Mean ± SD/SEM — select replicate columns below</option>
+                        <option value="grouped">Grouped / long-format bar chart</option>
+                    </select>
+                </div>
+                <div id="import-rep-opts" style="display:none;">
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+                        <label style="font-size:11px;margin:0;white-space:nowrap;">Replicates per sample:</label>
+                        <input type="number" id="importRepN" value="3" min="1" max="50" style="width:55px;" oninput="autoSelectImportRepCols()">
+                        <span style="font-size:10.5px;color:#888;">(auto-selects first N columns)</span>
+                    </div>
+                    <label style="font-size:11px;">Replicate columns <span style="font-weight:400;color:#888;">(Ctrl+click to multi-select, or use number above)</span></label>
+                    <select id="importRepCols" multiple style="height:70px;font-size:11.5px;margin-bottom:5px;"></select>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <label style="margin:0;font-size:11px;">Error bars:</label>
+                        <select id="importRepError" style="flex:1;">
+                            <option value="sd">SD</option><option value="sem">SEM</option><option value="ci95">95% CI</option>
+                        </select>
+                        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;white-space:nowrap;">
+                            <input type="checkbox" id="importRepShowPts"> Show points
+                        </label>
+                    </div>
+                </div>
+                <div id="import-grp-opts" style="display:none;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;">
+                        <div><label style="font-size:11px;">Group column</label><select id="importGroupCol"></select></div>
+                        <div><label style="font-size:11px;">Category column</label><select id="importCatCol"></select></div>
+                        <div><label style="font-size:11px;">Value column</label><select id="importValCol"></select></div>
+                    </div>
+                    <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin-top:5px;font-size:11px;">
+                        <input type="checkbox" id="importGrpStacked"> Stacked bars
+                    </label>
+                </div>
+            </div>
+            <div style="display:flex;gap:9px;">
                 <button onclick="importFullFile()" class="btn-g" id="importBtn" disabled>
-                    <i class="fa-solid fa-check"></i> Import
+                    <i class="fa-solid fa-check"></i> Import &amp; Plot
                 </button>
                 <button onclick="closeCustomImportModal()" class="btn-b">Cancel</button>
             </div>
@@ -1208,7 +936,7 @@ footer a {
 <footer>
     <p><strong>Developed by:</strong> Anindya Karmaker, PhD Candidate, McDonald-Nandi Lab.</p>
     <p><strong>Source:</strong> <a href="https://github.com/Anindya-Karmaker/Chromatogram-Plotter-Analyzer" target="_blank">View on GitHub</a></p>
-    <p><strong>Funding:</strong> NSF PFI Grant No. 2016563.</p>
+    <p><strong>Funding:</strong> NSF PFI Grant No. 2016563. &nbsp;|&nbsp; <strong>Version:</strong> v2.00 — Universal Data Plotter &amp; Analyzer</p>
 </footer>
 <script>
 // --- Global Variables/Functions for HTML access ---
@@ -1263,7 +991,15 @@ document.addEventListener('DOMContentLoaded', () => {
         annotations: [], // Custom peak labels for publication
         labelMode: false,  // Toggle for adding labels
         xaxisRange: { start: null, end: null }, // Global X-axis range
-        showLabels: true   // Global label visibility
+        showLabels: true,   // Global label visibility
+        dragLabelsMode: false,  // Toggle for drag/edit labels mode
+        // Per-axis overrides used in Drag Labels Mode (text/size/color/bold/x/y)
+        dragAxisSettings: {
+            xAxis:  { text: null, size: 13, color: '#444444', bold: false, x: 0.5,   y: -0.10 },
+            yAxis:  { text: null, size: 13, color: '#444444', bold: false, x: -0.12, y: 0.5   },
+            y2Axis: { text: null, size: 13, color: '#444444', bold: false, x: 1.09,  y: 0.5   },
+            y3Axis: { text: null, size: 13, color: '#444444', bold: false, x: 1.17,  y: 0.5   }
+        }
         // bgCorrection/axisShift stored per-file in plotConfig
     };
 
@@ -1371,43 +1107,41 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openCustomImportModal = () => { if (customImportModal) { customImportModal.style.display = 'block'; resetModal(); } };
     window.closeCustomImportModal = () => { if (customImportModal) customImportModal.style.display = 'none'; state.pendingFile = null; };
     window.previewCustomFile = handlePreview;
+    
+    function parseSelectionRange(str, max) {
+        const selected = new Set();
+        if (!str) return selected;
+        str.split(',').forEach(part => {
+            part = part.trim();
+            if (!part) return;
+            if (part.includes('-')) {
+                const [start, end] = part.split('-').map(Number);
+                if (!isNaN(start) && !isNaN(end)) {
+                    for (let i = Math.max(1, start); i <= end; i++) selected.add(i);
+                }
+            } else {
+                const num = Number(part);
+                if (!isNaN(num)) selected.add(num);
+            }
+        });
+        return selected;
+    }
+
     window.importFullFile = handleImportFull;
 
     window.applyStyleSettings = () => {
         if (!state.activeFileId) return;
         const config = state.plotConfig[state.activeFileId];
-        const styleTraceName2  = document.getElementById('styleTraceName');
-        const styleColor2      = document.getElementById('styleColor');
-        const styleLineWidth2  = document.getElementById('styleLineWidth');
-        const styleLineDash2   = document.getElementById('styleLineDash');
-        const styleYAxisSide2  = document.getElementById('styleYAxisSide');
-        const chartTypeSelect2 = document.getElementById('chartTypeSelect');
-        const styleOpacity2    = document.getElementById('styleOpacity');
-        const ebCheck = document.getElementById('errorBarsCheck');
-        const etSel   = document.getElementById('errorTypeSelect');
-        const ecSel   = document.getElementById('errorColSelect');
-        const ecP     = document.getElementById('errorColPlusSelect');
-        const ecM     = document.getElementById('errorColMinusSelect');
-        const ecConst = document.getElementById('errorConstant');
-        const ecPct   = document.getElementById('errorPercent');
-
-        if (styleTraceName2) config.traceName = styleTraceName2.value;
-        if (styleColor2)     config.color     = styleColor2.value;
-        if (styleLineWidth2) config.lineWidth  = parseInt(styleLineWidth2.value)||2;
-        if (styleLineDash2)  config.lineDash   = styleLineDash2.value;
-        if (styleYAxisSide2) config.yaxisSide  = styleYAxisSide2.value;
-        if (chartTypeSelect2){ config.chartType = chartTypeSelect2.value; config.mode = config.chartType; }
-        if (styleOpacity2)   config.opacity    = parseInt(styleOpacity2.value)/100 || 1;
-
-        if (!config.errorConfig) config.errorConfig = {};
-        if (ebCheck)  config.errorConfig.show    = ebCheck.checked;
-        if (etSel)    config.errorConfig.type    = etSel.value;
-        if (ecSel)    config.errorConfig.col     = ecSel.value||null;
-        if (ecP)      config.errorConfig.colPlus = ecP.value||null;
-        if (ecM)      config.errorConfig.colMinus= ecM.value||null;
-        if (ecConst)  config.errorConfig.constant= parseFloat(ecConst.value)||0;
-        if (ecPct)    config.errorConfig.percent = parseFloat(ecPct.value)||5;
-
+        const g = id => document.getElementById(id);
+        if (g('styleTraceName')) config.traceName = g('styleTraceName').value;
+        if (g('styleColor'))     { config.color = g('styleColor').value; }
+        if (g('styleLineWidth')) config.lineWidth = parseFloat(g('styleLineWidth').value)||2;
+        if (g('styleLineDash'))  config.lineDash  = g('styleLineDash').value;
+        if (g('styleOpacity'))   config.opacity   = parseInt(g('styleOpacity').value)/100 || 1;
+        // Sync quick color pickers in export tab
+        if (g('quickTraceColor'))   g('quickTraceColor').value = config.color;
+        if (g('quickTraceOpacity')) g('quickTraceOpacity').value = Math.round(config.opacity*100);
+        if (g('quickTraceWidth'))   g('quickTraceWidth').value  = config.lineWidth;
         renderFileList();
         renderPlot();
     };
@@ -1479,11 +1213,15 @@ document.addEventListener('DOMContentLoaded', () => {
         state.labelMode = !state.labelMode;
         const btn = document.getElementById('toggleLabelBtn');
         if (btn) {
-            btn.textContent = state.labelMode ? '🏷️ Labeling ON' : '🏷️ Add Custom Labels';
-            btn.style.background = state.labelMode ? '#d32f2f' : '#00796b';
+            btn.textContent = state.labelMode ? '🏷️ Labeling ON — click anywhere on plot' : '🏷️ Click anywhere to add label';
+            btn.style.background = state.labelMode ? '#d32f2f' : '';
         }
-        updateStatus(state.labelMode ? 'Click on plot to add labels' : 'Label mode OFF');
-        renderPlot(); // Re-render to attach/detach handlers
+        if (!state.labelMode && state._labelClickHandler) {
+            plotlyDiv.removeEventListener('click', state._labelClickHandler);
+            state._labelClickHandler = null;
+        }
+        updateStatus(state.labelMode ? '🏷️ Click anywhere on the plot to place a label' : 'Label mode OFF');
+        renderPlot();
     };
 
     window.clearLabels = () => {
@@ -1767,8 +1505,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (xAxisSelect) xAxisSelect.addEventListener('change', updateActiveConfig);
     if (yAxisSelect) yAxisSelect.addEventListener('change', updateActiveConfig);
     if (trendlineSelect) trendlineSelect.addEventListener('change', updateActiveTrendline);
-    if (updatePlotBtn) updatePlotBtn.addEventListener('click', renderPlot);
-    if (removeFileBtn) removeFileBtn.addEventListener('click', removeActiveFile);
+    const _rfb = document.getElementById('remove-file-btn');
+    if (_rfb) _rfb.addEventListener('click', removeActiveFile);
     if (smoothingSlider) {
         smoothingSlider.addEventListener('input', (e) => {
             smoothingValue.textContent = e.target.value;
@@ -1924,38 +1662,85 @@ document.addEventListener('DOMContentLoaded', () => {
         previewSection.style.display = 'block';
         importBtn.disabled = false;
         updateStatus("Preview generated.");
+
+        // Populate import data-mode selects
+        const _allCols = columns;
+        const _importSelects = ['importRepCols','importGroupCol','importCatCol','importValCol'];
+        _importSelects.forEach(sid => {
+            const sel = document.getElementById(sid);
+            if (!sel) return;
+            sel.innerHTML = '';
+            _allCols.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c; o.textContent = c;
+                sel.appendChild(o);
+            });
+        });
+        // Auto-select N rep cols based on current N input
+        autoSelectImportRepCols();
     }
+
+    window.autoSelectImportRepCols = () => {
+        const repSel = document.getElementById('importRepCols');
+        if (!repSel) return;
+        const n = parseInt(document.getElementById('importRepN')?.value) || 3;
+        Array.from(repSel.options).forEach((opt, i) => { opt.selected = i < n; });
+    };
+
+    window.toggleImportDataModeOpts = () => {
+        const mode = document.getElementById('importDataMode')?.value|| 'single';
+        const repOpts = document.getElementById('import-rep-opts');
+        const grpOpts = document.getElementById('import-grp-opts');
+        if (repOpts) repOpts.style.display = mode === 'meansd'  ? 'block' : 'none';
+        if (grpOpts) grpOpts.style.display = mode === 'grouped' ? 'block' : 'none';
+    };
 
     function handleImportFull() {
         if (!state.pendingFile) return;
         const file = state.pendingFile;
         const xCol = mapXSelect.value;
         const yCol = mapYSelect.value;
-        const y2Col = mapY2Select.value || null; // Capture Y2
+        const y2Col = mapY2Select.value || null;
         const xLabel = mapXLabel.value || null;
         const yLabel = mapYLabel.value || null;
         const delim = previewDelimiter.value;
         const headerRow = parseInt(headerRowIndex.value);
+        const importChartType = document.getElementById('importChartType')?.value || 'scatter_line';
+        const importName = document.getElementById('importDatasetName')?.value.trim() || null;
 
-        // ... (Parsing logic similar to previous, assumes processData calls addFile)
-        // Simplified for this replacement block:
         const processData = (jsonData) => {
-            // ... (Header extraction logic) ... 
-            // Re-implementing minimal robust version for context:
             let header, data;
             const hRowIdx = headerRow > 0 ? headerRow - 1 : -1;
             if (hRowIdx >= 0) {
-                header = jsonData[hRowIdx].map(String);
-                data = jsonData.slice(headerRow).map(row => { let obj = {}; header.forEach((h, i) => obj[h] = row[i]); return obj; });
+                header = jsonData[hRowIdx].map((h, i) => String(h ?? '').trim() || `Col${i+1}`);
+                data = jsonData.slice(headerRow).map(row => { let obj = {}; header.forEach((h, i) => obj[h] = row[i] ?? ''); return obj; });
             } else {
                 const max = jsonData.reduce((m, r) => Math.max(m, r.length), 0);
                 header = Array.from({ length: max }, (_, i) => `Column ${i + 1}`);
-                data = jsonData.map(row => { let obj = {}; header.forEach((h, i) => obj[h] = row[i]); return obj; });
+                data = jsonData.map(row => { let obj = {}; header.forEach((h, i) => obj[h] = row[i] ?? ''); return obj; });
             }
-            addFile(file.name, data, header, xCol, yCol, y2Col, xLabel, yLabel); // Updated signature
+            // Filter empty rows
+            data = data.filter(r => header.some(h => r[h] !== '' && r[h] !== undefined && r[h] !== null));
+            const rowSel = document.getElementById('importRowSelection')?.value.trim();
+            if (rowSel) {
+                const selectedIndices = parseSelectionRange(rowSel, data.length);
+                data = data.filter((_, idx) => selectedIndices.has(idx + 1));
+            }
+            const dsName = importName || file.name;
+            const _importMode = document.getElementById('importDataMode')?.value || 'single';
+            const _importRepCols  = _importMode==='meansd'  ? Array.from(document.getElementById('importRepCols')?.selectedOptions||[]).map(o=>o.value) : [];
+            const _importRepErr   = document.getElementById('importRepError')?.value || 'sd';
+            const _importRepPts   = !!document.getElementById('importRepShowPts')?.checked;
+            const _importGrpCol   = document.getElementById('importGroupCol')?.value  || '';
+            const _importCatCol   = document.getElementById('importCatCol')?.value    || '';
+            const _importValCol   = document.getElementById('importValCol')?.value    || '';
+            const _importGrpStack = !!document.getElementById('importGrpStacked')?.checked;
+            addFile(dsName, data, header, xCol, yCol, y2Col, xLabel, yLabel, importChartType,
+                { mode:_importMode, replicateCols:_importRepCols, replicateError:_importRepErr,
+                  replicateShowPts:_importRepPts, groupCol:_importGrpCol, categoryCol:_importCatCol,
+                  valueCol:_importValCol, groupedStacked:_importGrpStack });
         };
 
-        // Trigger Parsing — use cached workbook when available
         const ext = file.name.split('.').pop().toLowerCase();
         if (['xlsx', 'xls'].includes(ext)) {
             const importFromWb = (wb) => {
@@ -1967,17 +1752,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     processData(raw.filter(row => row && row.some(v => v !== undefined && v !== '')));
                 } catch (err) { alert('Error reading Excel: ' + err.message); }
             };
-            if (state.pendingWorkbook) {
-                importFromWb(state.pendingWorkbook);
-            } else {
+            if (state.pendingWorkbook) importFromWb(state.pendingWorkbook);
+            else {
                 const r = new FileReader();
-                r.onload = e => {
-                    try {
-                        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-                        state.pendingWorkbook = wb;
-                        importFromWb(wb);
-                    } catch (err) { alert('Error reading Excel: ' + err.message); }
-                };
+                r.onload = e => { try { const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' }); state.pendingWorkbook = wb; importFromWb(wb); } catch (err) { alert('Error: ' + err.message); } };
                 r.readAsArrayBuffer(file);
             }
         } else {
@@ -1991,7 +1769,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Core Logic ---
 
-    function addFile(name, data, columns, initialX, initialY, initialY2 = null, xLabel = null, yLabel = null) {
+    function addFile(name, data, columns, initialX, initialY, initialY2 = null, xLabel = null, yLabel = null, importChartType = 'scatter_line', dataModeConfig = {}) {
         if (!columns || columns.length === 0) return;
         if (!columns.includes(initialX)) initialX = columns[0];
         if (!columns.includes(initialY)) initialY = columns[1] || columns[0];
@@ -1999,11 +1777,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const fileId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
         state.files.push({ id: fileId, name: name, data: data, columns: columns });
 
-        // Initial Style Config
         state.plotConfig[fileId] = {
             xCol: initialX,
             yCol: initialY,
-            y2Col: initialY2, // Store Y2 column
+            y2Col: initialY2,
             xLabel: xLabel,
             yLabel: yLabel,
             color: colors[(state.files.length - 1) % colors.length],
@@ -2015,7 +1792,7 @@ document.addEventListener('DOMContentLoaded', () => {
             smoothingMethod: 'movingAverage',
             sgOrder: 2,
             yaxisSide: 'left',
-            peakConfig: { show: false, highlight: false, prominence: 0 }, // Using 'prominence' field for height threshold
+            peakConfig: { show: false, highlight: false, prominence: 0 },
             axisLabels: { x: xLabel || initialX, y: yLabel || initialY, y2: 'Secondary Y' },
             enableY2: false,
             visible: true,
@@ -2025,13 +1802,22 @@ document.addEventListener('DOMContentLoaded', () => {
             opacity: 1.0,
             multiYCols: [],
             groupedBarMeanSD: false,
-            chartType: 'scatter_line'
+            chartType: importChartType,
+            barStyle: {},
+            dataMode:        dataModeConfig.mode           || 'single',
+            replicateCols:   dataModeConfig.replicateCols  || [],
+            replicateError:  dataModeConfig.replicateError || 'sd',
+            replicateShowPts:dataModeConfig.replicateShowPts||false,
+            groupCol:        dataModeConfig.groupCol        || '',
+            categoryCol:     dataModeConfig.categoryCol     || '',
+            valueCol:        dataModeConfig.valueCol        || '',
+            groupedStacked:  dataModeConfig.groupedStacked  || false
         };
         state.trendlines[fileId] = 'none';
 
         renderFileList();
         setActiveFile(fileId);
-        updateStatus(`Loaded ${name}.`);
+        updateStatus(`Loaded "${name}" — ${data.length} rows as ${importChartType}.`);
     }
 
     function renderFileList() {
@@ -2048,9 +1834,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         state.files.forEach(file => {
             const li = document.createElement('li');
-            li.innerHTML = `<span><span class="color-dot" style="background-color:${state.plotConfig[file.id].color}"></span> ${file.name}</span>`;
+            li.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:6px 8px;cursor:pointer;border-bottom:1px solid #eee;font-size:11.5px;';
+            const nameSpan = document.createElement('span');
+            nameSpan.style.cssText = 'display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            nameSpan.innerHTML = `<span class="color-dot" style="background-color:${state.plotConfig[file.id].color};flex-shrink:0;"></span>${file.name}`;
+            nameSpan.onclick = () => setActiveFile(file.id);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = 'Remove dataset';
+            removeBtn.style.cssText = 'background:none;border:1px solid #e0e0e0;border-radius:3px;color:#e74c3c;font-size:13px;font-weight:bold;padding:0 5px;cursor:pointer;width:auto;flex-shrink:0;margin-left:4px;line-height:1.4;';
+            removeBtn.onclick = (e) => { e.stopPropagation(); removeFile(file.id); };
+
+            li.appendChild(nameSpan);
+            li.appendChild(removeBtn);
             if (file.id === state.activeFileId) li.classList.add('active');
-            li.onclick = () => setActiveFile(file.id);
+            li.addEventListener('click', () => setActiveFile(file.id));
             fileListEl.appendChild(li);
         });
         if (configPanel) configPanel.style.display = 'block';
@@ -2096,11 +1895,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (styleTraceName) styleTraceName.value = config.traceName;
         if (styleColor) styleColor.value = config.color;
         if (styleLineWidth) styleLineWidth.value = config.lineWidth;
-        const _chartTypeSel = document.getElementById('chartTypeSelect');
+        const _chartTypeSel = document.getElementById('chartType');
         const _styleSide    = document.getElementById('styleYAxisSide');
         const _styleOp      = document.getElementById('styleOpacity');
         if (_styleSide)    _styleSide.value    = config.yaxisSide || 'left';
-        if (_chartTypeSel) _chartTypeSel.value = config.chartType || 'scatter_line';
+        if (_chartTypeSel) { _chartTypeSel.value = config.chartType || 'scatter_line'; applyChartTypeVisibility(config.chartType||'scatter_line'); }
+        if (_styleOp)      _styleOp.value      = Math.round((config.opacity||1)*100);
+
+        // Sync styleMode and styleLineDash
+        const _sm = document.getElementById('styleMode');
+        const _sd = document.getElementById('styleLineDash');
+        if (_sm) _sm.value = config.mode || 'lines';
+        if (_sd) _sd.value = config.lineDash || 'solid';
+
+        // Sync bar style controls
+        const bs = config.barStyle || {};
+        const _bfc = document.getElementById('barFillColor');
+        const _bbc = document.getElementById('barBorderColor');
+        const _bbw = document.getElementById('barBorderWidth');
+        const _bop = document.getElementById('barOpacity');
+        const _bsl = document.getElementById('barShowLabels');
+        const _blp = document.getElementById('barLabelPosition');
+        const _bls = document.getElementById('barLabelFontSize');
+        const _blc = document.getElementById('barLabelFontColor');
+        const _blf = document.getElementById('barLabelFormat');
+        if (_bfc) _bfc.value = bs.fillColor   || config.color;
+        if (_bbc) _bbc.value = bs.borderColor  || '#000000';
+        if (_bbw) _bbw.value = bs.borderWidth  != null ? bs.borderWidth : 0;
+        const _bps = document.getElementById('barPatternShape');
+        if (_bps) _bps.value = bs.patternShape || 'solid';
+        if (_bop) _bop.value = bs.opacity      != null ? Math.round(bs.opacity*100) : 85;
+        if (_bsl) _bsl.checked = !!bs.showLabels;
+        if (_blp) _blp.value = bs.labelPosition  || 'outside';
+        if (_bls) _bls.value = bs.labelFontSize   || 11;
+        if (_blc) _blc.value = bs.labelFontColor  || '#333333';
+        if (_blf) _blf.value = bs.labelFormat     || 'value';
         if (_styleOp)      _styleOp.value      = Math.round((config.opacity||1)*100);
 
         // Error bars sync
@@ -2120,6 +1949,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (_ecP)    populateSelect(_ecP,    [''].concat(file.columns), errCfg.colPlus ||'');
         if (_ecM)    populateSelect(_ecM,    [''].concat(file.columns), errCfg.colMinus||'');
         if (typeof window.syncErrorBarUI === 'function') window.syncErrorBarUI();
+        syncDataModeUI(file, config);
+
+        // Sync error bar type selector
+        {
+            const errCfg = config.errorConfig || {};
+            const _ebTypeSel = document.getElementById('errorBarType');
+            if (_ebTypeSel && errCfg.errorBarType) _ebTypeSel.value = errCfg.errorBarType;
+        }
 
         // Y3 label
         const _y3L = document.getElementById('y3AxisLabel');
@@ -2186,6 +2023,18 @@ document.addEventListener('DOMContentLoaded', () => {
             showTraceCheck.checked = config.visible !== false; // Default to true if undefined
         }
 
+        // Sync quick trace color in Export tab
+        {
+            const _qtc = document.getElementById('quickTraceColor');
+            const _qto = document.getElementById('quickTraceOpacity');
+            const _qtw = document.getElementById('quickTraceWidth');
+            const _qtd = document.getElementById('quickTraceDash');
+            if (_qtc) _qtc.value = config.color;
+            if (_qto) _qto.value = Math.round((config.opacity||1)*100);
+            if (_qtw) _qtw.value = config.lineWidth||2;
+            if (_qtd) _qtd.value = config.lineDash||'solid';
+        }
+
         renderPlot();
         // If data edit modal is open, refresh it
         if (document.getElementById('dataEditModal')) renderTable();
@@ -2214,9 +2063,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ... (rest of simple helpers: updateActiveConfig, removeActiveFile, populateSelect, renderTable, updateActiveSmoothing - same as before) ...
-    function updateActiveConfig() { if (!state.activeFileId) return; state.plotConfig[state.activeFileId].xCol = xAxisSelect.value; state.plotConfig[state.activeFileId].yCol = yAxisSelect.value; }
+    function updateActiveConfig() { 
+        if (!state.activeFileId) return; 
+        state.plotConfig[state.activeFileId].xCol = xAxisSelect.value; 
+        state.plotConfig[state.activeFileId].yCol = yAxisSelect.value;
+        renderPlot();
+    }
     function updateActiveTrendline() { if (!state.activeFileId) return; state.trendlines[state.activeFileId] = trendlineSelect.value; renderPlot(); }
-    function removeActiveFile() { if (!state.activeFileId) return; state.files = state.files.filter(f => f.id !== state.activeFileId); delete state.plotConfig[state.activeFileId]; delete state.trendlines[state.activeFileId]; state.activeFileId = state.files.length ? state.files[0].id : null; renderFileList(); if (state.activeFileId) setActiveFile(state.activeFileId); else Plotly.purge(plotlyDiv); }
+    function removeFile(id) {
+        state.files = state.files.filter(f => f.id !== id);
+        delete state.plotConfig[id];
+        delete state.trendlines[id];
+        state.annotations = state.annotations.filter(a => a.fileId !== id);
+        if (state.activeFileId === id) {
+            state.activeFileId = state.files.length ? state.files[0].id : null;
+        }
+        renderFileList();
+        if (state.activeFileId) setActiveFile(state.activeFileId);
+        else { Plotly.purge(plotlyDiv); updateStatus('No datasets loaded.'); }
+    }
+    function removeActiveFile() { if (state.activeFileId) removeFile(state.activeFileId); }
     function populateSelect(el, opts, val) { if (!el) return; el.innerHTML = ''; opts.forEach(o => { const op = document.createElement('option'); op.value = o; op.textContent = o; if (o === val) op.selected = true; el.appendChild(op); }); }
     function renderTableLegacy() { /* replaced by modal renderTable below */ }
     function updateActiveSmoothing() { /* Same as before but triggers render */ if (state.activeFileId) { const c = state.plotConfig[state.activeFileId]; c.smoothing = parseInt(smoothingSlider.value); c.smoothingMethod = smoothingMethod.value; c.sgOrder = parseInt(sgPolyOrder.value); if (smoothingValue) smoothingValue.textContent = c.smoothing; if (sgPolyOptions) sgPolyOptions.style.display = c.smoothingMethod === 'savitzkyGolay' ? 'block' : 'none'; renderPlot(); } }
@@ -2224,6 +2090,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPlot() {
         if (!plotlyDiv) return;
+        state._layoutExtras = {};
         const traces = [];
         const downsampleThreshold = 100000;
         let hasY2 = false, hasY3 = false;
@@ -2293,11 +2160,108 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // ── Grouped bar from replicates: mean ± SD ─────────────────
+            // ── Mean±SD/SEM from replicate columns ──────────────────────
+            const _dataMode = config.dataMode || 'single';
+
+            if (_dataMode === 'meansd' && config.replicateCols && config.replicateCols.length > 0) {
+                const repCols  = config.replicateCols;
+                const errType  = config.replicateError || 'sd';
+                const barLabels = x.map(v => String(v));
+                const means=[], errVals=[], allPts=[];
+                barLabels.forEach((lbl, i) => {
+                    const vals = repCols.map(c => parseFloat(file.data[i]?.[c])).filter(v => !isNaN(v));
+                    if (!vals.length) { means.push(0); errVals.push(0); return; }
+                    const n  = vals.length;
+                    const m  = vals.reduce((a,b)=>a+b,0)/n;
+                    const sd = n>1 ? Math.sqrt(vals.map(v=>(v-m)**2).reduce((a,b)=>a+b,0)/(n-1)) : 0;
+                    const sem = sd/Math.sqrt(n);
+                    const ci  = 1.96*sem;
+                    means.push(m);
+                    errVals.push(errType==='sd'?sd : errType==='sem'?sem : ci);
+                    if (config.replicateShowPts) vals.forEach(v => allPts.push({lbl, v}));
+                });
+                const yKey = config.yaxisSide==='right' ? 'y2' : config.yaxisSide==='right2' ? 'y3' : 'y';
+                const isBar = chartType === 'bar';
+                const _bs2 = config.barStyle || {};
+                const _fillCol2  = _bs2.fillColor   || config.color;
+                const _bordCol2  = _bs2.borderColor || 'rgba(0,0,0,0.15)';
+                const _bordW2    = _bs2.borderWidth  != null ? _bs2.borderWidth : 0;
+                const _barOp2    = _bs2.opacity      != null ? _bs2.opacity : (config.opacity||0.85);
+                const _showLbl2  = !!_bs2.showLabels;
+                const _lblPos2   = _bs2.labelPosition || 'outside';
+                const _lblFsz2   = _bs2.labelFontSize || 11;
+                const _lblCol2   = _bs2.labelFontColor || '#333333';
+                const _lblFmt2   = _bs2.labelFormat || 'value';
+                const _barName2  = config.traceName + ' (mean±' + errType + ')';
+                let _barTxt2 = null;
+                if (_showLbl2) { _barTxt2 = means.map(v => _lblFmt2==='percent'?((v*100).toFixed(1)+'%') : _lblFmt2==='scientific'?v.toExponential(2) : v.toPrecision(4).replace(/\.?0+$/, '')); }
+                const _errYSpec = { type:'data', array:errVals, visible:true, color:_fillCol2, thickness:1.5, width:6 };
+                traces.push(isBar
+                    ? { type:'bar', x:barLabels, y:means, name:_barName2, yaxis:yKey,
+                        text:_barTxt2||[], textposition:_showLbl2?(_lblPos2==='center'?'inside':'outside'):'none',
+                        textfont:{size:_lblFsz2,color:_lblCol2}, insidetextanchor:_lblPos2==='center'?'middle':'end',
+                        marker:{color:_fillCol2, opacity:_barOp2, line:{color:_bordCol2,width:_bordW2}},
+                        error_y:_errYSpec }
+                    : { type:'scatter', mode:config.mode||'lines+markers', x:barLabels, y:means, name:_barName2, yaxis:yKey,
+                        line:{color:config.color,width:config.lineWidth||2,dash:config.lineDash||'solid'},
+                        marker:{color:config.color,size:(config.lineWidth||2)*2.5},
+                        error_y:_errYSpec, opacity:config.opacity||1 });
+                if (config.replicateShowPts && allPts.length) {
+                    traces.push({type:'scatter', mode:'markers', x:allPts.map(p=>p.lbl), y:allPts.map(p=>p.v),
+                        name:config.traceName+' (points)', marker:{color:config.color,size:5,opacity:0.6,symbol:'circle-open'}, yaxis:yKey, showlegend:false});
+                }
+                return;
+            }
+
+            // ── Grouped / long-format bar chart ──────────────────────────
+            if (_dataMode === 'grouped' && config.groupCol && config.categoryCol && config.valueCol) {
+                const groupCol = config.groupCol, catCol = config.categoryCol, valCol = config.valueCol;
+                const groups = [...new Set(file.data.map(r => String(r[groupCol]||'')))].filter(Boolean);
+                const cats   = [...new Set(file.data.map(r => String(r[catCol]||'')))].filter(Boolean);
+                const colorPalette = ['#00796b','#d32f2f','#1976d2','#fbc02d','#7b1fa2','#e64a19','#0097a7','#455a64'];
+                const stackMode = config.groupedStacked ? 'stack' : 'group';
+                // Set barmode on layout later via layoutExtras
+                if (!state._layoutExtras) state._layoutExtras = {};
+                state._layoutExtras.barmode = stackMode;
+                const _bsG = config.barStyle || {};
+                const _bordColG = _bsG.borderColor || 'rgba(255,255,255,0.3)';
+                const _bordWG   = _bsG.borderWidth != null ? _bsG.borderWidth : 0.5;
+                const _barOpG   = _bsG.opacity     != null ? _bsG.opacity : 0.87;
+                const _showLblG = !!_bsG.showLabels;
+                const _lblPosG  = _bsG.labelPosition || 'outside';
+                const _lblFszG  = _bsG.labelFontSize || 11;
+                const _lblColG  = _bsG.labelFontColor || '#333333';
+                const _lblFmtG  = _bsG.labelFormat || 'value';
+                const _yKeyG    = config.yaxisSide==='right' ? 'y2' : 'y';
+                groups.forEach((grp, gi) => {
+                    const yVals = cats.map(cat => {
+                        const row = file.data.find(r => String(r[groupCol]||'')===grp && String(r[catCol]||'')===cat);
+                        return row ? parseFloat(row[valCol])||0 : 0;
+                    });
+                    let _grpTxt = null;
+                    if (_showLblG) { _grpTxt = yVals.map(v => _lblFmtG==='percent'?((v*100).toFixed(1)+'%') : _lblFmtG==='scientific'?v.toExponential(2) : v.toPrecision(4).replace(/\.?0+$/, '')); }
+                    
+                    const gStyle = config.groupStyles?.[grp] || { color: colorPalette[gi%colorPalette.length], pattern: 'solid' };
+                    const markerStyles = {
+                        color: gStyle.color, opacity: _barOpG, 
+                        line: {color:_bordColG, width:_bordWG}
+                    };
+                    if (gStyle.pattern && gStyle.pattern !== 'solid') {
+                        markerStyles.pattern = { shape: gStyle.pattern, fillmode: 'replace' };
+                    }
+
+                    traces.push({ type:'bar', x:cats, y:yVals, name:grp,
+                        text:_grpTxt||[], textposition:_showLblG?(_lblPosG==='center'?'inside':'outside'):'none',
+                        textfont:{size:_lblFszG,color:_lblColG}, insidetextanchor:_lblPosG==='center'?'middle':'end',
+                        marker: markerStyles,
+                        yaxis:_yKeyG });
+                });
+                return;
+            }
+
+            // legacy grouped bar mode (backward compat)
             if (config.groupedBarMeanSD && chartType==='bar') {
-                const repCols = config.multiYCols && config.multiYCols.length>0
-                    ? config.multiYCols
-                    : [config.yCol];
+                const repCols = config.multiYCols && config.multiYCols.length>0 ? config.multiYCols : [config.yCol];
                 const barLabels = x.map(v=>String(v));
                 const means=[], sds=[];
                 barLabels.forEach((_,i) => {
@@ -2306,13 +2270,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const sd = vals.length>1 ? Math.sqrt(vals.map(v=>(v-m)**2).reduce((a,b)=>a+b,0)/(vals.length-1)) : 0;
                     means.push(m); sds.push(sd);
                 });
-                traces.push({
-                    x:barLabels, y:means, type:'bar', name:config.traceName+' (mean)',
+                traces.push({x:barLabels, y:means, type:'bar', name:config.traceName+' (mean)',
                     marker:{color:config.color,opacity:0.9,line:{color:'rgba(255,255,255,.4)',width:.5}},
                     error_y:{type:'data',array:sds,visible:true,color:'#333',thickness:1.5,width:6},
-                    yaxis: config.yaxisSide==='right' ? 'y2' : 'y'
-                });
-                return; // skip normal trace building
+                    yaxis: config.yaxisSide==='right' ? 'y2' : 'y'});
+                return;
             }
 
             // ── Smoothing ──────────────────────────────────────────────
@@ -2403,13 +2365,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Detect if Y column was originally percent strings → show "%" suffix
                 const _isPct = isPercentCol(file, config.yCol);
                 if (_isPct) config._yIsPct = true;
+                const bs = config.barStyle || {};
+                const fillColor   = bs.fillColor   || config.color;
+                const borderColor = bs.borderColor || 'rgba(0,0,0,0)';
+                const borderWidth = bs.borderWidth  != null ? bs.borderWidth : 0;
+                const barOpacity  = bs.opacity      != null ? bs.opacity     : (config.opacity||0.85);
+                const showLabels  = !!bs.showLabels;
+                const labelPos    = bs.labelPosition || 'outside';
+                const labelFontSz = bs.labelFontSize || 11;
+                const labelColor  = bs.labelFontColor|| '#333333';
+                const labelFmt    = bs.labelFormat   || 'value';
+
+                let textArr = null;
+                if (showLabels) {
+                    textArr = plotY.map(v => {
+                        if (labelFmt === 'percent') return (v*100).toFixed(1)+'%';
+                        if (labelFmt === 'scientific') return v.toExponential(2);
+                        return Number.isInteger(v) ? String(v) : v.toPrecision(4).replace(/\.?0+$/,'');
+                    });
+                }
                 trace = {
                     x: barX, y: plotY, type: 'bar', name: config.traceName,
-                    marker: {
-                        color: config.color,
-                        opacity,
-                        line: { color: 'rgba(255,255,255,0.4)', width: 0.5 }
-                    },
+                    text: textArr || [],
+                    textposition: showLabels ? (labelPos === 'inside' ? 'inside' : labelPos === 'center' ? 'inside' : 'outside') : 'none',
+                    textfont: { size: labelFontSz, color: labelColor },
+                    insidetextanchor: labelPos === 'center' ? 'middle' : 'end',
+                    marker: Object.assign({
+                        color: fillColor,
+                        opacity: barOpacity,
+                        line: { color: borderColor, width: borderWidth }
+                    }, bs.patternShape && bs.patternShape !== 'solid' ? { pattern: { shape: bs.patternShape, fillmode: 'replace' } } : {}),
                     error_y: errorBar, yaxis: yAxisKey,
                     hovertemplate: _isPct
                         ? '%{x}<br>%{y:.2f}%<extra>' + config.traceName + '</extra>'
@@ -2503,28 +2488,65 @@ document.addEventListener('DOMContentLoaded', () => {
         const xTickFormat = hasBarTrace ? '' : ',';
 
         const pa = typeof plotAppearance !== 'undefined' ? plotAppearance : {};
+        const _gcol = pa.gridColor || '#e0e0e0';
+        const _gw   = pa.gridWidth || 1;
+        const _gdash= pa.gridDash  || 'solid';
+        const _alcol= pa.axisLineColor || '#444444';
+        const _alw  = pa.axisLineWidth || 1;
+        const _mirror = pa.mirrorAxes ? 'ticks' : false;
+
+        // Build axis range arrays if overrides set
+        const _yRange = (pa.yAxisMin!=null||pa.yAxisMax!=null)
+            ? [pa.yAxisMin!==null?pa.yAxisMin:'auto', pa.yAxisMax!==null?pa.yAxisMax:'auto'] : undefined;
+        const _xRangeOverride = (pa.xAxisMin!=null||pa.xAxisMax!=null)
+            ? [pa.xAxisMin!==null?pa.xAxisMin:'auto', pa.xAxisMax!==null?pa.xAxisMax:'auto'] : undefined;
+
+        const _titleSz = pa.axisTitleFontSize || 13;
+        const _tickSz  = pa.axisTickFontSize  || 11;
+        const _tightAxes = document.getElementById('tightAxesCheck')?.checked ?? false;
         const layout = {
             autosize: true, height: (pa.height||580),
             margin: { t: 40, r: rightMargin, b: 60, l: 70 },
-            barmode: 'group',   // multiple bar series sit side-by-side
-            bargap: 0.15,       // gap between bar groups
+            barmode: (state._layoutExtras && state._layoutExtras.barmode) || 'group',
+            bargap: 0.15,
             bargroupgap: 0.05,
             xaxis: {
-                title: { text: xTitle, font:{size:(pa.fontSize||12)+1} }, gridcolor: '#eee',
+                title: { text: xTitle, font:{size: _titleSz} },
+                tickfont: { size: _tickSz },
+                automargin: true,
+                gridcolor: _gcol, gridwidth: _gw, griddash: _gdash,
                 showgrid: pa.showGridX!==false, zeroline: pa.zeroLine!==false,
+                zerolinecolor: _alcol, zerolinewidth: _alw,
+                showline: pa.showAxisLineX!==false,
+                linecolor: _alcol, linewidth: _alw,
+                mirror: _mirror,
                 tickformat: xTickFormat,
-                range: (state.xaxisRange.start!==null || state.xaxisRange.end!==null)
+                range: _xRangeOverride || ((state.xaxisRange.start!==null || state.xaxisRange.end!==null)
                     ? [state.xaxisRange.start??undefined, state.xaxisRange.end??undefined]
-                    : undefined,
+                    : undefined),
+                rangemode: _tightAxes ? 'tozero' : 'normal',
                 showspikes: true, spikemode: 'across', spikethickness: 1, spikedash: 'dash', spikecolor: '#aaa'
             },
-            yaxis:  { title: { text: yTitle, font:{size:(pa.fontSize||12)+1} },  gridcolor: '#eee',
+            yaxis:  {
+                title: { text: yTitle, font:{size: _titleSz} },
+                tickfont: { size: _tickSz },
+                automargin: true,
+                gridcolor: _gcol, gridwidth: _gw, griddash: _gdash,
                 showgrid: pa.showGridY!==false, zeroline: pa.zeroLine!==false,
+                zerolinecolor: _alcol, zerolinewidth: _alw,
+                showline: pa.showAxisLineY!==false,
+                linecolor: _alcol, linewidth: _alw,
+                mirror: _mirror,
                 ticksuffix: state.files.some(f=>(state.plotConfig[f.id]||{})._yIsPct) ? '%' : '',
-                showspikes: true, spikethickness: 1, spikedash: 'dash', spikecolor: '#aaa' },
-            yaxis2: { title: { text: y2Title }, overlaying: 'y', side: 'right',  showgrid: false, visible: hasY2 },
-            yaxis3: { title: { text: y3Title }, overlaying: 'y', side: 'right',  showgrid: false, visible: hasY3, position: 0.93 },
-            legend: { x: 0, y: 1.1, orientation: 'h', font: { size: 11 } },
+                range: _yRange,
+                rangemode: _tightAxes ? 'tozero' : 'normal',
+                showspikes: true, spikethickness: 1, spikedash: 'dash', spikecolor: '#aaa'
+            },
+            yaxis2: { title: { text: y2Title, font:{size: _titleSz} }, tickfont:{size:_tickSz}, automargin: true, overlaying: 'y', side: 'right', showgrid: false, visible: hasY2,
+                showline: pa.showAxisLineY!==false, linecolor: _alcol, linewidth: _alw },
+            yaxis3: { title: { text: y3Title, font:{size: _titleSz} }, tickfont:{size:_tickSz}, automargin: true, overlaying: 'y', side: 'right', showgrid: false, visible: hasY3, position: 0.93,
+                showline: pa.showAxisLineY!==false, linecolor: _alcol, linewidth: _alw },
+            legend: { x: 0, y: 1.1, orientation: 'h', font: { size: _tickSz } },
             paper_bgcolor: pa.paperColor||'#fff',
             plot_bgcolor: pa.bgColor||'#fcfcfc',
             font: { family: pa.fontFamily||'Arial', size: pa.fontSize||12 },
@@ -2538,32 +2560,151 @@ document.addEventListener('DOMContentLoaded', () => {
             }) : []
         };
 
-        Plotly.react(plotlyDiv, traces, layout, {responsive:true, scrollZoom:true});
+        // ── Axis titles: in drag mode, use draggable paper annotations ──
+        const _annotsForLayout = state.showLabels ? state.annotations.filter(ann => {
+            const f = state.files.find(f => f.id === ann.fileId);
+            if (!f) return !ann.fileId;
+            return (state.plotConfig[f.id]||{}).visible !== false;
+        }) : [];
 
-        if (state.labelMode) {
-            plotlyDiv.on('plotly_click', data=>{
-                const pt=data.points[0];
-                const labelText=prompt('Label text:','Peak');
-                if (labelText!==null) {
-                    const showX=confirm('Include X value?');
-                    const showY=confirm('Include Y value?');
-                    let displayText=labelText;
-                    if(showX&&showY) displayText+=`\nX: ${parseFloat(pt.x).toFixed(3)}\nY: ${parseFloat(pt.y).toFixed(3)}`;
-                    else if(showX)   displayText+=`\nX: ${parseFloat(pt.x).toFixed(3)}`;
-                    else if(showY)   displayText+=`\nY: ${parseFloat(pt.y).toFixed(3)}`;
-                    state.annotations.push({
-                        id:Date.now(), fileId:state.activeFileId,
-                        x:pt.x, y:pt.y, text:displayText, customText:labelText,
-                        showX, showY, showarrow:true, arrowhead:2, ax:0, ay:-40,
-                        font:{size:12,color:'black'}, bgcolor:'rgba(255,255,255,0.9)',
-                        bordercolor:'black', borderwidth:1
-                    });
-                    renderPlot();
-                    updateStatus('Label added: '+labelText);
-                }
+        if (state.dragLabelsMode) {
+            // Suppress built-in titles so annotations replace them
+            layout.xaxis.title  = { text: '' };
+            layout.yaxis.title  = { text: '' };
+            // Disable automargin in drag mode so we have precise margin control
+            layout.xaxis.automargin  = false;
+            layout.yaxis.automargin  = false;
+            if (layout.yaxis2) { layout.yaxis2.title = { text: '' }; layout.yaxis2.automargin = false; }
+            if (layout.yaxis3) { layout.yaxis3.title = { text: '' }; layout.yaxis3.automargin = false; }
+            layout.margin.t = Math.max(layout.margin.t, 50);
+            layout.margin.b = Math.max(layout.margin.b, 80);
+            layout.margin.l = Math.max(layout.margin.l, 100);
+
+            const das = state.dragAxisSettings;
+            const _fmtAxisText = (s, bold) => bold ? `<b>${s}</b>` : s;
+            const pa2 = typeof plotAppearance !== 'undefined' ? plotAppearance : {};
+            const _ff = pa2.fontFamily || 'Arial';
+
+            // X-axis title annotation
+            const xS = das.xAxis;
+            _annotsForLayout.push({
+                x: xS.x, y: xS.y, xref: 'paper', yref: 'paper',
+                text: _fmtAxisText(xS.text || xTitle, xS.bold),
+                showarrow: false, captureevents: true,
+                font: { size: xS.size, color: xS.color, family: _ff },
+                xanchor: 'center', yanchor: 'top',
+                name: 'dragXAxisTitle'
             });
-        } else {
-            plotlyDiv.removeAllListeners('plotly_click');
+
+            // Y-axis title annotation (primary)
+            const yS = das.yAxis;
+            _annotsForLayout.push({
+                x: yS.x, y: yS.y, xref: 'paper', yref: 'paper',
+                text: _fmtAxisText(yS.text || yTitle, yS.bold),
+                showarrow: false, captureevents: true,
+                font: { size: yS.size, color: yS.color, family: _ff },
+                xanchor: 'center', yanchor: 'middle', textangle: -90,
+                name: 'dragYAxisTitle'
+            });
+
+            // Y2-axis title annotation
+            if (hasY2) {
+                const y2S = das.y2Axis;
+                _annotsForLayout.push({
+                    x: y2S.x, y: y2S.y, xref: 'paper', yref: 'paper',
+                    text: _fmtAxisText(y2S.text || y2Title, y2S.bold),
+                    showarrow: false, captureevents: true,
+                    font: { size: y2S.size, color: y2S.color, family: _ff },
+                    xanchor: 'center', yanchor: 'middle', textangle: -90,
+                    name: 'dragY2AxisTitle'
+                });
+            }
+
+            // Y3-axis title annotation
+            if (hasY3) {
+                const y3S = das.y3Axis;
+                _annotsForLayout.push({
+                    x: y3S.x, y: y3S.y, xref: 'paper', yref: 'paper',
+                    text: _fmtAxisText(y3S.text || y3Title, y3S.bold),
+                    showarrow: false, captureevents: true,
+                    font: { size: y3S.size, color: y3S.color, family: _ff },
+                    xanchor: 'center', yanchor: 'middle', textangle: -90,
+                    name: 'dragY3AxisTitle'
+                });
+            }
+        }
+
+        layout.annotations = _annotsForLayout;
+
+        // Drag labels mode: Plotly edits config
+        const _dragModeOn = state.dragLabelsMode;
+        Plotly.react(plotlyDiv, traces, layout, {
+            responsive: true,
+            scrollZoom: true,
+            edits: _dragModeOn ? {
+                annotationPosition: true,
+                annotationTail: true,
+                annotationText: false,
+                legendPosition: true
+            } : {}
+        });
+
+        // Drag Labels Mode — attach/detach annotation event listeners
+        plotlyDiv.removeAllListeners('plotly_clickannotation');
+        plotlyDiv.removeAllListeners('plotly_relayout');
+        if (_dragModeOn) {
+            plotlyDiv.on('plotly_clickannotation', handleDragAnnotationClick);
+            plotlyDiv.on('plotly_relayout', handleDragRelayout);
+        }
+
+        // Remove old plotly_click listener (we use native DOM click instead)
+        plotlyDiv.removeAllListeners('plotly_click');
+
+        // Attach/detach native click listener for label-anywhere mode
+        if (state._labelClickHandler) {
+            plotlyDiv.removeEventListener('click', state._labelClickHandler);
+            state._labelClickHandler = null;
+        }
+        if (state.labelMode) {
+            state._labelClickHandler = (e) => {
+                const layout = plotlyDiv._fullLayout;
+                if (!layout) return;
+                const rect   = plotlyDiv.getBoundingClientRect();
+                const px = e.clientX - rect.left;
+                const py = e.clientY - rect.top;
+                // Plot area bounds in pixels
+                const ml = layout.margin.l, mr = layout.margin.r;
+                const mt = layout.margin.t, mb = layout.margin.b;
+                const pw = rect.width, ph = rect.height;
+                const plotL = ml, plotR = pw - mr, plotT = mt, plotB = ph - mb;
+                if (px < plotL || px > plotR || py < plotT || py > plotB) return;
+                // Convert pixel → data coords
+                const xa = layout.xaxis, ya = layout.yaxis;
+                const xRange = xa.range, yRange = ya.range;
+                let dataX = xRange[0] + (px - plotL) / (plotR - plotL) * (xRange[1] - xRange[0]);
+                let dataY = yRange[0] + (plotB - py) / (plotB - plotT) * (yRange[1] - yRange[0]);
+                // Snap to nearest data point if enabled
+                let snapped = false;
+                if (document.getElementById('labelSnapCheck')?.checked && state.activeFileId) {
+                    const file = state.files.find(f => f.id === state.activeFileId);
+                    const cfg  = state.plotConfig[state.activeFileId];
+                    if (file && cfg) {
+                        let bestDist = Infinity, bx = dataX, by = dataY;
+                        file.data.forEach(row => {
+                            const rx = parseVal(row[cfg.xCol]), ry = parseVal(row[cfg.yCol]);
+                            if (isNaN(rx)||isNaN(ry)) return;
+                            // Normalize by axis range to get equal-weight distance
+                            const dx = (rx-dataX)/(xRange[1]-xRange[0]||1);
+                            const dy = (ry-dataY)/(yRange[1]-yRange[0]||1);
+                            const dist = dx*dx+dy*dy;
+                            if (dist < bestDist) { bestDist=dist; bx=rx; by=ry; }
+                        });
+                        if (bestDist < 0.01) { dataX=bx; dataY=by; snapped=true; }
+                    }
+                }
+                openLabelPlacementModal(dataX, dataY, snapped, e.clientX, e.clientY);
+            };
+            plotlyDiv.addEventListener('click', state._labelClickHandler);
         }
 
         if (trendlineStats) {
@@ -2717,7 +2858,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //  TAB SWITCHING
     // ════════════════════════════════════════════════════════════════
     window.switchTab = (name) => {
-        ['data','configure','analysis','stats','export'].forEach(t => {
+        ['data','series','axis','analysis','export'].forEach(t => {
             const btn  = document.getElementById('tabbtn-'+t);
             const pane = document.getElementById('tab-'+t);
             if (btn)  btn.classList.toggle('active',  t===name);
@@ -3275,6 +3416,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    // Helper: show/hide chart-type-specific UI panels
+    function applyChartTypeVisibility(ct) {
+        const g = id => document.getElementById(id);
+        const mode = state.activeFileId ? (state.plotConfig[state.activeFileId]?.dataMode||'single') : 'single';
+        const showBarStyle = ct==='bar' || (mode==='meansd' && ct==='bar') || mode==='grouped';
+        if (g('histogram-opts'))  g('histogram-opts').style.display  = ct==='histogram' ? 'block' : 'none';
+        if (g('bar-style-card'))  g('bar-style-card').style.display  = showBarStyle ? 'flex' : 'none';
+        if (g('line-style-card')) g('line-style-card').style.display = ['scatter_line','scatter_both','area','step'].includes(ct) ? 'flex' : 'none';
+        // hide error-bar-card when using data mode (it has its own error config)
+        const ebCard = g('error-bar-card');
+        if (ebCard) ebCard.style.display = (mode==='meansd'||mode==='grouped') ? 'none' : 'block';
+    }
+
     // ═══════════════════════════════════════════════════════════════════════
     //  applyAxisCalibration — 2-point linear map; reads HTML IDs calXData1 etc.
     // ═══════════════════════════════════════════════════════════════════════
@@ -3314,8 +3468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Chart type
         const ct = g('chartType')?.value || 'scatter_line';
         config.chartType = ct;
-        const ho = g('histogram-opts');
-        if (ho) ho.style.display = ct === 'histogram' ? 'block' : 'none';
+        applyChartTypeVisibility(ct);
         if (ct === 'histogram') {
             const bs = parseFloat(g('histBinSize')?.value);
             config.histBinSize = isNaN(bs) ? null : bs;
@@ -3325,34 +3478,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const ya = g('yAxisAssign')?.value || 'left';
         config.yaxisSide = ya;
 
-        // Error bars — map new HTML IDs to config.errorConfig shape renderPlot uses
-        const ebType = g('errorBarType')?.value || 'none';
-        g('errbar-fixed-row') && (g('errbar-fixed-row').style.display = ebType==='fixed'   ? 'block' : 'none');
-        g('errbar-pct-row')   && (g('errbar-pct-row').style.display   = ebType==='percent' ? 'block' : 'none');
-        g('errbar-col-row')   && (g('errbar-col-row').style.display   = ebType==='column'  ? 'block' : 'none');
-
-        // Store in both old errorConfig shape (for renderPlot) AND new errorBar shape
+        // Error bars — read from new unified selects
+        const ebType    = g('errorBarType')?.value || 'none';
         const ebVal     = parseFloat(g('errorBarValue')?.value)   || 0;
         const ebPct     = parseFloat(g('errorBarPercent')?.value) || 5;
-        const ebCol     = g('errorBarColumn')?.value || null;
-        const ebSym     = g('errorBarSymmetric')?.checked !== false;
+        const ebCol     = g('errorBarColumn')?.value    || null;
+        const ebColPlus = g('errorBarPlusCol')?.value   || null;
+        const ebColMinus= g('errorBarMinusCol')?.value  || null;
 
-        // Map to errorConfig (what renderPlot reads)
+        const _ebShow = ebType !== 'none';
+        const _ebInternalType =
+            ebType === 'fixed'      ? 'constant'  :
+            ebType === 'percent'    ? 'percent'   :
+            ebType === 'sqrt'       ? 'sqrt'      :
+            ebType === 'column_sd'  ? 'symmetric' :
+            ebType === 'column_raw' ? 'symmetric' :
+            ebType === 'asymmetric' ? 'asymmetric': 'none';
+
         config.errorConfig = {
-            show:     ebType !== 'none',
-            type:     ebType === 'fixed'   ? 'constant'
-                    : ebType === 'percent' ? 'percent'
-                    : ebType === 'column'  ? (ebSym ? 'symmetric' : 'asymmetric')
-                    : ebType === 'sqrt'    ? 'sqrt'
-                    : 'none',
-            col:      ebCol,
-            colPlus:  ebCol,
-            colMinus: ebCol,
-            constant: ebVal,
-            percent:  ebPct
+            show: _ebShow, type: _ebInternalType,
+            col: ebCol, colPlus: ebColPlus||ebCol, colMinus: ebColMinus||ebCol,
+            constant: ebVal, percent: ebPct,
+            errorBarType: ebType   // keep raw for UI sync
         };
-        // Also keep errorBar for reference
-        config.errorBar = { type:ebType, value:ebVal, percent:ebPct, column:ebCol, symmetric:ebSym };
+        config.errorBar = { type:ebType, value:ebVal, percent:ebPct, column:ebCol };
 
         // Multi-Y columns
         const myS = document.getElementById('y-multi-select');
@@ -3360,8 +3509,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const gbM = document.getElementById('grouped-bar-mode');
         if (gbM) config.groupedBarMeanSD = gbM.checked;
 
+        // Bar-specific style
+        config.barStyle = {
+            fillColor:        g('barFillColor')?.value        || config.color,
+            patternShape:     g('barPatternShape')?.value     || 'solid',
+            borderColor:      g('barBorderColor')?.value      || 'rgba(0,0,0,0)',
+            borderWidth:      parseFloat(g('barBorderWidth')?.value) || 0,
+            opacity:          (parseInt(g('barOpacity')?.value) || 85) / 100,
+            showLabels:       !!g('barShowLabels')?.checked,
+            labelPosition:    g('barLabelPosition')?.value    || 'outside',
+            labelFontSize:    parseInt(g('barLabelFontSize')?.value)    || 11,
+            labelFontColor:   g('barLabelFontColor')?.value   || '#333333',
+            labelFormat:      g('barLabelFormat')?.value      || 'value',
+        };
+        // DO NOT overwrite config.color here — it breaks multi-file color assignments.
+        // barStyle.fillColor is the bar-specific color; config.color remains the base identity color.
+
         renderPlot();
-        updateStatus('Chart settings updated.');
+        updateStatus('Settings updated.');
     };
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -3625,7 +3790,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let result = '';
 
-        if (testType === 'anova1') {
+        if (testType === 'anova2') {
+            // Two-way ANOVA (balanced, colA = factor-A level 1, colB = factor-A level 2)
+            // Rows within each column = levels of factor B; each cell is one observation
+            const n1=vA.length, n2=vB.length;
+            const n=Math.min(n1,n2);
+            if (n<2) { alert('Need at least 2 matched observations per group.'); return; }
+            const a=vA.slice(0,n), b=vB.slice(0,n);
+            // Factor A (between cols), Factor B (between rows), Interaction
+            const grandMean=(a.concat(b)).reduce((s,v)=>s+v,0)/(2*n);
+            const meanA=a.reduce((s,v)=>s+v,0)/n, meanB=b.reduce((s,v)=>s+v,0)/n;
+            // Row means
+            const rowMeans=Array.from({length:n},(_,i)=>(a[i]+b[i])/2);
+            const SSA = n*((meanA-grandMean)**2+(meanB-grandMean)**2);
+            const SSB = 2*rowMeans.reduce((s,rm)=>s+(rm-grandMean)**2,0);
+            const SSTotal = a.concat(b).reduce((s,v)=>s+(v-grandMean)**2,0);
+            const cellMeans=[[meanA],[meanB]]; // simplified 2×n
+            const SSInt = SSTotal - SSA - SSB - (()=>{
+                let sse=0;
+                a.forEach((v,i)=>sse+=(v-(meanA+rowMeans[i]-grandMean))**2);
+                b.forEach((v,i)=>sse+=(v-(meanB+rowMeans[i]-grandMean))**2);
+                return sse;
+            })();
+            const SSE = SSTotal - SSA - SSB - Math.max(0,SSInt);
+            const dfA=1, dfB=n-1, dfInt=dfB, dfErr=Math.max(1,2*n-dfA-dfB-dfInt);
+            const MSA=SSA/dfA, MSB=SSB/dfB, MSInt=Math.max(0,SSInt)/dfInt, MSE=Math.max(SSE,1e-15)/dfErr;
+            const FA=MSA/MSE, FB=MSB/MSE, FInt=MSInt/MSE;
+            const pA=fDistPValue(FA,dfA,dfErr), pB=fDistPValue(FB,dfB,dfErr), pInt=fDistPValue(FInt,dfInt,dfErr);
+            result = `<b>Two-Way ANOVA</b> (Factor A = columns, Factor B = rows, n=${n})<br><hr style="margin:4px 0;">
+                <b>Factor A</b> (${colA} vs ${colB}): F(${dfA},${dfErr})=${FA.toFixed(3)}, <b>p≈${pA<0.001?'<0.001':pA.toFixed(4)}</b> ${sigStars(pA)}<br>
+                <b>Factor B</b> (rows): F(${dfB},${dfErr})=${FB.toFixed(3)}, <b>p≈${pB<0.001?'<0.001':pB.toFixed(4)}</b> ${sigStars(pB)}<br>
+                <b>Interaction</b>: F(${dfInt},${dfErr})=${FInt.toFixed(3)}, <b>p≈${pInt<0.001?'<0.001':pInt.toFixed(4)}</b> ${sigStars(pInt)}<br>
+                <small style="color:#888;">Note: balanced 2-column design assumed.</small>`;
+        } else if (testType === 'anova1') {
             // One-way ANOVA across all numeric columns
             const file = state.files.find(f=>f.id===state.activeFileId);
             const groups = file.columns
@@ -3765,11 +3962,16 @@ document.addEventListener('DOMContentLoaded', () => {
         bgColor: '#fcfcfc', paperColor: '#ffffff',
         fontSize: 12, fontFamily: 'Arial',
         showGridX: true, showGridY: true, showLegend: true,
-        zeroLine: true, height: 580
+        zeroLine: true, height: 580,
+        showAxisLineX: true, showAxisLineY: true, mirrorAxes: false,
+        axisLineColor: '#444444', axisLineWidth: 1,
+        gridColor: '#e0e0e0', gridWidth: 1, gridDash: 'solid',
+        yAxisMin: null, yAxisMax: null, xAxisMin: null, xAxisMax: null
     };
 
     window.applyPlotAppearance = () => {
         const g = id => document.getElementById(id);
+        const numOrNull = (id) => { const v = g(id)?.value; return (v !== '' && v !== null && v !== undefined) ? parseFloat(v) : null; };
         plotAppearance.bgColor     = g('plotBgColor')?.value      || '#fcfcfc';
         plotAppearance.paperColor  = g('plotPaperColor')?.value   || '#ffffff';
         plotAppearance.fontSize    = parseInt(g('plotFontSize')?.value) || 12;
@@ -3779,12 +3981,486 @@ document.addEventListener('DOMContentLoaded', () => {
         plotAppearance.showLegend  = g('showLegend')?.checked !== false;
         plotAppearance.zeroLine    = g('plotZeroLine')?.checked !== false;
         plotAppearance.height      = parseInt(g('plotHeight')?.value) || 580;
+        plotAppearance.axisTitleFontSize = parseInt(g('axisTitleFontSize')?.value) || 13;
+        plotAppearance.axisTickFontSize  = parseInt(g('axisTickFontSize')?.value)  || 11;
+        // Axis line controls
+        plotAppearance.showAxisLineX  = g('showAxisLineX')?.checked !== false;
+        plotAppearance.showAxisLineY  = g('showAxisLineY')?.checked !== false;
+        plotAppearance.mirrorAxes     = !!g('mirrorAxes')?.checked;
+        plotAppearance.axisLineColor  = g('axisLineColor')?.value  || '#444444';
+        plotAppearance.axisLineWidth  = parseFloat(g('axisLineWidth')?.value) || 1;
+        plotAppearance.gridColor      = g('gridColor')?.value      || '#e0e0e0';
+        plotAppearance.gridWidth      = parseFloat(g('gridWidth')?.value) || 1;
+        plotAppearance.gridDash       = g('gridDash')?.value       || 'solid';
+        // Range overrides
+        plotAppearance.yAxisMin = numOrNull('yAxisMin');
+        plotAppearance.yAxisMax = numOrNull('yAxisMax');
+        plotAppearance.xAxisMin = numOrNull('xAxisMinOverride');
+        plotAppearance.xAxisMax = numOrNull('xAxisMaxOverride');
+        plotAppearance.tightAxes = !!g('tightAxesCheck')?.checked;
         renderPlot();
+    };
+
+    window.applyQuickTraceColor = () => {
+        if (!state.activeFileId) return;
+        const cfg = state.plotConfig[state.activeFileId];
+        const g = id => document.getElementById(id);
+        cfg.color      = g('quickTraceColor')?.value || cfg.color;
+        cfg.opacity    = (parseInt(g('quickTraceOpacity')?.value) || 100) / 100;
+        cfg.lineWidth  = parseFloat(g('quickTraceWidth')?.value) || cfg.lineWidth;
+        cfg.lineDash   = g('quickTraceDash')?.value || cfg.lineDash;
+        // Sync the Configure tab color picker too
+        const sc = document.getElementById('styleColor');
+        if (sc) sc.value = cfg.color;
+        renderPlot();
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    //  QUICK DATA ENTRY
+    // ═══════════════════════════════════════════════════════════════════════
+    window.importQuickData = () => {
+        const raw = (document.getElementById('quickDataInput')?.value || '').trim();
+        if (!raw) { alert('Please enter some data first.'); return; }
+        const name    = document.getElementById('quickDataName')?.value   || 'Dataset';
+        const xLabel  = document.getElementById('quickDataXLabel')?.value || 'Category';
+        const yLabel  = document.getElementById('quickDataYLabel')?.value || 'Value';
+        const ctype   = document.getElementById('quickDataChartType')?.value || 'bar';
+
+        const rows = raw.split('\n').map(l=>l.trim()).filter(l=>l && !l.startsWith('#'));
+        if (!rows.length) { alert('No valid rows found.'); return; }
+
+        // Try to detect format:
+        // 1. "label: value" or "label = value"
+        // 2. "label, value" or "label\tvalue"
+        // 3. plain "value" per line (auto-index)
+        let xVals=[], yVals=[];
+        let formatDetected = null;
+
+        for (const row of rows) {
+            // Try colon / equals
+            const colonMatch = row.match(/^(.+?)\s*[:=]\s*(-?[\d.eE+\-]+)\s*$/);
+            if (colonMatch) {
+                xVals.push(colonMatch[1].trim());
+                yVals.push(parseFloat(colonMatch[2]));
+                formatDetected = 'label:value';
+                continue;
+            }
+            // Try comma/tab separated (2 values)
+            const parts = row.split(/[\t,;]+/).map(p=>p.trim()).filter(Boolean);
+            if (parts.length >= 2) {
+                const numB = parseFloat(parts[parts.length-1]);
+                if (!isNaN(numB)) {
+                    xVals.push(parts.slice(0, parts.length-1).join(' '));
+                    yVals.push(numB);
+                    formatDetected = 'x,y';
+                    continue;
+                }
+            }
+            // Plain number
+            if (parts.length === 1) {
+                const v = parseFloat(parts[0]);
+                if (!isNaN(v)) {
+                    xVals.push(String(xVals.length + 1));
+                    yVals.push(v);
+                    formatDetected = 'values';
+                    continue;
+                }
+            }
+        }
+
+        if (!xVals.length) { alert('Could not parse any data. Try:\n  apples: 5\n  bananas: 8\n\nor two columns:\n  1, 10\n  2, 25'); return; }
+
+        // Build tabular data for addFile
+        const X_COL = xLabel || 'Category';
+        const Y_COL = yLabel || 'Value';
+        const data = xVals.map((xv, i) => ({ [X_COL]: xv, [Y_COL]: yVals[i] }));
+
+        addFile(name, data, [X_COL, Y_COL], X_COL, Y_COL, null, X_COL, Y_COL);
+
+        // Auto-set chart type to what was selected
+        if (state.activeFileId) {
+            state.plotConfig[state.activeFileId].chartType = ctype;
+            // Sync dropdown
+            const ctSel = document.getElementById('chartTypeSelect');
+            if (ctSel) ctSel.value = ctype;
+        }
+        renderPlot();
+        updateStatus(`Quick import: ${xVals.length} rows as "${name}".`);
     };
 
     // ═══════════════════════════════════════════════════════════════════════
     //  EXPORT HELPERS
     // ═══════════════════════════════════════════════════════════════════════
+
+    // ═══════════════════════════════════════════════════════════════════════
+    //  LABEL PLACEMENT MODAL (click-anywhere labels)
+    // ═══════════════════════════════════════════════════════════════════════
+    function openLabelPlacementModal(dataX, dataY, snapped, screenX, screenY) {
+        // Remove existing if any
+        const existing = document.getElementById('labelPlaceModal');
+        if (existing) existing.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'labelPlaceModal';
+        // Position near click but keep on screen
+        const left = Math.min(screenX + 10, window.innerWidth - 340);
+        const top  = Math.min(screenY - 20, window.innerHeight - 280);
+        modal.style.cssText = `position:fixed;left:${left}px;top:${top}px;z-index:12000;background:white;
+            border:1px solid #ddd;border-radius:8px;padding:14px 16px;width:320px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.25);font-size:12px;`;
+
+        const xFmt = typeof dataX==='number' ? dataX.toFixed(4) : dataX;
+        const yFmt = typeof dataY==='number' ? dataY.toFixed(4) : dataY;
+
+        modal.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <strong style="font-size:13px;color:#00796b;">🏷️ Add Label</strong>
+                <span onclick="document.getElementById('labelPlaceModal').remove()" style="cursor:pointer;color:#aaa;font-size:18px;line-height:1;">&times;</span>
+            </div>
+            <div style="font-size:10.5px;color:#888;margin-bottom:8px;">
+                Position: X=${xFmt}, Y=${yFmt} ${snapped?'<span style="color:#00796b;">(snapped ✓)</span>':''}
+            </div>
+            <div style="margin-bottom:7px;"><label style="font-size:11px;font-weight:600;">Label text:</label>
+                <input id="lblModalText" type="text" value="" placeholder="e.g. Peak 1" autofocus
+                    style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:12px;box-sizing:border-box;margin-top:3px;">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div><label style="font-size:11px;font-weight:600;">Font size:</label>
+                    <input id="lblModalSize" type="number" value="12" min="7" max="28"
+                        style="width:100%;padding:5px;border:1px solid #ddd;border-radius:4px;font-size:11px;box-sizing:border-box;margin-top:3px;">
+                </div>
+                <div><label style="font-size:11px;font-weight:600;">Color:</label>
+                    <input id="lblModalColor" type="color" value="#000000"
+                        style="width:100%;height:29px;border:1px solid #ddd;border-radius:4px;cursor:pointer;margin-top:3px;padding:2px;box-sizing:border-box;">
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-bottom:10px;">
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;margin:0;">
+                    <input id="lblModalShowX" type="checkbox"> Include X value
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;margin:0;">
+                    <input id="lblModalShowY" type="checkbox"> Include Y value
+                </label>
+                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;margin:0;">
+                    <input id="lblModalArrow" type="checkbox" checked> Arrow
+                </label>
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button onclick="confirmLabelPlace(${dataX},${dataY})" style="flex:2;background:#00796b;color:white;border:none;border-radius:4px;padding:7px;font-size:12px;cursor:pointer;">✓ Add Label</button>
+                <button onclick="document.getElementById('labelPlaceModal').remove()" style="flex:1;background:#6c757d;color:white;border:none;border-radius:4px;padding:7px;font-size:12px;cursor:pointer;">Cancel</button>
+            </div>`;
+        document.body.appendChild(modal);
+        // Focus text input
+        setTimeout(() => { const inp = document.getElementById('lblModalText'); if(inp) inp.focus(); }, 50);
+        // Close on outside click
+        setTimeout(() => {
+            const closeOutside = (ev) => {
+                if (!modal.contains(ev.target)) { modal.remove(); document.removeEventListener('mousedown', closeOutside); }
+            };
+            document.addEventListener('mousedown', closeOutside);
+        }, 100);
+    }
+
+    window.confirmLabelPlace = (dataX, dataY) => {
+        const text    = document.getElementById('lblModalText')?.value.trim() || 'Label';
+        const size    = parseInt(document.getElementById('lblModalSize')?.value) || 12;
+        const color   = document.getElementById('lblModalColor')?.value || '#000000';
+        const showX   = !!document.getElementById('lblModalShowX')?.checked;
+        const showY   = !!document.getElementById('lblModalShowY')?.checked;
+        const arrow   = !!document.getElementById('lblModalArrow')?.checked;
+
+        let displayText = text;
+        const xStr = typeof dataX==='number' ? dataX.toFixed(3) : String(dataX);
+        const yStr = typeof dataY==='number' ? dataY.toFixed(3) : String(dataY);
+        if (showX && showY) displayText += `\nX:${xStr} Y:${yStr}`;
+        else if (showX)     displayText += `\nX:${xStr}`;
+        else if (showY)     displayText += `\nY:${yStr}`;
+
+        state.annotations.push({
+            id: Date.now(), fileId: state.activeFileId,
+            x: dataX, y: dataY,
+            text: displayText, customText: text,
+            showX, showY,
+            showarrow: arrow, arrowhead: 2, ax: 0, ay: -40,
+            font: { size, color },
+            bgcolor: 'rgba(255,255,255,0.9)',
+            bordercolor: color, borderwidth: 1
+        });
+        document.getElementById('labelPlaceModal')?.remove();
+        renderPlot();
+        updateStatus(`Label added: "${text}" at (${typeof dataX==='number'?dataX.toFixed(3):dataX}, ${typeof dataY==='number'?dataY.toFixed(3):dataY})`);
+    };
+
+    // ── History for undo/redo ──
+    let _dragEditHistory = [];
+    let _dragEditIdx = -1;
+    const _DRAG_MAX_HISTORY = 50;
+
+    function _saveDragState() {
+        const snapshot = {
+            annotations: JSON.parse(JSON.stringify(state.annotations)),
+            dragAxisSettings: JSON.parse(JSON.stringify(state.dragAxisSettings))
+        };
+        if (_dragEditIdx < _dragEditHistory.length - 1) {
+            _dragEditHistory = _dragEditHistory.slice(0, _dragEditIdx + 1);
+        }
+        _dragEditHistory.push(snapshot);
+        if (_dragEditHistory.length > _DRAG_MAX_HISTORY) {
+            _dragEditHistory.shift();
+        } else {
+            _dragEditIdx++;
+        }
+        _updateDragUndoRedoBtns();
+    }
+
+    function _updateDragUndoRedoBtns() {
+        const u = document.getElementById('dragUndoBtn');
+        const r = document.getElementById('dragRedoBtn');
+        if (u) u.disabled = _dragEditIdx <= 0;
+        if (r) r.disabled = _dragEditIdx >= _dragEditHistory.length - 1;
+    }
+
+    window.undoDragEdit = function () {
+        if (_dragEditIdx > 0) {
+            _dragEditIdx--;
+            const snap = _dragEditHistory[_dragEditIdx];
+            state.annotations = JSON.parse(JSON.stringify(snap.annotations));
+            Object.assign(state.dragAxisSettings, JSON.parse(JSON.stringify(snap.dragAxisSettings)));
+            renderPlot();
+            updateStatus('↩ Undo applied');
+        }
+        _updateDragUndoRedoBtns();
+    };
+
+    window.redoDragEdit = function () {
+        if (_dragEditIdx < _dragEditHistory.length - 1) {
+            _dragEditIdx++;
+            const snap = _dragEditHistory[_dragEditIdx];
+            state.annotations = JSON.parse(JSON.stringify(snap.annotations));
+            Object.assign(state.dragAxisSettings, JSON.parse(JSON.stringify(snap.dragAxisSettings)));
+            renderPlot();
+            updateStatus('↪ Redo applied');
+        }
+        _updateDragUndoRedoBtns();
+    };
+
+    // ── Toggle ──
+    window.toggleDragLabelsMode = function () {
+        const chk = document.getElementById('dragLabelsModeCheck');
+        const hint = document.getElementById('dragLabelsModeHint');
+        const undoRedo = document.getElementById('drag-undo-redo');
+
+        state.dragLabelsMode = chk.checked;
+
+        if (state.dragLabelsMode) {
+            // Seed axis title text from current plot config if not already set
+            if (state.activeFileId) {
+                const c = state.plotConfig[state.activeFileId];
+                const al = c.axisLabels || {};
+                const das = state.dragAxisSettings;
+                if (!das.xAxis.text)  das.xAxis.text  = al.x  || c.xLabel || c.xCol  || 'X';
+                if (!das.yAxis.text)  das.yAxis.text  = al.y  || c.yLabel || c.yCol  || 'Y';
+                if (!das.y2Axis.text) das.y2Axis.text = al.y2 || 'Y2';
+                if (!das.y3Axis.text) das.y3Axis.text = al.y3 || 'Y3';
+                // Seed font size from plotAppearance if available
+                const pa2 = typeof plotAppearance !== 'undefined' ? plotAppearance : {};
+                const _sz = pa2.axisTitleFontSize || 13;
+                ['xAxis','yAxis','y2Axis','y3Axis'].forEach(k => {
+                    if (state.dragAxisSettings[k].size === 13) state.dragAxisSettings[k].size = _sz;
+                });
+            }
+            hint.style.display = 'inline';
+            undoRedo.style.display = 'flex';
+            _saveDragState();
+            updateStatus('✏️ Drag Labels Mode ON — click any axis title or label to edit, drag to reposition');
+        } else {
+            hint.style.display = 'none';
+            undoRedo.style.display = 'none';
+            updateStatus('Drag Labels Mode OFF');
+        }
+        renderPlot();
+    };
+
+    // ── Relayout: persist dragged annotation positions back to state ──
+    function handleDragRelayout(eventData) {
+        const annotKeys = Object.keys(eventData).filter(k => k.startsWith('annotations['));
+        if (annotKeys.length === 0) return;
+
+        const plotAnnotations = plotlyDiv.layout && plotlyDiv.layout.annotations ? plotlyDiv.layout.annotations : [];
+        let changed = false;
+
+        annotKeys.forEach(key => {
+            const m = key.match(/annotations\[(\d+)\]\.(.+)/);
+            if (!m) return;
+            const plotIdx = parseInt(m[1]);
+            const prop = m[2];
+            const val = eventData[key];
+            const plotAnn = plotAnnotations[plotIdx];
+            if (!plotAnn) return;
+            const annName = plotAnn.name || '';
+
+            // ── Axis title annotations ──
+            const axisMap = {
+                dragXAxisTitle:  'xAxis',
+                dragYAxisTitle:  'yAxis',
+                dragY2AxisTitle: 'y2Axis',
+                dragY3AxisTitle: 'y3Axis'
+            };
+            if (axisMap[annName]) {
+                const das = state.dragAxisSettings[axisMap[annName]];
+                if (prop === 'x') { das.x = val; changed = true; }
+                if (prop === 'y') { das.y = val; changed = true; }
+                return;
+            }
+
+            // ── Custom peak/label annotations ──
+            const stateAnn = state.annotations.find(a => a.text === plotAnn.text);
+            if (!stateAnn) return;
+            if (prop === 'x')  { stateAnn.x = val; changed = true; }
+            if (prop === 'y')  { stateAnn.y = val; changed = true; }
+            if (prop === 'ax') { stateAnn.ax = val; changed = true; }
+            if (prop === 'ay') { stateAnn.ay = val; changed = true; }
+        });
+
+        if (changed) {
+            _saveDragState();
+            updateStatus('Position saved');
+        }
+    }
+
+    // ── Click annotation: open edit modal ──
+    let _currentDragAnnotId = null;
+    let _currentDragAxisKey = null; // 'xAxis'|'yAxis'|'y2Axis'|'y3Axis' when editing axis title
+
+    const _axisAnnotNames = {
+        dragXAxisTitle:  'xAxis',
+        dragYAxisTitle:  'yAxis',
+        dragY2AxisTitle: 'y2Axis',
+        dragY3AxisTitle: 'y3Axis'
+    };
+
+    function handleDragAnnotationClick(event) {
+        const plotAnn = event.annotation;
+        const annName = plotAnn.name || '';
+
+        // ── Axis title annotation? ──
+        if (_axisAnnotNames[annName]) {
+            _currentDragAxisKey = _axisAnnotNames[annName];
+            _currentDragAnnotId = null;
+            const das = state.dragAxisSettings[_currentDragAxisKey];
+            const plainText = (das.text || '').replace(/<[^>]*>/g, '');
+
+            document.getElementById('dragAnnotTextInput').value = plainText;
+            document.getElementById('dragAnnotFontSize').value = das.size || 13;
+            document.getElementById('dragAnnotBold').checked = das.bold || false;
+            document.getElementById('dragAnnotColor').value = das.color || '#444444';
+            document.getElementById('dragAnnotDeleteBtn').style.display = 'none'; // can't delete axis titles
+            document.getElementById('dragAnnotModalTitle').textContent = '✏️ Edit Axis Title';
+            updateDragAnnotPreview();
+            document.getElementById('dragAnnotationEditModal').style.display = 'block';
+            return;
+        }
+
+        // ── Custom label annotation ──
+        _currentDragAxisKey = null;
+        const stateAnn = state.annotations.find(a => a.text === plotAnn.text) ||
+                         state.annotations.find(a => a.x === plotAnn.x && a.y === plotAnn.y);
+        if (!stateAnn) return;
+
+        _currentDragAnnotId = stateAnn.id;
+
+        const plainText = (stateAnn.customText || stateAnn.text || '').replace(/<[^>]*>/g, '');
+        const isBold = (stateAnn.text || '').includes('<b>');
+        const fontSize = (stateAnn.font && stateAnn.font.size) ? stateAnn.font.size : 12;
+        const fontColor = (stateAnn.font && stateAnn.font.color) ? stateAnn.font.color : '#000000';
+
+        document.getElementById('dragAnnotTextInput').value = plainText;
+        document.getElementById('dragAnnotFontSize').value = fontSize;
+        document.getElementById('dragAnnotBold').checked = isBold;
+        document.getElementById('dragAnnotColor').value = fontColor;
+        document.getElementById('dragAnnotDeleteBtn').style.display = 'inline-block';
+        document.getElementById('dragAnnotModalTitle').textContent = '✏️ Edit Label';
+        updateDragAnnotPreview();
+        document.getElementById('dragAnnotationEditModal').style.display = 'block';
+    }
+
+    window.updateDragAnnotPreview = function () {
+        const text  = document.getElementById('dragAnnotTextInput').value || 'Label';
+        const size  = document.getElementById('dragAnnotFontSize').value || 13;
+        const bold  = document.getElementById('dragAnnotBold').checked;
+        const color = document.getElementById('dragAnnotColor').value || '#444444';
+        const el = document.getElementById('dragAnnotPreviewText');
+        el.textContent    = text;
+        el.style.fontSize = size + 'px';
+        el.style.fontWeight = bold ? 'bold' : 'normal';
+        el.style.color    = color;
+    };
+
+    window.applyDragAnnotEdit = function () {
+        const newText  = document.getElementById('dragAnnotTextInput').value.trim();
+        const fontSize = parseInt(document.getElementById('dragAnnotFontSize').value) || 13;
+        const isBold   = document.getElementById('dragAnnotBold').checked;
+        const color    = document.getElementById('dragAnnotColor').value || '#444444';
+
+        if (!newText) { alert('Label text cannot be empty.'); return; }
+
+        // ── Editing an axis title ──
+        if (_currentDragAxisKey) {
+            const das = state.dragAxisSettings[_currentDragAxisKey];
+            das.text  = newText;
+            das.size  = fontSize;
+            das.bold  = isBold;
+            das.color = color;
+            closeDragAnnotationModal();
+            _saveDragState();
+            renderPlot();
+            updateStatus(`✓ Axis title updated: "${newText}"`);
+            return;
+        }
+
+        // ── Editing a custom label ──
+        if (_currentDragAnnotId === null) return;
+        const stateAnn = state.annotations.find(a => a.id === _currentDragAnnotId);
+        if (!stateAnn) return;
+
+        stateAnn.customText = newText;
+        let displayText = newText;
+        if (stateAnn.showX && stateAnn.showY) displayText += `\nX: ${parseFloat(stateAnn.x).toFixed(3)}\nY: ${parseFloat(stateAnn.y).toFixed(3)}`;
+        else if (stateAnn.showX) displayText += `\nX: ${parseFloat(stateAnn.x).toFixed(3)}`;
+        else if (stateAnn.showY) displayText += `\nY: ${parseFloat(stateAnn.y).toFixed(3)}`;
+
+        stateAnn.text = isBold ? `<b>${displayText}</b>` : displayText;
+        stateAnn.font = Object.assign({}, stateAnn.font || {}, { size: fontSize, color });
+
+        closeDragAnnotationModal();
+        _saveDragState();
+        renderPlot();
+        updateStatus(`✓ Label updated: "${newText}"`);
+    };
+
+    window.deleteDragAnnot = function () {
+        if (_currentDragAnnotId === null) return;
+        if (!confirm('Delete this label?')) return;
+        state.annotations = state.annotations.filter(a => a.id !== _currentDragAnnotId);
+        closeDragAnnotationModal();
+        _saveDragState();
+        renderPlot();
+        updateStatus('🗑 Label deleted');
+    };
+
+    window.closeDragAnnotationModal = function () {
+        document.getElementById('dragAnnotationEditModal').style.display = 'none';
+        _currentDragAnnotId = null;
+        _currentDragAxisKey = null;
+    };
+
+    // Close modal on backdrop click
+    document.getElementById('dragAnnotationEditModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDragAnnotationModal();
+    });
+
+
+
     window.exportActiveCSV = () => {
         if (!state.activeFileId) return;
         const file = state.files.find(f=>f.id===state.activeFileId);
@@ -3801,11 +4477,264 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click(); URL.revokeObjectURL(a.href);
     };
 
+
+    // ═══════════════════════════════════════════════════════════════════════
+    //  DATA MODE (replicates / grouped long-format)
+    // ═══════════════════════════════════════════════════════════════════════
+    window.applyDataMode = () => {
+        if (!state.activeFileId) return;
+        const config = state.plotConfig[state.activeFileId];
+        const file   = state.files.find(f => f.id === state.activeFileId);
+        if (!file) return;
+        const mode   = document.getElementById('dataModeSelect')?.value || 'single';
+        config.dataMode = mode;
+
+        const rOpts = document.getElementById('replicate-opts');
+        const gOpts = document.getElementById('grouped-opts');
+        if (rOpts) rOpts.style.display = mode === 'meansd'   ? 'block' : 'none';
+        if (gOpts) {
+            gOpts.style.display = mode === 'grouped'  ? 'block' : 'none';
+            if (mode === 'grouped') {
+                // Populate grouped column selects if empty
+                ['groupColSelect','categoryColSelect','valueColSelect'].forEach(sid => {
+                    const sel = document.getElementById(sid);
+                    if (!sel || sel.options.length === 0) {
+                        sel.innerHTML = '';
+                        file.columns.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+                    }
+                });
+            }
+        }
+
+        if (mode === 'meansd') {
+            const repSel = document.getElementById('replicateColSelect');
+            if (repSel) {
+                config.replicateCols  = Array.from(repSel.selectedOptions).map(o => o.value);
+                config.replicateError = document.getElementById('replicateErrorType')?.value || 'sd';
+                config.replicateShowPts = !!document.getElementById('replicateShowPoints')?.checked;
+            }
+        }
+        if (mode === 'grouped') {
+            config.groupCol    = document.getElementById('groupColSelect')?.value    || '';
+            config.categoryCol = document.getElementById('categoryColSelect')?.value || '';
+            config.valueCol    = document.getElementById('valueColSelect')?.value    || '';
+            config.groupedStacked = !!document.getElementById('groupedBarStacked')?.checked;
+            renderGroupedStylesUI(file, config);
+        }
+        // Refresh bar-style card visibility based on new mode
+        const _curCt = document.getElementById('chartType')?.value || 'scatter_line';
+        applyChartTypeVisibility(_curCt);
+        renderPlot();
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    //  Group Styles UI — per-group color + pattern pickers in Series tab
+    // ═══════════════════════════════════════════════════════════════════════
+    function renderGroupedStylesUI(file, config) {
+        const container = document.getElementById('grouped-colors-container');
+        if (!container) return;
+
+        const groupCol = config.groupCol || document.getElementById('groupColSelect')?.value;
+        if (!groupCol || !file) { container.innerHTML = ''; return; }
+
+        const groups = [...new Set(file.data.map(r => String(r[groupCol]||'')))].filter(Boolean);
+        if (groups.length === 0) { container.innerHTML = ''; return; }
+
+        const colorPalette = ['#00796b','#d32f2f','#1976d2','#fbc02d','#7b1fa2','#e64a19','#0097a7','#455a64','#2e7d32','#ad1457'];
+        if (!config.groupStyles) config.groupStyles = {};
+
+        // Initialize defaults for new groups
+        groups.forEach((grp, gi) => {
+            if (!config.groupStyles[grp]) {
+                config.groupStyles[grp] = { color: colorPalette[gi % colorPalette.length], pattern: 'solid' };
+            }
+        });
+
+        let html = '<div style="font-size:10.5px;font-weight:700;color:#555;letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px;">Group Colors &amp; Patterns</div>';
+        groups.forEach(grp => {
+            const s = config.groupStyles[grp];
+            const grpEsc = grp.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+            html += `
+            <div class="group-style-row" data-group="${grpEsc}" style="display:grid;grid-template-columns:1fr 26px 26px;gap:5px;align-items:center;margin-bottom:3px;">
+                <span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${grpEsc}">${grpEsc}</span>
+                <input type="color" class="grp-color" value="${s.color}" title="Color for ${grpEsc}" oninput="applyGroupedStyles()" style="height:24px;width:24px;padding:1px;cursor:pointer;border:1px solid #ccc;border-radius:3px;">
+                <select class="grp-pattern" title="Pattern for ${grpEsc}" onchange="applyGroupedStyles()" style="padding:2px;font-size:10px;height:24px;">
+                    <option value="solid" ${s.pattern==='solid'?'selected':''}>■</option>
+                    <option value="/" ${s.pattern==='/'?'selected':''}>/</option>
+                    <option value="\\" ${s.pattern==='\\'?'selected':''}>\\</option>
+                    <option value="x" ${s.pattern==='x'?'selected':''}>x</option>
+                    <option value="-" ${s.pattern==='-'?'selected':''}>—</option>
+                    <option value="|" ${s.pattern==='|'?'selected':''}>|</option>
+                    <option value="+" ${s.pattern==='+'?'selected':''}>+</option>
+                    <option value="." ${s.pattern==='.'?'selected':''}>•</option>
+                </select>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    window.applyGroupedStyles = () => {
+        if (!state.activeFileId) return;
+        const config = state.plotConfig[state.activeFileId];
+        if (!config.groupStyles) config.groupStyles = {};
+        const container = document.getElementById('grouped-colors-container');
+        if (!container) return;
+        container.querySelectorAll('.group-style-row').forEach(row => {
+            const grp = row.getAttribute('data-group');
+            if (!grp) return;
+            const color   = row.querySelector('.grp-color')?.value   || '#00796b';
+            const pattern = row.querySelector('.grp-pattern')?.value || 'solid';
+            config.groupStyles[grp] = { color, pattern };
+        });
+        renderPlot();
+    };
+
+    // Populate replicate/grouped selects when active file changes
+    function syncDataModeUI(file, config) {
+        const mode = config.dataMode || 'single';
+        const dmSel = document.getElementById('dataModeSelect');
+        if (dmSel) dmSel.value = mode;
+
+        const rOpts = document.getElementById('replicate-opts');
+        const gOpts = document.getElementById('grouped-opts');
+        if (rOpts) rOpts.style.display = mode === 'meansd'  ? 'block' : 'none';
+        if (gOpts) {
+            gOpts.style.display = mode === 'grouped' ? 'block' : 'none';
+            if (mode === 'grouped') renderGroupedStylesUI(file, config);
+        }
+
+        // Populate replicate selector
+        const repSel = document.getElementById('replicateColSelect');
+        if (repSel) {
+            repSel.innerHTML = '';
+            file.columns.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c; o.textContent = c;
+                if ((config.replicateCols||[]).includes(c)) o.selected = true;
+                repSel.appendChild(o);
+            });
+        }
+        const rET = document.getElementById('replicateErrorType');
+        if (rET) rET.value = config.replicateError || 'sd';
+        const rSP = document.getElementById('replicateShowPoints');
+        if (rSP) rSP.checked = !!config.replicateShowPts;
+
+        // Populate grouped selects
+        ['groupColSelect','categoryColSelect','valueColSelect'].forEach(sid => {
+            const sel = document.getElementById(sid);
+            if (!sel) return;
+            sel.innerHTML = '';
+            file.columns.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c; o.textContent = c;
+                const cfgKey = sid === 'groupColSelect'    ? 'groupCol'
+                             : sid === 'categoryColSelect' ? 'categoryCol' : 'valueCol';
+                if (config[cfgKey] === c) o.selected = true;
+                sel.appendChild(o);
+            });
+        });
+        const gBS = document.getElementById('groupedBarStacked');
+        if (gBS) gBS.checked = !!config.groupedStacked;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    //  ERROR BAR ROWS SYNC
+    // ═══════════════════════════════════════════════════════════════════════
+    window.syncErrorBarRows = () => {
+        const type = document.getElementById('errorBarType')?.value || 'none';
+        const g = id => document.getElementById(id);
+        g('errbar-fixed-row') && (g('errbar-fixed-row').style.display  = type==='fixed'       ? 'block':'none');
+        g('errbar-pct-row')   && (g('errbar-pct-row').style.display    = type==='percent'     ? 'block':'none');
+        g('errbar-col-row')   && (g('errbar-col-row').style.display    = (type==='column_sd'||type==='column_raw') ? 'block':'none');
+        g('errbar-plus-row')  && (g('errbar-plus-row').style.display   = type==='asymmetric'  ? 'block':'none');
+        g('errbar-minus-row') && (g('errbar-minus-row').style.display  = type==='asymmetric'  ? 'block':'none');
+
+        // Populate error column selects from active file columns
+        if (state.activeFileId) {
+            const file = state.files.find(f => f.id === state.activeFileId);
+            if (file) {
+                const cols = [''].concat(file.columns);
+                const config = state.plotConfig[state.activeFileId];
+                const errCfg = config.errorConfig || {};
+                ['errorBarColumn','errorBarPlusCol','errorBarMinusCol'].forEach((sid,i) => {
+                    const sel = g(sid);
+                    if (!sel) return;
+                    const curVal = i===0 ? (errCfg.col||'') : i===1 ? (errCfg.colPlus||'') : (errCfg.colMinus||'');
+                    sel.innerHTML = '';
+                    cols.forEach(c => {
+                        const o = document.createElement('option');
+                        o.value = c; o.textContent = c || '(none)';
+                        if (c === curVal) o.selected = true;
+                        sel.appendChild(o);
+                    });
+                });
+            }
+        }
+        // Update error bar config in state without full re-render loop
+        if (state.activeFileId) {
+            const _cfg = state.plotConfig[state.activeFileId];
+            const _type = document.getElementById('errorBarType')?.value || 'none';
+            const _val  = parseFloat(document.getElementById('errorBarValue')?.value) || 0;
+            const _pct  = parseFloat(document.getElementById('errorBarPercent')?.value) || 5;
+            const _col  = document.getElementById('errorBarColumn')?.value || null;
+            const _cPlus  = document.getElementById('errorBarPlusCol')?.value || null;
+            const _cMinus = document.getElementById('errorBarMinusCol')?.value || null;
+            const _eShow = _type !== 'none';
+            const _eIntType = _type==='fixed'?'constant':_type==='percent'?'percent':_type==='sqrt'?'sqrt':_type.startsWith('column')?'symmetric':_type==='asymmetric'?'asymmetric':'none';
+            _cfg.errorConfig = { show:_eShow, type:_eIntType, col:_col, colPlus:_cPlus||_col, colMinus:_cMinus||_col, constant:_val, percent:_pct, errorBarType:_type };
+            renderPlot();
+        }
+    };
+    window.syncErrorBarUI = window.syncErrorBarRows;
+
     window.exportSVG = () => {
         Plotly.downloadImage('plotly-div', {format:'svg', filename:'plot'});
     };
 
 });
 </script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     Drag Labels Mode — Annotation Edit Modal
+═══════════════════════════════════════════════════════════════ -->
+<div id="dragAnnotationEditModal" style="display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);overflow:auto;">
+    <div style="background:#fff;margin:60px auto;padding:0;border-radius:10px;width:90%;max-width:440px;box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+        <div style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-bottom:2px solid #ffb74d;padding:16px 20px;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center;">
+            <h3 id="dragAnnotModalTitle" style="margin:0;color:#e65100;font-size:16px;">✏️ Edit Label</h3>
+            <span onclick="closeDragAnnotationModal()" style="font-size:24px;font-weight:bold;color:#aaa;cursor:pointer;line-height:1;">&times;</span>
+        </div>
+        <div style="padding:18px 20px;">
+            <div style="margin-bottom:12px;">
+                <label style="display:block;margin-bottom:5px;font-weight:600;color:#555;font-size:13px;">Label Text:</label>
+                <input type="text" id="dragAnnotTextInput" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;" oninput="updateDragAnnotPreview()">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;align-items:end;">
+                <div>
+                    <label style="display:block;margin-bottom:4px;font-weight:600;color:#555;font-size:12px;">Font Size (px):</label>
+                    <input type="number" id="dragAnnotFontSize" min="6" max="48" step="1" style="width:100%;padding:7px;border:1px solid #ddd;border-radius:4px;font-size:13px;" oninput="updateDragAnnotPreview()">
+                </div>
+                <div>
+                    <label style="display:block;margin-bottom:4px;font-weight:600;color:#555;font-size:12px;">Color:</label>
+                    <input type="color" id="dragAnnotColor" value="#444444" style="width:100%;height:35px;border:1px solid #ddd;border-radius:4px;cursor:pointer;padding:2px;" oninput="updateDragAnnotPreview()">
+                </div>
+                <div style="padding-bottom:2px;">
+                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:600;color:#555;">
+                        <input type="checkbox" id="dragAnnotBold" style="width:15px;height:15px;" onchange="updateDragAnnotPreview()"> Bold
+                    </label>
+                </div>
+            </div>
+            <div id="dragAnnotPreviewBox" style="padding:10px;background:#f5f5f5;border:1px dashed #ccc;border-radius:6px;text-align:center;margin-bottom:14px;min-height:44px;">
+                <span style="color:#999;font-size:11px;">Preview:</span>
+                <div id="dragAnnotPreviewText" style="margin-top:4px;font-size:14px;">Label</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button onclick="applyDragAnnotEdit()" style="flex:2;background:#00796b;color:#fff;border:none;border-radius:4px;padding:9px;cursor:pointer;font-size:13px;margin-top:0;">✓ Apply</button>
+                <button id="dragAnnotDeleteBtn" onclick="deleteDragAnnot()" style="flex:1;background:#dc3545;color:#fff;border:none;border-radius:4px;padding:9px;cursor:pointer;font-size:13px;margin-top:0;">🗑 Delete</button>
+                <button onclick="closeDragAnnotationModal()" style="flex:1;background:#6c757d;color:#fff;border:none;border-radius:4px;padding:9px;cursor:pointer;font-size:13px;margin-top:0;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
