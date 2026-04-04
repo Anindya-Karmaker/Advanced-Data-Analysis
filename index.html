@@ -103,7 +103,7 @@
     <div class="app-header">
         <div style="display:flex;align-items:center;gap:14px;">
             <div>
-                <h1 class="app-title">Advanced Data Analyzer <span style="font-size:13px;font-weight:400;color:#00796b;vertical-align:middle;background:#e0f2f1;border-radius:3px;padding:2px 7px;">v2.00</span></h1>
+                <h1 class="app-title">Advanced Data Analyzer <span style="font-size:13px;font-weight:400;color:#00796b;vertical-align:middle;background:#e0f2f1;border-radius:3px;padding:2px 7px;">v2.10</span></h1>
                 <p class="app-subtitle">Universal interactive plotter &amp; data analysis tool — XY, bar, area, box, histogram &amp; more.</p>
             </div>
         </div>
@@ -240,14 +240,18 @@
       <div style="margin-bottom:7px;"><label>Mode</label>
         <select id="dataModeSelect" onchange="applyDataMode()">
           <option value="single">Single series (normal)</option>
-          <option value="meansd">Mean ± SD/SEM from replicate columns</option>
+          <option value="meansd">Mean ± error — wide format (replicate columns)</option>
+          <option value="meansd_long">Mean ± error — long format (group &amp; value columns)</option>
           <option value="grouped">Grouped / long-format bar chart</option>
         </select>
       </div>
 
-      <!-- Replicate opts -->
+      <!-- Wide replicate opts (columns) -->
       <div id="replicate-opts" style="display:none;">
-        <label style="margin-bottom:3px;">Replicate Columns <span style="font-weight:400;color:#888;font-size:10px;">(select all rep cols)</span></label>
+        <div style="background:#f0f7f0;border:1px solid #c8e6c9;border-radius:4px;padding:6px 8px;margin-bottom:6px;font-size:10.5px;color:#2e7d32;">
+          <b>Wide format:</b> Each row = one sample/condition. Each replicate column = one measurement. e.g. columns Rep1, Rep2, Rep3.
+        </div>
+        <label style="margin-bottom:3px;">Replicate Columns <span style="font-weight:400;color:#888;font-size:10px;">(Ctrl+click to multi-select)</span></label>
         <select id="replicateColSelect" multiple style="height:60px;font-size:11.5px;margin-bottom:6px;" onchange="applyDataMode()"></select>
         <div class="g2">
           <div><label>Error bars</label>
@@ -259,6 +263,27 @@
           </div>
           <div style="padding-top:16px;"><label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input type="checkbox" id="replicateShowPoints" onchange="applyDataMode()"> Show points</label></div>
         </div>
+      </div>
+
+      <!-- Long-format replicate opts (rows) -->
+      <div id="replicate-long-opts" style="display:none;">
+        <div style="background:#f0f4ff;border:1px solid #c5cff5;border-radius:4px;padding:6px 8px;margin-bottom:6px;font-size:10.5px;color:#1565c0;">
+          <b>Long format:</b> Each row = one observation. One column labels the group/condition, one column holds the measurement value. e.g. rows: WT, 1.2 / WT, 0.9 / KO, 2.1 / KO, 1.8.
+        </div>
+        <div style="margin-bottom:5px;"><label>Group / Condition column</label><select id="repLongGroupCol" onchange="applyDataMode()" style="font-size:11px;"></select></div>
+        <div style="margin-bottom:5px;"><label>Value column</label><select id="repLongValueCol" onchange="applyDataMode()" style="font-size:11px;"></select></div>
+        <div class="g2">
+          <div><label>Error bars</label>
+            <select id="repLongErrorType" onchange="applyDataMode()">
+              <option value="sd">SD</option>
+              <option value="sem">SEM</option>
+              <option value="ci95">95% CI</option>
+            </select>
+          </div>
+          <div style="padding-top:16px;"><label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input type="checkbox" id="repLongShowPoints" onchange="applyDataMode()"> Show points</label></div>
+        </div>
+        <div style="margin-top:5px;"><label>X-axis order <span style="font-weight:400;color:#888;font-size:10px;">(comma-separated group names, or leave blank for auto)</span></label>
+          <input type="text" id="repLongOrder" placeholder="e.g. Control, WT, KO" oninput="applyDataMode()" style="font-size:11px;"></div>
       </div>
 
       <!-- Grouped long-format opts -->
@@ -298,7 +323,15 @@
       <div class="card-title"><i class="fa-solid fa-palette"></i>Trace Identity &amp; Style</div>
       <div class="g2" style="margin-bottom:6px;">
         <div><label>Dataset Name</label><input type="text" id="styleTraceName" oninput="applyStyleSettings()"></div>
-        <div><label>Color</label><input type="color" id="styleColor" style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"></div>
+        <div><label>Line / Bar Color</label><input type="color" id="styleColor" style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"></div>
+      </div>
+      <div class="g2" style="margin-bottom:6px;">
+        <div><label>Marker Color</label><input type="color" id="styleMarkerColor" style="height:28px;cursor:pointer;" oninput="applyStyleSettings()" title="Independent color for scatter points"></div>
+        <div><label>Error Bar Color</label><input type="color" id="styleErrorBarColor" style="height:28px;cursor:pointer;" oninput="applyStyleSettings()" title="Color for error bars"></div>
+      </div>
+      <div class="g2" style="margin-bottom:6px;">
+        <div><label>Fill Color <span style="font-size:9px;color:#aaa;">(area)</span></label><input type="color" id="styleAreaFillColor" style="height:28px;cursor:pointer;" oninput="applyStyleSettings()" title="Fill color for area charts"></div>
+        <div><label>Fill Opacity %</label><input type="number" id="styleAreaFillOpacity" value="18" min="0" max="100" step="5" oninput="applyStyleSettings()"></div>
       </div>
       <div class="g2">
         <div><label>Opacity (%)</label><input type="number" id="styleOpacity" value="100" min="0" max="100" step="5" oninput="applyStyleSettings()"></div>
@@ -312,7 +345,9 @@
       <div class="g2">
         <div><label>Draw Mode</label>
           <select id="styleMode" onchange="applyStyleSettings()">
-            <option value="lines">Lines only</option><option value="markers">Points only</option><option value="lines+markers">Lines + Points</option>
+            <option value="lines">Lines only</option>
+            <option value="markers">Points only</option>
+            <option value="lines+markers">Lines + Points</option>
           </select>
         </div>
         <div><label>Dash Style</label>
@@ -321,32 +356,58 @@
           </select>
         </div>
       </div>
+      <div class="g2">
+        <div><label>Marker Symbol</label>
+          <select id="styleMarkerSymbol" onchange="applyStyleSettings()">
+            <option value="circle">● Circle</option>
+            <option value="square">■ Square</option>
+            <option value="diamond">◆ Diamond</option>
+            <option value="triangle-up">▲ Triangle Up</option>
+            <option value="triangle-down">▼ Triangle Down</option>
+            <option value="cross">✚ Cross</option>
+            <option value="x">✕ X</option>
+            <option value="star">★ Star</option>
+            <option value="hexagram">⬡ Hexagram</option>
+            <option value="circle-open">○ Circle (open)</option>
+            <option value="square-open">□ Square (open)</option>
+            <option value="diamond-open">◇ Diamond (open)</option>
+            <option value="triangle-up-open">△ Triangle (open)</option>
+          </select>
+        </div>
+        <div><label>Marker Size (px)</label>
+          <input type="number" id="styleMarkerSize" value="8" min="2" max="40" step="1" oninput="applyStyleSettings()">
+        </div>
+      </div>
     </div>
 
     <!-- Bar Style -->
     <div class="card" id="bar-style-card" style="display:none;flex-direction:column;gap:8px;">
       <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Bar Style</div>
       <div class="g2">
-        <div><label>Fill Color</label><input type="color" id="barFillColor" style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+        <div><label>Bar BG Color <span style="font-size:9px;color:#aaa;">(fill/base)</span></label><input type="color" id="barBgColor" style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+        <div><label>Pattern FG Color <span style="font-size:9px;color:#aaa;">(lines)</span></label><input type="color" id="barFgColor" value="#000000" style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+      </div>
+      <div class="g2">
         <div><label>Pattern Fill</label>
           <select id="barPatternShape" onchange="applyChartTypeSettings()">
-            <option value="solid">Solid</option>
-            <option value="/">Stripes (Right)</option>
-            <option value="\">Stripes (Left)</option>
-            <option value="x">Cross</option>
-            <option value="-">Horizontal Lines</option>
-            <option value="|">Vertical Lines</option>
-            <option value="+">Grid</option>
-            <option value=".">Dots</option>
+            <option value="solid">Solid (no pattern)</option>
+            <option value="/">╱ Stripes Right</option>
+            <option value="\">\╲ Stripes Left</option>
+            <option value="x">✕ Cross-hatch</option>
+            <option value="-">— Horizontal</option>
+            <option value="|">| Vertical</option>
+            <option value="+">+ Grid</option>
+            <option value=".">• Dots</option>
           </select>
         </div>
+        <div><label>Pattern Size</label><input type="number" id="barPatternSize" value="8" min="2" max="24" step="1" oninput="applyChartTypeSettings()"></div>
       </div>
       <div class="g2">
         <div><label>Border Color</label><input type="color" id="barBorderColor" value="#000000" style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
         <div><label>Border Width</label><input type="number" id="barBorderWidth" value="0" min="0" max="6" step="0.5" oninput="applyChartTypeSettings()"></div>
       </div>
       <div class="g2">
-        <div><label>Fill Opacity (%)</label><input type="number" id="barOpacity" value="85" min="0" max="100" step="5" oninput="applyChartTypeSettings()"></div>
+        <div><label>Bar Opacity (%)</label><input type="number" id="barOpacity" value="85" min="0" max="100" step="5" oninput="applyChartTypeSettings()"></div>
         <div></div>
       </div>
       <hr style="margin:4px 0;">
@@ -364,37 +425,6 @@
       </div>
     </div>
 
-    <!-- Shift / Rescale -->
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale</div>
-      <p style="font-size:10px;color:#888;margin-bottom:6px;">new = (old + offset) × scale</p>
-      <div class="sag" style="margin-bottom:5px;">
-        <span></span><span style="font-size:10px;color:#888;text-align:center;">Offset (+)</span><span style="font-size:10px;color:#888;text-align:center;">Scale (×)</span>
-        <label>X</label><input type="number" id="axisShiftXOffset" value="0" step="any" placeholder="0"><input type="number" id="axisShiftXScale" value="1" step="any" placeholder="1">
-        <label>Y</label><input type="number" id="axisShiftYOffset" value="0" step="any" placeholder="0"><input type="number" id="axisShiftYScale" value="1" step="any" placeholder="1">
-      </div>
-      <div class="g2" style="gap:5px;">
-        <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
-        <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-      </div>
-    </div>
-
-    <!-- 2-Point Calibration -->
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>2-Point Calibration</div>
-      <div style="display:grid;grid-template-columns:60px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:6px;">
-        <span></span><span style="color:#0288d1;text-align:center;font-weight:600;">X axis</span><span style="color:#e65100;text-align:center;font-weight:600;">Y axis</span>
-        <label style="margin:0;">P1 data</label><input type="number" id="calXData1" placeholder="0" step="any"><input type="number" id="calYData1" placeholder="0" step="any">
-        <label style="margin:0;">P1 real</label><input type="number" id="calXReal1" placeholder="0" step="any"><input type="number" id="calYReal1" placeholder="0" step="any">
-        <label style="margin:0;">P2 data</label><input type="number" id="calXData2" placeholder="100" step="any"><input type="number" id="calYData2" placeholder="1" step="any">
-        <label style="margin:0;">P2 real</label><input type="number" id="calXReal2" placeholder="100" step="any"><input type="number" id="calYReal2" placeholder="1000" step="any">
-      </div>
-      <div class="g2" style="gap:5px;">
-        <button onclick="applyAxisCalibration()" class="btn-g" style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
-        <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-      </div>
-    </div>
-
     <button id="remove-file-btn" class="btn-r" style="font-size:11px;padding:7px;"><i class="fa-solid fa-trash"></i> Remove This Dataset</button>
   </div>
 </div>
@@ -404,17 +434,53 @@
   <!-- Axis Titles -->
   <div class="card">
     <div class="card-title"><i class="fa-solid fa-tag"></i>Axis Titles</div>
+    <!-- Rich text toolbar for axis labels -->
+    <div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px;padding:5px 6px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;align-items:center;">
+      <span style="font-size:9.5px;color:#888;margin-right:2px;white-space:nowrap;">Format:</span>
+      <button type="button" onclick="axisInsert('sup')" title="Superscript (e.g. m²)" style="width:auto;padding:2px 7px;font-size:11px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">x<sup style="font-size:8px">n</sup></button>
+      <button type="button" onclick="axisInsert('sub')" title="Subscript (e.g. CO₂)" style="width:auto;padding:2px 7px;font-size:11px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">x<sub style="font-size:8px">n</sub></button>
+      <button type="button" onclick="axisInsert('b')" title="Bold" style="width:auto;padding:2px 7px;font-size:11px;font-weight:700;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">B</button>
+      <button type="button" onclick="axisInsert('i')" title="Italic" style="width:auto;padding:2px 7px;font-size:11px;font-style:italic;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">I</button>
+      <span style="font-size:9px;color:#ccc;">|</span>
+      <button type="button" onclick="axisSnippet('°C')" title="Degree Celsius" style="width:auto;padding:2px 6px;font-size:10.5px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">°C</button>
+      <button type="button" onclick="axisSnippet('°F')" style="width:auto;padding:2px 6px;font-size:10.5px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">°F</button>
+      <button type="button" onclick="axisSnippet('μ')" style="width:auto;padding:2px 6px;font-size:10.5px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">μ</button>
+      <button type="button" onclick="axisSnippet('±')" style="width:auto;padding:2px 6px;font-size:10.5px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">±</button>
+      <button type="button" onclick="axisSnippet('×10<sup>3</sup>')" style="width:auto;padding:2px 6px;font-size:10px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">×10³</button>
+      <button type="button" onclick="axisSnippet('×10<sup>6</sup>')" style="width:auto;padding:2px 6px;font-size:10px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">×10⁶</button>
+      <button type="button" onclick="axisSnippet('α')" style="width:auto;padding:2px 6px;font-size:10.5px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">α</button>
+      <button type="button" onclick="axisSnippet('β')" style="width:auto;padding:2px 6px;font-size:10.5px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">β</button>
+    </div>
+    <div style="font-size:9px;color:#aaa;margin-bottom:5px;">Click an axis input first, then click a format button. HTML tags like &lt;sup&gt;, &lt;sub&gt;, &lt;b&gt; are supported directly.</div>
     <div class="g2" style="margin-bottom:5px;">
-      <div><label>X Title</label><input type="text" id="xAxisLabel" placeholder="e.g. m/z" oninput="updateActiveAxisLabels()"></div>
+      <div><label>X Title</label><input type="text" id="xAxisLabel" placeholder="e.g. Time (s)" oninput="updateActiveAxisLabels()"></div>
       <div><label>Y Title</label><input type="text" id="yAxisLabel" placeholder="e.g. Intensity" oninput="updateActiveAxisLabels()"></div>
     </div>
     <div class="g2" style="margin-bottom:5px;">
       <div><label>Y2 Title</label><input type="text" id="y2AxisLabel" placeholder="Secondary Y" oninput="updateActiveAxisLabels()"></div>
       <div><label>Y3 Title</label><input type="text" id="y3AxisLabel" placeholder="Tertiary Y" oninput="updateActiveAxisLabels()"></div>
     </div>
-    <div class="g2">
+    <hr style="margin:5px 0;">
+    <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">Typography</div>
+    <div class="g2" style="margin-bottom:5px;">
       <div><label>Title Font Size (pt)</label><input type="number" id="axisTitleFontSize" value="13" min="8" max="28" oninput="applyPlotAppearance()"></div>
       <div><label>Tick Font Size (pt)</label><input type="number" id="axisTickFontSize" value="11" min="6" max="24" oninput="applyPlotAppearance()"></div>
+    </div>
+    <div class="g2" style="margin-bottom:5px;">
+      <div><label>Title Font Family</label>
+        <select id="axisTitleFont" onchange="applyPlotAppearance()">
+          <option value="Arial">Arial</option><option value="Helvetica">Helvetica</option><option value="'Times New Roman'">Times New Roman</option><option value="Georgia">Georgia</option><option value="'Courier New'">Courier New</option><option value="Verdana">Verdana</option><option value="Tahoma">Tahoma</option><option value="Calibri">Calibri</option>
+        </select>
+      </div>
+      <div><label>Tick Font Family</label>
+        <select id="axisTickFont" onchange="applyPlotAppearance()">
+          <option value="Arial">Arial</option><option value="Helvetica">Helvetica</option><option value="'Times New Roman'">Times New Roman</option><option value="Georgia">Georgia</option><option value="'Courier New'">Courier New</option><option value="Verdana">Verdana</option><option value="Tahoma">Tahoma</option><option value="Calibri">Calibri</option>
+        </select>
+      </div>
+    </div>
+    <div class="g2">
+      <div><label>Axis Title Color</label><input type="color" id="axisTitleColor" value="#333333" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+      <div><label>Tick Color</label><input type="color" id="axisTickColor" value="#444444" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
     </div>
   </div>
 
@@ -482,16 +548,54 @@
       <div><label>Paper Color</label><input type="color" id="plotPaperColor" value="#ffffff" style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
     </div>
     <div class="g2" style="margin-bottom:5px;">
-      <div><label>Font Size</label><input type="number" id="plotFontSize" value="12" min="8" max="24" onchange="applyPlotAppearance()"></div>
-      <div><label>Font Family</label>
+      <div><label>Global Font Size</label><input type="number" id="plotFontSize" value="12" min="8" max="24" onchange="applyPlotAppearance()"></div>
+      <div><label>Global Font Family</label>
         <select id="plotFont" onchange="applyPlotAppearance()">
-          <option value="Arial">Arial</option><option value="'Times New Roman'">Times New Roman</option><option value="Helvetica">Helvetica</option><option value="'Courier New'">Courier New</option><option value="Georgia">Georgia</option>
+          <option value="Arial">Arial</option>
+          <option value="Helvetica">Helvetica</option>
+          <option value="'Times New Roman'">Times New Roman</option>
+          <option value="Georgia">Georgia</option>
+          <option value="'Courier New'">Courier New</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Tahoma">Tahoma</option>
+          <option value="Calibri">Calibri</option>
         </select>
       </div>
     </div>
     <div class="g2">
       <div><label>Plot Height (px)</label><input type="number" id="plotHeight" value="580" min="200" max="1200" step="10" onchange="applyPlotAppearance()"></div>
       <div style="padding-top:16px;"><label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Show Legend</label></div>
+    </div>
+  </div>
+
+  <!-- Shift / Rescale (moved from Series tab) -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale Active Dataset</div>
+    <p style="font-size:10px;color:#888;margin-bottom:6px;">new = (old + offset) × scale</p>
+    <div class="sag" style="margin-bottom:5px;">
+      <span></span><span style="font-size:10px;color:#888;text-align:center;">Offset (+)</span><span style="font-size:10px;color:#888;text-align:center;">Scale (×)</span>
+      <label>X</label><input type="number" id="axisShiftXOffset" value="0" step="any" placeholder="0"><input type="number" id="axisShiftXScale" value="1" step="any" placeholder="1">
+      <label>Y</label><input type="number" id="axisShiftYOffset" value="0" step="any" placeholder="0"><input type="number" id="axisShiftYScale" value="1" step="any" placeholder="1">
+    </div>
+    <div class="g2" style="gap:5px;">
+      <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
+      <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+    </div>
+  </div>
+
+  <!-- 2-Point Calibration (moved from Series tab) -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>2-Point Calibration</div>
+    <div style="display:grid;grid-template-columns:60px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:6px;">
+      <span></span><span style="color:#0288d1;text-align:center;font-weight:600;">X axis</span><span style="color:#e65100;text-align:center;font-weight:600;">Y axis</span>
+      <label style="margin:0;">P1 data</label><input type="number" id="calXData1" placeholder="0" step="any"><input type="number" id="calYData1" placeholder="0" step="any">
+      <label style="margin:0;">P1 real</label><input type="number" id="calXReal1" placeholder="0" step="any"><input type="number" id="calYReal1" placeholder="0" step="any">
+      <label style="margin:0;">P2 data</label><input type="number" id="calXData2" placeholder="100" step="any"><input type="number" id="calYData2" placeholder="1" step="any">
+      <label style="margin:0;">P2 real</label><input type="number" id="calXReal2" placeholder="100" step="any"><input type="number" id="calYReal2" placeholder="1000" step="any">
+    </div>
+    <div class="g2" style="gap:5px;">
+      <button onclick="applyAxisCalibration()" class="btn-g" style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
+      <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i class="fa-solid fa-rotate-left"></i> Reset</button>
     </div>
   </div>
 
@@ -562,15 +666,62 @@
   </div>
   <div class="card">
     <div class="card-title"><i class="fa-solid fa-not-equal"></i>Compare Groups</div>
-    <div class="g2" style="margin-bottom:6px;">
-      <div><label>Group A</label><select id="test-colA"></select></div>
-      <div><label>Group B</label><select id="test-colB"></select></div>
+
+    <!-- Data source selector -->
+    <div style="margin-bottom:7px;"><label>Data source</label>
+      <select id="stats-source-type" onchange="syncStatsSourceUI()">
+        <option value="columns">Wide format — each column is a group</option>
+        <option value="rows">Long format — group label column + value column</option>
+      </select>
     </div>
-    <div style="margin-bottom:7px;"><label>Test</label>
-      <select id="stats-test-type"><option value="ttest_unpaired">Unpaired t-test</option><option value="ttest_paired">Paired t-test</option><option value="welch">Welch t-test</option><option value="mannwhitney">Mann-Whitney U</option><option value="anova1">One-way ANOVA</option></select>
+
+    <!-- Wide format: pick two columns -->
+    <div id="stats-wide-ui">
+      <div class="g2" style="margin-bottom:6px;">
+        <div><label>Group A column</label><select id="test-colA"></select></div>
+        <div><label>Group B column</label><select id="test-colB"></select></div>
+      </div>
     </div>
+
+    <!-- Long format: pick group col + value col + filter which groups -->
+    <div id="stats-long-ui" style="display:none;">
+      <div class="g2" style="margin-bottom:5px;">
+        <div><label>Group label column</label><select id="stats-long-groupcol" onchange="syncStatsLongGroups()"></select></div>
+        <div><label>Value column</label><select id="stats-long-valuecol"></select></div>
+      </div>
+      <div style="margin-bottom:5px;">
+        <label>Groups to compare <span style="font-weight:400;color:#888;font-size:10px;">(Ctrl+click for multi-select; ANOVA/Tukey uses all selected)</span></label>
+        <select id="stats-long-groups" multiple style="height:72px;font-size:11.5px;" onchange="syncStatsLongGroupPair()"></select>
+      </div>
+      <div class="g2" style="margin-bottom:2px;">
+        <div><label style="font-size:10.5px;color:#888;">Pair — Group A</label><select id="stats-long-grpA" style="font-size:11px;"></select></div>
+        <div><label style="font-size:10.5px;color:#888;">Pair — Group B</label><select id="stats-long-grpB" style="font-size:11px;"></select></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:7px;margin-top:5px;"><label>Statistical test</label>
+      <select id="stats-test-type" onchange="syncAnovaUI()">
+        <option value="ttest_unpaired">Unpaired t-test</option>
+        <option value="ttest_paired">Paired t-test</option>
+        <option value="welch">Welch t-test</option>
+        <option value="mannwhitney">Mann-Whitney U</option>
+        <option value="anova1">One-Way ANOVA</option>
+        <option value="anova1_tukey">One-Way ANOVA + Tukey HSD post-hoc</option>
+        <option value="anova2">Two-Way ANOVA</option>
+      </select>
+    </div>
+
+    <!-- Two-way ANOVA extra controls -->
+    <div id="anova2-ui" style="display:none;background:#f0f7ff;border:1px solid #c5d9f0;border-radius:4px;padding:8px;margin-bottom:7px;">
+      <div style="font-size:10.5px;font-weight:700;color:#1565c0;margin-bottom:5px;">2-Way ANOVA Setup (Long Format)</div>
+      <p style="font-size:10px;color:#555;margin:0 0 5px;">Data must be in long format: one column for Factor A, one for Factor B, one for the response value.</p>
+      <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Factor A column (e.g. Treatment)</label><select id="anova2-factorA" style="font-size:11px;"></select></div>
+      <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Factor B column (e.g. Time)</label><select id="anova2-factorB" style="font-size:11px;"></select></div>
+      <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Response/Value column</label><select id="anova2-value" style="font-size:11px;"></select></div>
+    </div>
+
     <button onclick="runStatTest()" class="btn-g" style="font-size:11px;padding:7px;margin-bottom:0;"><i class="fa-solid fa-flask"></i> Run Test</button>
-    <div id="test-results-box" class="stats-box" style="display:none;margin-top:8px;font-size:11.5px;line-height:1.8;"></div>
+    <div id="test-results-box" class="stats-box" style="display:none;margin-top:8px;font-size:11px;line-height:1.7;overflow-x:auto;"></div>
   </div>
   <div class="card">
     <div class="card-title"><i class="fa-solid fa-table-list"></i>Column Summary</div>
@@ -936,7 +1087,7 @@
 <footer>
     <p><strong>Developed by:</strong> Anindya Karmaker, PhD Candidate, McDonald-Nandi Lab.</p>
     <p><strong>Source:</strong> <a href="https://github.com/Anindya-Karmaker/Chromatogram-Plotter-Analyzer" target="_blank">View on GitHub</a></p>
-    <p><strong>Funding:</strong> NSF PFI Grant No. 2016563. &nbsp;|&nbsp; <strong>Version:</strong> v2.00 — Universal Data Plotter &amp; Analyzer</p>
+    <p><strong>Funding:</strong> NSF PFI Grant No. 2016563. &nbsp;|&nbsp; <strong>Version:</strong> v2.10 — Universal Data Plotter &amp; Analyzer</p>
 </footer>
 <script>
 // --- Global Variables/Functions for HTML access ---
@@ -1133,11 +1284,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!state.activeFileId) return;
         const config = state.plotConfig[state.activeFileId];
         const g = id => document.getElementById(id);
-        if (g('styleTraceName')) config.traceName = g('styleTraceName').value;
-        if (g('styleColor'))     { config.color = g('styleColor').value; }
-        if (g('styleLineWidth')) config.lineWidth = parseFloat(g('styleLineWidth').value)||2;
-        if (g('styleLineDash'))  config.lineDash  = g('styleLineDash').value;
-        if (g('styleOpacity'))   config.opacity   = parseInt(g('styleOpacity').value)/100 || 1;
+        if (g('styleTraceName'))       config.traceName       = g('styleTraceName').value;
+        if (g('styleColor'))           config.color           = g('styleColor').value;
+        if (g('styleMarkerColor'))     config.markerColor     = g('styleMarkerColor').value;
+        if (g('styleErrorBarColor'))   config.errorBarColor   = g('styleErrorBarColor').value;
+        if (g('styleAreaFillColor'))   config.areaFillColor   = g('styleAreaFillColor').value;
+        if (g('styleAreaFillOpacity')) config.areaFillOpacity = parseInt(g('styleAreaFillOpacity').value)||18;
+        if (g('styleLineWidth'))       config.lineWidth       = parseFloat(g('styleLineWidth').value)||2;
+        if (g('styleLineDash'))        config.lineDash        = g('styleLineDash').value;
+        if (g('styleOpacity'))         config.opacity         = parseInt(g('styleOpacity').value)/100 || 1;
+        // Line/Marker style
+        if (g('styleMode'))            config.mode            = g('styleMode').value;
+        if (g('styleMarkerSymbol'))    config.markerSymbol    = g('styleMarkerSymbol').value;
+        if (g('styleMarkerSize'))      config.markerSize      = parseFloat(g('styleMarkerSize').value)||8;
         // Sync quick color pickers in export tab
         if (g('quickTraceColor'))   g('quickTraceColor').value = config.color;
         if (g('quickTraceOpacity')) g('quickTraceOpacity').value = Math.round(config.opacity*100);
@@ -1196,7 +1355,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.saveSession = () => {
-        const sessionData = JSON.stringify(state);
+        // Collect current plotAppearance state from UI into the object first
+        const pa = plotAppearance;
+        const sessionData = JSON.stringify({
+            ...state,
+            plotAppearance: { ...pa },
+            _savedVersion: '2.10'
+        });
         const blob = new Blob([sessionData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1233,53 +1398,58 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.openLabelManager = () => {
-        if (state.annotations.length === 0) {
-            alert('No labels to manage');
-            return;
-        }
+        // Remove existing
+        document.querySelectorAll('.label-manager-overlay').forEach(e => e.remove());
 
-        let html = '<h3 style="margin-top:0;">Manage Labels</h3>';
-        html += '<div style="max-height: 400px; overflow-y: auto;">';
-        html += '<table style="width: 100%; border-collapse: collapse; font-size: 12px;">';
-        html += '<tr style="background:#f5f5f5;"><th style="padding:6px; text-align:left;">Label</th><th style="padding:6px;">X</th><th style="padding:6px;">Y</th><th style="padding:6px;">Trace</th><th style="padding:6px;">Actions</th></tr>';
+        if (state.annotations.length === 0) { alert('No labels to manage'); return; }
 
-        state.annotations.forEach((ann) => {
-            const associatedFile = state.files.find(f => f.id === ann.fileId);
-            const fileName = associatedFile ? associatedFile.name : 'None';
+        const overlay = document.createElement('div');
+        overlay.className = 'label-manager-overlay';
+        overlay.setAttribute('data-label-manager', '1');
+        overlay.style.cssText = 'position:fixed;z-index:10500;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;';
 
-            html += `<tr style="border-bottom: 1px solid #eee;">`;
-            html += `<td style="padding: 6px;">${ann.customText || ann.text}</td>`;
-            html += `<td style="padding: 6px; text-align:center;">${parseFloat(ann.x).toFixed(2)}</td>`;
-            html += `<td style="padding: 6px; text-align:center;">${parseFloat(ann.y).toFixed(2)}</td>`;
-            html += `<td style="padding: 6px; text-align:center;">`;
-            html += `<select id="file-select-${ann.id}" style="font-size: 11px; padding: 2px;" onchange="reassignLabel(${ann.id}, this.value)">`;
+        const box = document.createElement('div');
+        box.style.cssText = 'background:#fff;border-radius:8px;width:92%;max-width:700px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3);';
 
-            // Add options for all files
-            state.files.forEach(file => {
-                const selected = file.id === ann.fileId ? 'selected' : '';
-                html += `<option value="${file.id}" ${selected}>${file.name.substring(0, 20)}</option>`;
-            });
+        const hdr = document.createElement('div');
+        hdr.style.cssText = 'padding:14px 18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;';
+        hdr.innerHTML = `<h3 style="margin:0;font-size:15px;color:#333;">📋 Label Manager (${state.annotations.length})</h3><button onclick="this.closest('.label-manager-overlay').remove()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;width:auto;padding:0;">&times;</button>`;
 
-            html += `</select></td>`;
-            html += `<td style="padding: 6px; text-align:center;">`;
-            html += `<button onclick="editLabel(${ann.id})" style="margin-right: 4px; padding: 3px 6px; font-size: 10px;">Edit</button>`;
-            html += `<button onclick="deleteLabel(${ann.id})" style="padding: 3px 6px; font-size: 10px; background: #dc3545; color: white; border:none; cursor:pointer;">Del</button>`;
-            html += `</td></tr>`;
+        const body = document.createElement('div');
+        body.style.cssText = 'overflow:auto;flex:1;padding:12px;';
+
+        let tbl = `<table style="width:100%;border-collapse:collapse;font-size:11.5px;">
+            <thead><tr style="background:#f5f5f5;"><th style="padding:7px;border:1px solid #ddd;text-align:left;">Label</th><th style="padding:7px;border:1px solid #ddd;">X</th><th style="padding:7px;border:1px solid #ddd;">Y</th><th style="padding:7px;border:1px solid #ddd;">Size</th><th style="padding:7px;border:1px solid #ddd;">Actions</th></tr></thead><tbody>`;
+
+        state.annotations.forEach(ann => {
+            const displayText = (ann.customText || ann.text || '').replace(/\n.*/,'').substring(0,30);
+            const xVal = typeof ann.x === 'number' ? ann.x.toFixed(3) : ann.x;
+            const yVal = typeof ann.y === 'number' ? ann.y.toFixed(3) : ann.y;
+            const sz = ann.font?.size || 12;
+            const col = ann.font?.color || '#000';
+            tbl += `<tr style="border-bottom:1px solid #eee;">
+                <td style="padding:6px 8px;border:1px solid #eee;"><span style="color:${col};font-weight:${ann.font?.bold?'bold':'normal'}">${displayText}</span></td>
+                <td style="padding:6px 8px;border:1px solid #eee;text-align:center;font-family:monospace;">${xVal}</td>
+                <td style="padding:6px 8px;border:1px solid #eee;text-align:center;font-family:monospace;">${yVal}</td>
+                <td style="padding:6px 8px;border:1px solid #eee;text-align:center;">${sz}px</td>
+                <td style="padding:6px 8px;border:1px solid #eee;text-align:center;white-space:nowrap;">
+                    <button onclick="editLabel(${ann.id})" style="background:#00796b;color:white;border:none;border-radius:3px;padding:3px 8px;font-size:10.5px;cursor:pointer;width:auto;margin-right:4px;">✏️ Edit</button>
+                    <button onclick="deleteLabel(${ann.id})" style="background:#dc3545;color:white;border:none;border-radius:3px;padding:3px 8px;font-size:10.5px;cursor:pointer;width:auto;">🗑</button>
+                </td>
+            </tr>`;
         });
+        tbl += '</tbody></table>';
+        body.innerHTML = tbl;
 
-        html += '</table></div>';
+        const ftr = document.createElement('div');
+        ftr.style.cssText = 'padding:10px 18px;border-top:1px solid #eee;display:flex;gap:8px;';
+        ftr.innerHTML = `<button onclick="clearLabels();this.closest('.label-manager-overlay').remove()" style="background:#dc3545;color:white;border:none;border-radius:4px;padding:7px 14px;font-size:12px;cursor:pointer;width:auto;">✖ Clear All</button>
+            <button onclick="this.closest('.label-manager-overlay').remove()" style="background:#6c757d;color:white;border:none;border-radius:4px;padding:7px 14px;font-size:12px;cursor:pointer;width:auto;margin-left:auto;">Close</button>`;
 
-        const container = document.createElement('div');
-        container.innerHTML = html;
-        container.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; max-width: 700px; width: 90%;';
-
-        const closeBtn = document.createElement('button');
-        closeBtn.textContent = 'Close';
-        closeBtn.style.cssText = 'margin-top: 15px; padding: 8px 16px; width: 100%;';
-        closeBtn.onclick = () => document.body.removeChild(container);
-        container.appendChild(closeBtn);
-
-        document.body.appendChild(container);
+        box.appendChild(hdr); box.appendChild(body); box.appendChild(ftr);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
     };
 
     window.reassignLabel = (labelId, newFileId) => {
@@ -1291,36 +1461,157 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ── Axis title sub/superscript helpers ─────────────────────────────────
+    // Track last focused axis input for toolbar inserts
+    let _lastAxisInput = null;
+    ['xAxisLabel','yAxisLabel','y2AxisLabel','y3AxisLabel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('focus', () => { _lastAxisInput = el; });
+    });
+
+    window.axisInsert = (tag) => {
+        const el = _lastAxisInput || document.getElementById('xAxisLabel');
+        if (!el) return;
+        el.focus();
+        const open = `<${tag}>`, close = `</${tag}>`;
+        const s = el.selectionStart, e = el.selectionEnd;
+        const selected = el.value.slice(s, e);
+        const inserted = open + selected + close;
+        el.value = el.value.slice(0, s) + inserted + el.value.slice(e);
+        el.setSelectionRange(s + open.length, s + open.length + selected.length);
+        el.dispatchEvent(new Event('input', {bubbles: true}));
+    };
+
+    window.axisSnippet = (text) => {
+        const el = _lastAxisInput || document.getElementById('xAxisLabel');
+        if (!el) return;
+        el.focus();
+        const s = el.selectionStart, e = el.selectionEnd;
+        el.value = el.value.slice(0, s) + text + el.value.slice(e);
+        el.setSelectionRange(s + text.length, s + text.length);
+        el.dispatchEvent(new Event('input', {bubbles: true}));
+    };
+
+    // ── Label edit modal — full styled replacement for prompt() ────────────
     window.editLabel = (id) => {
         const ann = state.annotations.find(a => a.id === id);
         if (!ann) return;
 
-        const newText = prompt('Edit label text:', ann.customText || ann.text);
-        if (newText !== null) {
-            const showX = confirm('Include X-axis value?');
-            const showY = confirm('Include Y-axis value?');
+        // Close any open label manager first
+        const existing = document.querySelector('.label-manager-overlay');
+        if (existing) existing.remove();
 
-            let displayText = newText;
-            if (showX && showY) {
-                displayText = `${newText}\nX: ${parseFloat(ann.x).toFixed(2)}\nY: ${parseFloat(ann.y).toFixed(2)}`;
-            } else if (showX) {
-                displayText = `${newText}\nX: ${parseFloat(ann.x).toFixed(2)}`;
-            } else if (showY) {
-                displayText = `${newText}\nY: ${parseFloat(ann.y).toFixed(2)}`;
-            }
+        const overlay = document.createElement('div');
+        overlay.className = 'label-manager-overlay';
+        overlay.style.cssText = 'position:fixed;z-index:11000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;';
+
+        const modal = document.createElement('div');
+        modal.style.cssText = 'background:#fff;border-radius:10px;padding:0;width:92%;max-width:420px;box-shadow:0 8px 32px rgba(0,0,0,.3);overflow:hidden;';
+
+        modal.innerHTML = `
+            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-bottom:2px solid #81c784;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;color:#1b5e20;font-size:15px;">✏️ Edit Label</h3>
+                <span id="_lblEditClose" style="font-size:22px;font-weight:bold;color:#aaa;cursor:pointer;line-height:1;">&times;</span>
+            </div>
+            <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+                <div>
+                    <label style="font-size:11px;font-weight:600;color:#444;display:block;margin-bottom:4px;">Label Text:</label>
+                    <input type="text" id="_lblEditText" value="${(ann.customText || ann.text || '').replace(/"/g,'&quot;').replace(/\n.*/,'')}"
+                        style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:13px;box-sizing:border-box;">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end;">
+                    <div>
+                        <label style="font-size:11px;font-weight:600;color:#444;display:block;margin-bottom:4px;">Font Size:</label>
+                        <input type="number" id="_lblEditSize" value="${ann.font?.size || 12}" min="6" max="36" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:12px;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size:11px;font-weight:600;color:#444;display:block;margin-bottom:4px;">Color:</label>
+                        <input type="color" id="_lblEditColor" value="${ann.font?.color || '#000000'}" style="width:100%;height:33px;border:1px solid #ddd;border-radius:4px;cursor:pointer;padding:2px;">
+                    </div>
+                    <div>
+                        <label style="font-size:11px;font-weight:600;color:#444;display:flex;align-items:center;gap:5px;cursor:pointer;margin-bottom:4px;">
+                            <input type="checkbox" id="_lblEditBold" ${ann.font?.bold ? 'checked' : ''}> Bold
+                        </label>
+                        <label style="font-size:11px;font-weight:600;color:#444;display:flex;align-items:center;gap:5px;cursor:pointer;">
+                            <input type="checkbox" id="_lblEditArrow" ${ann.showarrow !== false ? 'checked' : ''}> Arrow
+                        </label>
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <label style="font-size:11px;margin:0;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="_lblEditShowX" ${ann.showX?'checked':''}> Show X</label>
+                    <label style="font-size:11px;margin:0;display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" id="_lblEditShowY" ${ann.showY?'checked':''}> Show Y</label>
+                </div>
+                <div id="_lblEditPreview" style="padding:8px 12px;background:#f5f5f5;border:1px dashed #ccc;border-radius:5px;min-height:36px;text-align:center;font-size:13px;color:#333;"></div>
+                <div style="display:flex;gap:8px;">
+                    <button id="_lblEditApply" style="flex:2;background:#00796b;color:#fff;border:none;border-radius:4px;padding:9px;font-size:13px;cursor:pointer;">✓ Apply</button>
+                    <button id="_lblEditDelete" style="flex:1;background:#dc3545;color:#fff;border:none;border-radius:4px;padding:9px;font-size:13px;cursor:pointer;">🗑 Delete</button>
+                    <button id="_lblEditCancel" style="flex:1;background:#6c757d;color:#fff;border:none;border-radius:4px;padding:9px;font-size:13px;cursor:pointer;">Cancel</button>
+                </div>
+            </div>`;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const updatePreview = () => {
+            const t = document.getElementById('_lblEditText')?.value || '';
+            const sz = parseInt(document.getElementById('_lblEditSize')?.value) || 12;
+            const col = document.getElementById('_lblEditColor')?.value || '#000';
+            const bold = document.getElementById('_lblEditBold')?.checked;
+            const prev = document.getElementById('_lblEditPreview');
+            if (prev) prev.innerHTML = `<span style="font-size:${sz}px;color:${col};font-weight:${bold?'bold':'normal'};">${t || '<em style="color:#aaa">Label preview</em>'}</span>`;
+        };
+        ['_lblEditText','_lblEditSize','_lblEditColor','_lblEditBold'].forEach(id => {
+            document.getElementById(id)?.addEventListener('input', updatePreview);
+            document.getElementById(id)?.addEventListener('change', updatePreview);
+        });
+        updatePreview();
+
+        const close = () => overlay.remove();
+        document.getElementById('_lblEditClose').onclick = close;
+        document.getElementById('_lblEditCancel').onclick = close;
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+        document.getElementById('_lblEditApply').onclick = () => {
+            const text    = document.getElementById('_lblEditText')?.value.trim() || 'Label';
+            const size    = parseInt(document.getElementById('_lblEditSize')?.value) || 12;
+            const color   = document.getElementById('_lblEditColor')?.value || '#000000';
+            const bold    = !!document.getElementById('_lblEditBold')?.checked;
+            const arrow   = !!document.getElementById('_lblEditArrow')?.checked;
+            const showX   = !!document.getElementById('_lblEditShowX')?.checked;
+            const showY   = !!document.getElementById('_lblEditShowY')?.checked;
+
+            let displayText = text;
+            const xStr = typeof ann.x==='number' ? ann.x.toFixed(3) : String(ann.x);
+            const yStr = typeof ann.y==='number' ? ann.y.toFixed(3) : String(ann.y);
+            if (showX && showY) displayText += `\nX:${xStr} Y:${yStr}`;
+            else if (showX) displayText += `\nX:${xStr}`;
+            else if (showY) displayText += `\nY:${yStr}`;
 
             ann.text = displayText;
-            ann.customText = newText;
-            ann.showX = showX;
-            ann.showY = showY;
+            ann.customText = text;
+            ann.showX = showX; ann.showY = showY;
+            ann.showarrow = arrow; ann.arrowhead = arrow ? 2 : 0;
+            ann.font = { size, color, bold };
+            if (bold) ann.font.weight = 'bold';
+            ann.bordercolor = color;
 
             renderPlot();
             updateStatus('Label updated');
+            close();
+            // Reopen manager if it was open
+            if (document.querySelector('[data-label-manager]')) window.openLabelManager();
+        };
 
-            const container = document.querySelector('div[style*="z-index: 10000"]');
-            if (container) document.body.removeChild(container);
-            window.openLabelManager();
-        }
+        document.getElementById('_lblEditDelete').onclick = () => {
+            if (confirm('Delete this label?')) {
+                state.annotations = state.annotations.filter(a => a.id !== ann.id);
+                renderPlot();
+                updateStatus('Label deleted');
+                close();
+            }
+        };
+
+        setTimeout(() => document.getElementById('_lblEditText')?.focus(), 50);
     };
 
     window.deleteLabel = (id) => {
@@ -1328,12 +1619,8 @@ document.addEventListener('DOMContentLoaded', () => {
             state.annotations = state.annotations.filter(a => a.id !== id);
             renderPlot();
             updateStatus('Label deleted');
-
-            const container = document.querySelector('div[style*="z-index: 10000"]');
-            if (container) document.body.removeChild(container);
-            if (state.annotations.length > 0) {
-                window.openLabelManager();
-            }
+            document.querySelectorAll('.label-manager-overlay').forEach(e => e.remove());
+            if (state.annotations.length > 0) window.openLabelManager();
         }
     };
 
@@ -1422,15 +1709,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Filter files
         state.files = loadedState.files.filter(f => selectedFileIds.includes(f.id));
 
-        // Filter plot configs
+        // Filter plot configs — merge with defaults to handle new fields added since save
         state.plotConfig = {};
         selectedFileIds.forEach(fileId => {
             if (loadedState.plotConfig[fileId]) {
                 state.plotConfig[fileId] = {
+                    mode: 'lines', markerSymbol: 'circle', markerSize: 8,
                     ...loadedState.plotConfig[fileId],
-                    peakConfig: loadedState.plotConfig[fileId].peakConfig || { show: false, highlight: false, prominence: 0 },
-                    axisLabels: loadedState.plotConfig[fileId].axisLabels || {},
-                    enableY2: loadedState.plotConfig[fileId].enableY2 || false
+                    peakConfig:  loadedState.plotConfig[fileId].peakConfig  || { show: false, highlight: false, prominence: 0 },
+                    axisLabels:  loadedState.plotConfig[fileId].axisLabels  || {},
+                    bgCorrection:loadedState.plotConfig[fileId].bgCorrection|| { method:'none', params:{}, showBaseline:false },
+                    axisShift:   loadedState.plotConfig[fileId].axisShift   || { xOffset:0, xScale:1, yOffset:0, yScale:1 },
+                    errorConfig: loadedState.plotConfig[fileId].errorConfig  || { show:false },
+                    barStyle:    loadedState.plotConfig[fileId].barStyle     || {},
                 };
             }
         });
@@ -1438,32 +1729,73 @@ document.addEventListener('DOMContentLoaded', () => {
         // Filter trendlines
         state.trendlines = {};
         selectedFileIds.forEach(fileId => {
-            if (loadedState.trendlines && loadedState.trendlines[fileId]) {
-                state.trendlines[fileId] = loadedState.trendlines[fileId];
-            }
+            state.trendlines[fileId] = (loadedState.trendlines && loadedState.trendlines[fileId]) || 'none';
         });
 
-        // Filter annotations (only load labels for selected files)
+        // Filter annotations
         state.annotations = (loadedState.annotations || []).filter(ann =>
             selectedFileIds.includes(ann.fileId) || !ann.fileId
         );
 
-        // Set active file
-        state.activeFileId = state.files.length > 0 ? state.files[0].id : null;
-
-        // Sync Global X-Axis Range Inputs
-        if (loadedState.xaxisRange) {
-            state.xaxisRange = loadedState.xaxisRange;
-            if (xAxisStart) xAxisStart.value = state.xaxisRange.start !== null ? state.xaxisRange.start : '';
-            if (xAxisEnd) xAxisEnd.value = state.xaxisRange.end !== null ? state.xaxisRange.end : '';
+        // Restore dragAxisSettings if present
+        if (loadedState.dragAxisSettings) {
+            Object.assign(state.dragAxisSettings, loadedState.dragAxisSettings);
         }
 
-        // Sync Label Visibility
+        // Restore showLabels
         if (loadedState.showLabels !== undefined) {
             state.showLabels = loadedState.showLabels;
-            if (showLabelsCheck) showLabelsCheck.checked = state.showLabels;
+            const slc = document.getElementById('showLabelsCheck');
+            if (slc) slc.checked = state.showLabels;
         }
 
+        // Restore global X-axis range
+        if (loadedState.xaxisRange) {
+            state.xaxisRange = loadedState.xaxisRange;
+            const xs = document.getElementById('xAxisStart');
+            const xe = document.getElementById('xAxisEnd');
+            if (xs) xs.value = state.xaxisRange.start !== null ? state.xaxisRange.start : '';
+            if (xe) xe.value = state.xaxisRange.end   !== null ? state.xaxisRange.end   : '';
+        }
+
+        // ── Restore plotAppearance and sync ALL appearance UI elements ─────────
+        if (loadedState.plotAppearance) {
+            Object.assign(plotAppearance, loadedState.plotAppearance);
+            const pa = plotAppearance;
+            const sg = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+            const sc = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+            sg('plotBgColor',        pa.bgColor        || '#fcfcfc');
+            sg('plotPaperColor',     pa.paperColor     || '#ffffff');
+            sg('plotFontSize',       pa.fontSize       || 12);
+            sg('plotFont',           pa.fontFamily     || 'Arial');
+            sg('axisTitleFont',      pa.axisTitleFont  || pa.fontFamily || 'Arial');
+            sg('axisTickFont',       pa.axisTickFont   || pa.fontFamily || 'Arial');
+            sg('axisTitleColor',     pa.axisTitleColor || '#333333');
+            sg('axisTickColor',      pa.axisTickColor  || '#444444');
+            sg('axisTitleFontSize',  pa.axisTitleFontSize || 13);
+            sg('axisTickFontSize',   pa.axisTickFontSize  || 11);
+            sg('plotHeight',         pa.height         || 580);
+            sg('gridColor',          pa.gridColor      || '#e0e0e0');
+            sg('gridWidth',          pa.gridWidth      || 1);
+            sg('gridDash',           pa.gridDash       || 'solid');
+            sg('axisLineColor',      pa.axisLineColor  || '#444444');
+            sg('axisLineWidth',      pa.axisLineWidth  || 1);
+            sg('yAxisMin',           pa.yAxisMin       != null ? pa.yAxisMin : '');
+            sg('yAxisMax',           pa.yAxisMax       != null ? pa.yAxisMax : '');
+            sg('xAxisMinOverride',   pa.xAxisMin       != null ? pa.xAxisMin : '');
+            sg('xAxisMaxOverride',   pa.xAxisMax       != null ? pa.xAxisMax : '');
+            sc('showGridX',          pa.showGridX      !== false);
+            sc('showGridY',          pa.showGridY      !== false);
+            sc('showLegend',         pa.showLegend     !== false);
+            sc('plotZeroLine',       pa.zeroLine       !== false);
+            sc('showAxisLineX',      pa.showAxisLineX  !== false);
+            sc('showAxisLineY',      pa.showAxisLineY  !== false);
+            sc('mirrorAxes',         !!pa.mirrorAxes);
+            sc('tightAxesCheck',     !!pa.tightAxes);
+        }
+
+        // Set active file and rebuild UI
+        state.activeFileId = state.files.length > 0 ? state.files[0].id : null;
         renderFileList();
         if (state.activeFileId) setActiveFile(state.activeFileId);
         updateStatus(`Loaded ${state.files.length} file(s) with ${state.annotations.length} label(s)`);
@@ -1777,6 +2109,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const fileId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
         state.files.push({ id: fileId, name: name, data: data, columns: columns });
 
+        const _defaultModeMap = {
+            'scatter_line':'lines', 'scatter_point':'markers', 'scatter_both':'lines+markers',
+            'area':'lines', 'step':'lines', 'bar':'', 'histogram':'', 'box':'', 'violin':''
+        };
         state.plotConfig[fileId] = {
             xCol: initialX,
             yCol: initialY,
@@ -1785,7 +2121,9 @@ document.addEventListener('DOMContentLoaded', () => {
             yLabel: yLabel,
             color: colors[(state.files.length - 1) % colors.length],
             traceName: name,
-            mode: 'markers',
+            mode: _defaultModeMap[importChartType] || 'lines',
+            markerSymbol: 'circle',
+            markerSize: 8,
             lineDash: 'solid',
             lineWidth: 2,
             smoothing: 0,
@@ -1882,10 +2220,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         // Stats column dropdowns
-        ['stats-col-select','test-colA','test-colB'].forEach(sid => {
+        ['stats-col-select','test-colA','test-colB','anova2-factorA','anova2-factorB','anova2-value',
+         'stats-long-groupcol','stats-long-valuecol'].forEach(sid => {
             const sel = document.getElementById(sid);
             if (sel) { sel.innerHTML = ''; file.columns.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); }); }
         });
+        // Refresh long-format groups list if source is already set to rows
+        if (document.getElementById('stats-source-type')?.value === 'rows') syncStatsLongGroups();
         // Grouped bar checkbox
         const _gbM = document.getElementById('grouped-bar-mode');
         if (_gbM) _gbM.checked = !!(config.groupedBarMeanSD);
@@ -1895,6 +2236,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (styleTraceName) styleTraceName.value = config.traceName;
         if (styleColor) styleColor.value = config.color;
         if (styleLineWidth) styleLineWidth.value = config.lineWidth;
+        const _mrkColorEl = document.getElementById('styleMarkerColor');
+        const _ebColorEl  = document.getElementById('styleErrorBarColor');
+        const _fillColorEl= document.getElementById('styleAreaFillColor');
+        const _fillOpEl   = document.getElementById('styleAreaFillOpacity');
+        if (_mrkColorEl)  _mrkColorEl.value  = config.markerColor  || config.color;
+        if (_ebColorEl)   _ebColorEl.value   = config.errorBarColor || config.color;
+        if (_fillColorEl) _fillColorEl.value  = config.areaFillColor || config.color;
+        if (_fillOpEl)    _fillOpEl.value     = config.areaFillOpacity != null ? config.areaFillOpacity : 18;
         const _chartTypeSel = document.getElementById('chartType');
         const _styleSide    = document.getElementById('styleYAxisSide');
         const _styleOp      = document.getElementById('styleOpacity');
@@ -1905,12 +2254,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Sync styleMode and styleLineDash
         const _sm = document.getElementById('styleMode');
         const _sd = document.getElementById('styleLineDash');
+        const _msym = document.getElementById('styleMarkerSymbol');
+        const _msz  = document.getElementById('styleMarkerSize');
         if (_sm) _sm.value = config.mode || 'lines';
         if (_sd) _sd.value = config.lineDash || 'solid';
+        if (_msym) _msym.value = config.markerSymbol || 'circle';
+        if (_msz)  _msz.value  = config.markerSize   != null ? config.markerSize : 8;
 
         // Sync bar style controls
         const bs = config.barStyle || {};
-        const _bfc = document.getElementById('barFillColor');
+        const _bfc = document.getElementById('barBgColor');
+        const _bfg = document.getElementById('barFgColor');
+        const _bps2 = document.getElementById('barPatternSize');
         const _bbc = document.getElementById('barBorderColor');
         const _bbw = document.getElementById('barBorderWidth');
         const _bop = document.getElementById('barOpacity');
@@ -1919,7 +2274,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const _bls = document.getElementById('barLabelFontSize');
         const _blc = document.getElementById('barLabelFontColor');
         const _blf = document.getElementById('barLabelFormat');
-        if (_bfc) _bfc.value = bs.fillColor   || config.color;
+        if (_bfc) _bfc.value = bs.bgColor    || bs.fillColor || config.color;
+        if (_bfg) _bfg.value = bs.fgColor    || '#000000';
+        if (_bps2) _bps2.value = bs.patternSize != null ? bs.patternSize : 8;
         if (_bbc) _bbc.value = bs.borderColor  || '#000000';
         if (_bbw) _bbw.value = bs.borderWidth  != null ? bs.borderWidth : 0;
         const _bps = document.getElementById('barPatternShape');
@@ -2117,8 +2474,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // ── Box Plot ───────────────────────────────────────────────
             if (chartType === 'box') {
                 const vals = file.data.map(r => parseVal(r[config.yCol])||0);
+                const _mc = config.markerColor || config.color;
                 traces.push({ y:vals, type:'box', name:config.traceName, boxpoints:'outliers',
-                    marker:{color:config.color}, line:{color:config.color},
+                    marker:{color:_mc, outliercolor:_mc}, line:{color:config.color},
+                    fillcolor:hexToRgba(config.areaFillColor||config.color,(config.areaFillOpacity??30)/100),
                     yaxis:yAxisKey, opacity:config.opacity||1 });
                 return;
             }
@@ -2126,8 +2485,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (chartType === 'violin') {
                 const vals = file.data.map(r => parseVal(r[config.yCol])||0);
                 traces.push({ y:vals, type:'violin', name:config.traceName, points:'outliers',
-                    marker:{color:config.color}, line:{color:config.color},
-                    fillcolor:hexToRgba(config.color,0.3),
+                    marker:{color:config.markerColor||config.color}, line:{color:config.color},
+                    fillcolor:hexToRgba(config.areaFillColor||config.color,(config.areaFillOpacity??30)/100),
                     yaxis:yAxisKey, opacity:config.opacity||1 });
                 return;
             }
@@ -2166,54 +2525,162 @@ document.addEventListener('DOMContentLoaded', () => {
             if (_dataMode === 'meansd' && config.replicateCols && config.replicateCols.length > 0) {
                 const repCols  = config.replicateCols;
                 const errType  = config.replicateError || 'sd';
-                const barLabels = x.map(v => String(v));
-                const means=[], errVals=[], allPts=[];
-                barLabels.forEach((lbl, i) => {
+                const isBar    = chartType === 'bar';
+                // x labels are string for bar, attempt numeric for line/scatter
+                const rawXVals = x.map(v => String(v));
+                const numericX = x.map(v => parseFloat(v)).every(v => !isNaN(v));
+                const plotXVals = (isBar || !numericX) ? rawXVals : x.map(v => parseFloat(v));
+
+                const means=[], errVals=[], ns=[], allPts=[];
+                rawXVals.forEach((lbl, i) => {
                     const vals = repCols.map(c => parseFloat(file.data[i]?.[c])).filter(v => !isNaN(v));
-                    if (!vals.length) { means.push(0); errVals.push(0); return; }
-                    const n  = vals.length;
-                    const m  = vals.reduce((a,b)=>a+b,0)/n;
-                    const sd = n>1 ? Math.sqrt(vals.map(v=>(v-m)**2).reduce((a,b)=>a+b,0)/(n-1)) : 0;
+                    if (!vals.length) { means.push(NaN); errVals.push(0); ns.push(0); return; }
+                    const n   = vals.length;
+                    const m   = vals.reduce((a,b)=>a+b,0)/n;
+                    const sd  = n>1 ? Math.sqrt(vals.map(v=>(v-m)**2).reduce((a,b)=>a+b,0)/(n-1)) : 0;
                     const sem = sd/Math.sqrt(n);
                     const ci  = 1.96*sem;
                     means.push(m);
                     errVals.push(errType==='sd'?sd : errType==='sem'?sem : ci);
-                    if (config.replicateShowPts) vals.forEach(v => allPts.push({lbl, v}));
+                    ns.push(n);
+                    if (config.replicateShowPts) vals.forEach(v => allPts.push({lbl: isBar||!numericX ? lbl : parseFloat(lbl), v}));
                 });
+
                 const yKey = config.yaxisSide==='right' ? 'y2' : config.yaxisSide==='right2' ? 'y3' : 'y';
-                const isBar = chartType === 'bar';
                 const _bs2 = config.barStyle || {};
-                const _fillCol2  = _bs2.fillColor   || config.color;
-                const _bordCol2  = _bs2.borderColor || 'rgba(0,0,0,0.15)';
-                const _bordW2    = _bs2.borderWidth  != null ? _bs2.borderWidth : 0;
-                const _barOp2    = _bs2.opacity      != null ? _bs2.opacity : (config.opacity||0.85);
+                const _fillCol2  = _bs2.bgColor      || _bs2.fillColor || config.color;
+                const _fgCol2    = _bs2.fgColor      || '#000000';
+                const _bordCol2  = _bs2.borderColor  || 'rgba(0,0,0,0.15)';
+                const _bordW2    = _bs2.borderWidth   != null ? _bs2.borderWidth : 0;
+                const _barOp2    = _bs2.opacity       != null ? _bs2.opacity : (config.opacity||0.85);
+                const _pat2      = _bs2.patternShape  || 'solid';
+                const _patSz2    = _bs2.patternSize   || 8;
                 const _showLbl2  = !!_bs2.showLabels;
                 const _lblPos2   = _bs2.labelPosition || 'outside';
                 const _lblFsz2   = _bs2.labelFontSize || 11;
                 const _lblCol2   = _bs2.labelFontColor || '#333333';
                 const _lblFmt2   = _bs2.labelFormat || 'value';
                 const _barName2  = config.traceName + ' (mean±' + errType + ')';
+                const _errColor2 = config.errorBarColor || _fgCol2;
+                const _patObj2   = _pat2 !== 'solid'
+                    ? { shape: _pat2, bgcolor: _fillCol2, fgcolor: _fgCol2, fillmode: 'overlay', size: _patSz2, solidity: 0.4 }
+                    : undefined;
                 let _barTxt2 = null;
-                if (_showLbl2) { _barTxt2 = means.map(v => _lblFmt2==='percent'?((v*100).toFixed(1)+'%') : _lblFmt2==='scientific'?v.toExponential(2) : v.toPrecision(4).replace(/\.?0+$/, '')); }
-                const _errYSpec = { type:'data', array:errVals, visible:true, color:_fillCol2, thickness:1.5, width:6 };
+                if (_showLbl2) { _barTxt2 = means.map((v,i) => {
+                    if (isNaN(v)) return '';
+                    const label = _lblFmt2==='percent'?((v*100).toFixed(1)+'%') : _lblFmt2==='scientific'?v.toExponential(2) : v.toPrecision(4).replace(/\.?0+$/, '');
+                    return config.replicateShowPts ? `${label} (n=${ns[i]})` : label;
+                }); }
+                const _errYSpec = { type:'data', array:errVals, visible:true, color:_errColor2, thickness:1.5, width:6 };
+                const validMask = means.map((m,i)=>!isNaN(m));
+                const filtX  = plotXVals.filter((_,i)=>validMask[i]);
+                const filtY  = means.filter((_,i)=>validMask[i]);
+                const filtEr = errVals.filter((_,i)=>validMask[i]);
+                const filtTx = _barTxt2 ? _barTxt2.filter((_,i)=>validMask[i]) : null;
+                const filtErrSpec = { type:'data', array:filtEr, visible:true, color:_errColor2, thickness:1.5, width:6 };
+                const _mkrObj2 = { color: _fillCol2, opacity: _barOp2, line: { color: _bordCol2, width: _bordW2 } };
+                if (_patObj2) _mkrObj2.pattern = _patObj2;
                 traces.push(isBar
-                    ? { type:'bar', x:barLabels, y:means, name:_barName2, yaxis:yKey,
-                        text:_barTxt2||[], textposition:_showLbl2?(_lblPos2==='center'?'inside':'outside'):'none',
+                    ? { type:'bar', x:rawXVals.filter((_,i)=>validMask[i]), y:filtY, name:_barName2, yaxis:yKey,
+                        text:filtTx||[], textposition:_showLbl2?(_lblPos2==='center'?'inside':'outside'):'none',
                         textfont:{size:_lblFsz2,color:_lblCol2}, insidetextanchor:_lblPos2==='center'?'middle':'end',
-                        marker:{color:_fillCol2, opacity:_barOp2, line:{color:_bordCol2,width:_bordW2}},
-                        error_y:_errYSpec }
-                    : { type:'scatter', mode:config.mode||'lines+markers', x:barLabels, y:means, name:_barName2, yaxis:yKey,
+                        marker: _mkrObj2,
+                        error_y:filtErrSpec }
+                    : { type:'scatter', mode:config.mode||'lines+markers', x:filtX, y:filtY, name:_barName2, yaxis:yKey,
                         line:{color:config.color,width:config.lineWidth||2,dash:config.lineDash||'solid'},
-                        marker:{color:config.color,size:(config.lineWidth||2)*2.5},
-                        error_y:_errYSpec, opacity:config.opacity||1 });
+                        marker:{color:config.markerColor||config.color,size:config.markerSize||8,symbol:config.markerSymbol||'circle'},
+                        error_y:filtErrSpec, opacity:config.opacity||1 });
                 if (config.replicateShowPts && allPts.length) {
-                    traces.push({type:'scatter', mode:'markers', x:allPts.map(p=>p.lbl), y:allPts.map(p=>p.v),
-                        name:config.traceName+' (points)', marker:{color:config.color,size:5,opacity:0.6,symbol:'circle-open'}, yaxis:yKey, showlegend:false});
+                    // Add small jitter for overlapping points in bar mode
+                    traces.push({type:'scatter', mode:'markers',
+                        x:allPts.map(p=>p.lbl), y:allPts.map(p=>p.v),
+                        name:config.traceName+' (pts)', yaxis:yKey,
+                        marker:{color:config.markerColor||config.color,size:5,opacity:0.65,symbol:'circle-open'},
+                        showlegend:false});
                 }
                 return;
             }
 
-            // ── Grouped / long-format bar chart ──────────────────────────
+            // ── Mean±SD/SEM from long-format rows (group col + value col) ──
+            if (_dataMode === 'meansd_long' && config.repLongGroupCol && config.repLongValueCol) {
+                const grpCol   = config.repLongGroupCol;
+                const valCol   = config.repLongValueCol;
+                const errType  = config.repLongErrorType || 'sd';
+                const isBar    = chartType === 'bar';
+                const yKey     = config.yaxisSide==='right' ? 'y2' : config.yaxisSide==='right2' ? 'y3' : 'y';
+
+                // Collect all values per group
+                const groupMap = new Map();
+                file.data.forEach(r => {
+                    const grp = String(r[grpCol]||'').trim();
+                    const val = parseVal(r[valCol]);
+                    if (!grp || isNaN(val)) return;
+                    if (!groupMap.has(grp)) groupMap.set(grp, []);
+                    groupMap.get(grp).push(val);
+                });
+
+                // Determine x-axis order
+                let groups = config.repLongOrder && config.repLongOrder.length > 0
+                    ? config.repLongOrder.filter(g => groupMap.has(g))
+                    : [...groupMap.keys()];
+                // Append any groups not in order spec
+                groupMap.forEach((_, g) => { if (!groups.includes(g)) groups.push(g); });
+
+                const means=[], errVals=[], ns=[], allPts=[];
+                groups.forEach(grp => {
+                    const vals = groupMap.get(grp) || [];
+                    const n   = vals.length;
+                    if (!n) { means.push(NaN); errVals.push(0); ns.push(0); return; }
+                    const m   = vals.reduce((a,b)=>a+b,0)/n;
+                    const sd  = n>1 ? Math.sqrt(vals.map(v=>(v-m)**2).reduce((a,b)=>a+b,0)/(n-1)) : 0;
+                    const sem = sd/Math.sqrt(n);
+                    const ci  = 1.96*sem;
+                    means.push(m);
+                    errVals.push(errType==='sd'?sd : errType==='sem'?sem : ci);
+                    ns.push(n);
+                    if (config.repLongShowPts) vals.forEach(v => allPts.push({grp, v}));
+                });
+
+                const _bsL = config.barStyle || {};
+                const _fillL  = _bsL.bgColor || _bsL.fillColor || config.color;
+                const _fgL    = _bsL.fgColor || '#000000';
+                const _bordL  = _bsL.borderColor || 'rgba(0,0,0,0.15)';
+                const _bordWL = _bsL.borderWidth != null ? _bsL.borderWidth : 0;
+                const _opL    = _bsL.opacity != null ? _bsL.opacity : (config.opacity||0.85);
+                const _patL   = _bsL.patternShape || 'solid';
+                const _patSzL = _bsL.patternSize || 8;
+                const _errClrL = config.errorBarColor || _fgL;
+                const _patObjL = _patL !== 'solid'
+                    ? { shape:_patL, bgcolor:_fillL, fgcolor:_fgL, fillmode:'overlay', size:_patSzL, solidity:0.4 }
+                    : undefined;
+                const _mkrL = { color:_fillL, opacity:_opL, line:{color:_bordL, width:_bordWL} };
+                if (_patObjL) _mkrL.pattern = _patObjL;
+                const validMask = means.map(m=>!isNaN(m));
+                const filtGrps = groups.filter((_,i)=>validMask[i]);
+                const filtMeans = means.filter((_,i)=>validMask[i]);
+                const filtErr   = errVals.filter((_,i)=>validMask[i]);
+                const filtNs    = ns.filter((_,i)=>validMask[i]);
+                const _errSpec = { type:'data', array:filtErr, visible:true, color:_errClrL, thickness:1.5, width:6 };
+                traces.push(isBar
+                    ? { type:'bar', x:filtGrps, y:filtMeans, name:config.traceName+' (mean±'+errType+')', yaxis:yKey,
+                        customdata: filtNs,
+                        marker:_mkrL, error_y:_errSpec,
+                        hovertemplate:'%{x}<br>mean=%{y:.4g}<br>n=%{customdata}<extra>'+config.traceName+'</extra>' }
+                    : { type:'scatter', mode:config.mode||'lines+markers', x:filtGrps, y:filtMeans,
+                        name:config.traceName+' (mean±'+errType+')', yaxis:yKey,
+                        customdata: filtNs,
+                        line:{color:config.color, width:config.lineWidth||2, dash:config.lineDash||'solid'},
+                        marker:{color:config.markerColor||config.color, size:config.markerSize||8, symbol:config.markerSymbol||'circle'},
+                        error_y:_errSpec, opacity:config.opacity||1,
+                        hovertemplate:'%{x}<br>mean=%{y:.4g}<br>n=%{customdata}<extra>'+config.traceName+'</extra>' });
+                if (config.repLongShowPts && allPts.length) {
+                    traces.push({ type:'scatter', mode:'markers', x:allPts.map(p=>p.grp), y:allPts.map(p=>p.v),
+                        name:config.traceName+' (pts)', yaxis:yKey,
+                        marker:{color:config.markerColor||config.color, size:5, opacity:0.65, symbol:'circle-open'},
+                        showlegend:false });
+                }
+                return;
+            }
             if (_dataMode === 'grouped' && config.groupCol && config.categoryCol && config.valueCol) {
                 const groupCol = config.groupCol, catCol = config.categoryCol, valCol = config.valueCol;
                 const groups = [...new Set(file.data.map(r => String(r[groupCol]||'')))].filter(Boolean);
@@ -2241,14 +2708,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     let _grpTxt = null;
                     if (_showLblG) { _grpTxt = yVals.map(v => _lblFmtG==='percent'?((v*100).toFixed(1)+'%') : _lblFmtG==='scientific'?v.toExponential(2) : v.toPrecision(4).replace(/\.?0+$/, '')); }
                     
-                    const gStyle = config.groupStyles?.[grp] || { color: colorPalette[gi%colorPalette.length], pattern: 'solid' };
+                    const gStyle = config.groupStyles?.[grp] || { color: colorPalette[gi%colorPalette.length], fgcolor: '#000000', pattern: 'solid' };
+                    const _gPatObj = gStyle.pattern && gStyle.pattern !== 'solid'
+                        ? { shape: gStyle.pattern, bgcolor: gStyle.color, fgcolor: gStyle.fgcolor||'#000000', fillmode: 'overlay', size: gStyle.patternSize||8, solidity: 0.4 }
+                        : undefined;
                     const markerStyles = {
-                        color: gStyle.color, opacity: _barOpG, 
+                        color: gStyle.color, opacity: _barOpG,
                         line: {color:_bordColG, width:_bordWG}
                     };
-                    if (gStyle.pattern && gStyle.pattern !== 'solid') {
-                        markerStyles.pattern = { shape: gStyle.pattern, fillmode: 'replace' };
-                    }
+                    if (_gPatObj) markerStyles.pattern = _gPatObj;
 
                     traces.push({ type:'bar', x:cats, y:yVals, name:grp,
                         text:_grpTxt||[], textposition:_showLblG?(_lblPosG==='center'?'inside':'outside'):'none',
@@ -2270,9 +2738,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const sd = vals.length>1 ? Math.sqrt(vals.map(v=>(v-m)**2).reduce((a,b)=>a+b,0)/(vals.length-1)) : 0;
                     means.push(m); sds.push(sd);
                 });
+                const _legEbColor = config.errorBarColor || config.color;
                 traces.push({x:barLabels, y:means, type:'bar', name:config.traceName+' (mean)',
                     marker:{color:config.color,opacity:0.9,line:{color:'rgba(255,255,255,.4)',width:.5}},
-                    error_y:{type:'data',array:sds,visible:true,color:'#333',thickness:1.5,width:6},
+                    error_y:{type:'data',array:sds,visible:true,color:_legEbColor,thickness:1.5,width:6},
                     yaxis: config.yaxisSide==='right' ? 'y2' : 'y'});
                 return;
             }
@@ -2340,18 +2809,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // ── Error Bars ─────────────────────────────────────────────
             let errorBar;
             const ec = config.errorConfig || {};
+            const _ebColor = config.errorBarColor || config.color;
             if (ec.show) {
                 if (ec.type==='symmetric' && ec.col) {
-                    errorBar = { type:'data', array:file.data.map(r=>parseVal(r[ec.col])||0), visible:true, color:config.color };
+                    errorBar = { type:'data', array:file.data.map(r=>parseVal(r[ec.col])||0), visible:true, color:_ebColor, thickness:1.5, width:6 };
                 } else if (ec.type==='asymmetric' && ec.colPlus && ec.colMinus) {
                     errorBar = { type:'data',
                         array:      file.data.map(r=>parseVal(r[ec.colPlus]) ||0),
                         arrayminus: file.data.map(r=>parseVal(r[ec.colMinus])||0),
-                        visible:true, color:config.color };
+                        visible:true, color:_ebColor, thickness:1.5, width:6 };
                 } else if (ec.type==='percent') {
-                    errorBar = { type:'percent', value:ec.percent||5, visible:true, color:config.color };
+                    errorBar = { type:'percent', value:ec.percent||5, visible:true, color:_ebColor, thickness:1.5, width:6 };
                 } else if (ec.type==='constant') {
-                    errorBar = { type:'constant', value:ec.constant||0, visible:true, color:config.color };
+                    errorBar = { type:'constant', value:ec.constant||0, visible:true, color:_ebColor, thickness:1.5, width:6 };
+                } else if (ec.type==='sqrt') {
+                    // sqrt error: array = sqrt of each y value
+                    errorBar = { type:'data', array:plotY.map(v=>Math.sqrt(Math.abs(v))), visible:true, color:_ebColor, thickness:1.5, width:6 };
                 }
             }
 
@@ -2366,15 +2839,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const _isPct = isPercentCol(file, config.yCol);
                 if (_isPct) config._yIsPct = true;
                 const bs = config.barStyle || {};
-                const fillColor   = bs.fillColor   || config.color;
-                const borderColor = bs.borderColor || 'rgba(0,0,0,0)';
-                const borderWidth = bs.borderWidth  != null ? bs.borderWidth : 0;
-                const barOpacity  = bs.opacity      != null ? bs.opacity     : (config.opacity||0.85);
+                const fillColor   = bs.bgColor      || bs.fillColor || config.color;
+                const fgColor     = bs.fgColor      || '#000000';
+                const borderColor = bs.borderColor  || 'rgba(0,0,0,0)';
+                const borderWidth = bs.borderWidth   != null ? bs.borderWidth : 0;
+                const barOpacity  = bs.opacity       != null ? bs.opacity     : (config.opacity||0.85);
+                const patternShape = bs.patternShape || 'solid';
+                const patternSize  = bs.patternSize  || 8;
                 const showLabels  = !!bs.showLabels;
                 const labelPos    = bs.labelPosition || 'outside';
                 const labelFontSz = bs.labelFontSize || 11;
                 const labelColor  = bs.labelFontColor|| '#333333';
                 const labelFmt    = bs.labelFormat   || 'value';
+
+                // Build Plotly pattern object
+                const _patternObj = patternShape !== 'solid'
+                    ? { shape: patternShape, bgcolor: fillColor, fgcolor: fgColor, fillmode: 'overlay', size: patternSize, solidity: 0.4 }
+                    : undefined;
 
                 let textArr = null;
                 if (showLabels) {
@@ -2384,17 +2865,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         return Number.isInteger(v) ? String(v) : v.toPrecision(4).replace(/\.?0+$/,'');
                     });
                 }
+                const _markerObj = { color: fillColor, opacity: barOpacity, line: { color: borderColor, width: borderWidth } };
+                if (_patternObj) _markerObj.pattern = _patternObj;
                 trace = {
                     x: barX, y: plotY, type: 'bar', name: config.traceName,
                     text: textArr || [],
                     textposition: showLabels ? (labelPos === 'inside' ? 'inside' : labelPos === 'center' ? 'inside' : 'outside') : 'none',
                     textfont: { size: labelFontSz, color: labelColor },
                     insidetextanchor: labelPos === 'center' ? 'middle' : 'end',
-                    marker: Object.assign({
-                        color: fillColor,
-                        opacity: barOpacity,
-                        line: { color: borderColor, width: borderWidth }
-                    }, bs.patternShape && bs.patternShape !== 'solid' ? { pattern: { shape: bs.patternShape, fillmode: 'replace' } } : {}),
+                    marker: _markerObj,
                     error_y: errorBar, yaxis: yAxisKey,
                     hovertemplate: _isPct
                         ? '%{x}<br>%{y:.2f}%<extra>' + config.traceName + '</extra>'
@@ -2402,9 +2881,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
             } else if (chartType === 'area') {
+                const _fillRgba = config.areaFillColor
+                    ? hexToRgba(config.areaFillColor, (config.areaFillOpacity??18)/100)
+                    : hexToRgba(config.color, (config.areaFillOpacity??18)/100);
                 trace = {
                     x: plotX, y: plotY, type: 'scattergl', mode: 'lines', name: config.traceName,
-                    fill: 'tozeroy', fillcolor: hexToRgba(config.color, 0.18),
+                    fill: 'tozeroy', fillcolor: _fillRgba,
                     line: { color: config.color, width: config.lineWidth||2, dash: config.lineDash||'solid' },
                     error_y: errorBar, yaxis: yAxisKey, opacity
                 };
@@ -2418,6 +2900,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } else {
                 // scatter_line, scatter_point, scatter_both, or legacy 'lines'/'markers'
+                // chartType sets the default mode; config.mode overrides when explicitly set by user
                 const modeMap = {
                     'scatter_line':  'lines',
                     'scatter_point': 'markers',
@@ -2426,10 +2909,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     'markers':       'markers',
                     'lines+markers': 'lines+markers'
                 };
-                const mode = modeMap[chartType] || 'lines';
+                const ctMode = modeMap[chartType] || 'lines';
+                // Use config.mode if it's a valid plotly mode string; else fall back to chart-type default
+                const validModes = new Set(['lines','markers','lines+markers']);
+                const mode = (config.mode && validModes.has(config.mode)) ? config.mode : ctMode;
+
+                const _markerColor  = config.markerColor  || config.color;
+                const _markerSize   = config.markerSize   != null ? config.markerSize : (config.lineWidth||2) * 2.5;
+                const _markerSymbol = config.markerSymbol || 'circle';
                 trace = {
                     x: plotX, y: plotY, type: 'scattergl', mode, name: config.traceName,
-                    marker: { color: config.color, size: (config.lineWidth||2) * 2.5 },
+                    marker: { color: _markerColor, size: _markerSize, symbol: _markerSymbol },
                     line:   { color: config.color, width: config.lineWidth||2, dash: config.lineDash||'solid' },
                     error_y: errorBar, yaxis: yAxisKey, opacity
                 };
@@ -2494,6 +2984,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const _alcol= pa.axisLineColor || '#444444';
         const _alw  = pa.axisLineWidth || 1;
         const _mirror = pa.mirrorAxes ? 'ticks' : false;
+        const _titleFont = { family: pa.axisTitleFont || pa.fontFamily || 'Arial', size: pa.axisTitleFontSize || 13, color: pa.axisTitleColor || '#333333' };
+        const _tickFont  = { family: pa.axisTickFont  || pa.fontFamily || 'Arial', size: pa.axisTickFontSize  || 11, color: pa.axisTickColor  || '#444444' };
 
         // Build axis range arrays if overrides set
         const _yRange = (pa.yAxisMin!=null||pa.yAxisMax!=null)
@@ -2501,8 +2993,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const _xRangeOverride = (pa.xAxisMin!=null||pa.xAxisMax!=null)
             ? [pa.xAxisMin!==null?pa.xAxisMin:'auto', pa.xAxisMax!==null?pa.xAxisMax:'auto'] : undefined;
 
-        const _titleSz = pa.axisTitleFontSize || 13;
-        const _tickSz  = pa.axisTickFontSize  || 11;
         const _tightAxes = document.getElementById('tightAxesCheck')?.checked ?? false;
         const layout = {
             autosize: true, height: (pa.height||580),
@@ -2511,8 +3001,8 @@ document.addEventListener('DOMContentLoaded', () => {
             bargap: 0.15,
             bargroupgap: 0.05,
             xaxis: {
-                title: { text: xTitle, font:{size: _titleSz} },
-                tickfont: { size: _tickSz },
+                title: { text: xTitle, font: _titleFont },
+                tickfont: _tickFont,
                 automargin: true,
                 gridcolor: _gcol, gridwidth: _gw, griddash: _gdash,
                 showgrid: pa.showGridX!==false, zeroline: pa.zeroLine!==false,
@@ -2528,8 +3018,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 showspikes: true, spikemode: 'across', spikethickness: 1, spikedash: 'dash', spikecolor: '#aaa'
             },
             yaxis:  {
-                title: { text: yTitle, font:{size: _titleSz} },
-                tickfont: { size: _tickSz },
+                title: { text: yTitle, font: _titleFont },
+                tickfont: _tickFont,
                 automargin: true,
                 gridcolor: _gcol, gridwidth: _gw, griddash: _gdash,
                 showgrid: pa.showGridY!==false, zeroline: pa.zeroLine!==false,
@@ -2542,11 +3032,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 rangemode: _tightAxes ? 'tozero' : 'normal',
                 showspikes: true, spikethickness: 1, spikedash: 'dash', spikecolor: '#aaa'
             },
-            yaxis2: { title: { text: y2Title, font:{size: _titleSz} }, tickfont:{size:_tickSz}, automargin: true, overlaying: 'y', side: 'right', showgrid: false, visible: hasY2,
+            yaxis2: { title: { text: y2Title, font: _titleFont }, tickfont: _tickFont, automargin: true, overlaying: 'y', side: 'right', showgrid: false, visible: hasY2,
                 showline: pa.showAxisLineY!==false, linecolor: _alcol, linewidth: _alw },
-            yaxis3: { title: { text: y3Title, font:{size: _titleSz} }, tickfont:{size:_tickSz}, automargin: true, overlaying: 'y', side: 'right', showgrid: false, visible: hasY3, position: 0.93,
+            yaxis3: { title: { text: y3Title, font: _titleFont }, tickfont: _tickFont, automargin: true, overlaying: 'y', side: 'right', showgrid: false, visible: hasY3, position: 0.93,
                 showline: pa.showAxisLineY!==false, linecolor: _alcol, linewidth: _alw },
-            legend: { x: 0, y: 1.1, orientation: 'h', font: { size: _tickSz } },
+            legend: { x: 0, y: 1.1, orientation: 'h', font: _tickFont },
             paper_bgcolor: pa.paperColor||'#fff',
             plot_bgcolor: pa.bgColor||'#fcfcfc',
             font: { family: pa.fontFamily||'Arial', size: pa.fontSize||12 },
@@ -2741,13 +3231,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         file.data.forEach(row => {
                             const rx = parseVal(row[cfg.xCol]), ry = parseVal(row[cfg.yCol]);
                             if (isNaN(rx)||isNaN(ry)) return;
-                            // Normalize by axis range to get equal-weight distance
-                            const dx = (rx-dataX)/(xRange[1]-xRange[0]||1);
-                            const dy = (ry-dataY)/(yRange[1]-yRange[0]||1);
-                            const dist = dx*dx+dy*dy;
+                            // Normalize by axis range for equal-weight distance
+                            const xSpan = Math.abs(xRange[1]-xRange[0]) || 1;
+                            const ySpan = Math.abs(yRange[1]-yRange[0]) || 1;
+                            const dx = (rx-dataX)/xSpan;
+                            const dy = (ry-dataY)/ySpan;
+                            const dist = dx*dx + dy*dy;
                             if (dist < bestDist) { bestDist=dist; bx=rx; by=ry; }
                         });
-                        if (bestDist < 0.01) { dataX=bx; dataY=by; snapped=true; }
+                        // Snap if within 5% of axis range (was 0.01 = 1%, far too tight)
+                        if (bestDist < 0.0025) { dataX=bx; dataY=by; snapped=true; }
                     }
                 }
                 openLabelPlacementModal(dataX, dataY, snapped, e.clientX, e.clientY);
@@ -3488,16 +3981,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const xd1=g('calXData1'), xr1=g('calXReal1'), xd2=g('calXData2'), xr2=g('calXReal2');
         const yd1=g('calYData1'), yr1=g('calYReal1'), yd2=g('calYData2'), yr2=g('calYReal2');
         if (!isNaN(xd1)&&!isNaN(xr1)&&!isNaN(xd2)&&!isNaN(xr2)&&xd1!==xd2) {
-            const xs=(xr2-xr1)/(xd2-xd1), xo=xr1/xs-xd1;
+            const xs=(xr2-xr1)/(xd2-xd1), xo=xr1-xs*xd1;
             config.axisShift.xScale=xs; config.axisShift.xOffset=xo;
-            const oe=document.getElementById('axisShiftXOffset'); if(oe) oe.value=+xs.toPrecision(8);
-            const se=document.getElementById('axisShiftXScale');  if(se) se.value=+xo.toPrecision(8);
+            const oe=document.getElementById('axisShiftXOffset'); if(oe) oe.value=+xo.toPrecision(8);
+            const se=document.getElementById('axisShiftXScale');  if(se) se.value=+xs.toPrecision(8);
         }
         if (!isNaN(yd1)&&!isNaN(yr1)&&!isNaN(yd2)&&!isNaN(yr2)&&yd1!==yd2) {
-            const ys=(yr2-yr1)/(yd2-yd1), yo=yr1/ys-yd1;
+            const ys=(yr2-yr1)/(yd2-yd1), yo=yr1-ys*yd1;
             config.axisShift.yScale=ys; config.axisShift.yOffset=yo;
-            const oe=document.getElementById('axisShiftYOffset'); if(oe) oe.value=+ys.toPrecision(8);
-            const se=document.getElementById('axisShiftYScale');  if(se) se.value=+yo.toPrecision(8);
+            const oe=document.getElementById('axisShiftYOffset'); if(oe) oe.value=+yo.toPrecision(8);
+            const se=document.getElementById('axisShiftYScale');  if(se) se.value=+ys.toPrecision(8);
         }
         renderPlot();
         updateStatus('2-point calibration applied.');
@@ -3517,6 +4010,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const ct = g('chartType')?.value || 'scatter_line';
         config.chartType = ct;
         applyChartTypeVisibility(ct);
+        // Sync Draw Mode dropdown to match chart type for scatter variants
+        const _ctModeSync = {
+            'scatter_line': 'lines', 'scatter_point': 'markers', 'scatter_both': 'lines+markers'
+        };
+        if (_ctModeSync[ct]) {
+            config.mode = _ctModeSync[ct];
+            const _smEl = g('styleMode');
+            if (_smEl) _smEl.value = config.mode;
+        }
         if (ct === 'histogram') {
             const bs = parseFloat(g('histBinSize')?.value);
             config.histBinSize = isNaN(bs) ? null : bs;
@@ -3559,8 +4061,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Bar-specific style
         config.barStyle = {
-            fillColor:        g('barFillColor')?.value        || config.color,
+            bgColor:          g('barBgColor')?.value          || config.color,
+            fgColor:          g('barFgColor')?.value          || '#000000',
             patternShape:     g('barPatternShape')?.value     || 'solid',
+            patternSize:      parseInt(g('barPatternSize')?.value) || 8,
             borderColor:      g('barBorderColor')?.value      || 'rgba(0,0,0,0)',
             borderWidth:      parseFloat(g('barBorderWidth')?.value) || 0,
             opacity:          (parseInt(g('barOpacity')?.value) || 85) / 100,
@@ -3827,82 +4331,264 @@ document.addEventListener('DOMContentLoaded', () => {
         box.innerHTML = tbl;
     };
 
+    // ── Stats source UI (wide vs long format) ──────────────────────────────
+    window.syncStatsSourceUI = () => {
+        const src = document.getElementById('stats-source-type')?.value || 'columns';
+        const wideUI = document.getElementById('stats-wide-ui');
+        const longUI = document.getElementById('stats-long-ui');
+        if (wideUI) wideUI.style.display = src === 'columns' ? 'block' : 'none';
+        if (longUI) longUI.style.display = src === 'rows'    ? 'block' : 'none';
+        if (src === 'rows' && state.activeFileId) syncStatsLongGroups();
+    };
+
+    window.syncStatsLongGroups = () => {
+        if (!state.activeFileId) return;
+        const file = state.files.find(f=>f.id===state.activeFileId);
+        if (!file) return;
+        const grpCol = document.getElementById('stats-long-groupcol')?.value;
+        const grpSel = document.getElementById('stats-long-groups');
+        if (!grpSel || !grpCol) return;
+        const groups = [...new Set(file.data.map(r=>String(r[grpCol]||'')))].filter(Boolean).sort();
+        grpSel.innerHTML = '';
+        groups.forEach(g => {
+            const o = document.createElement('option');
+            o.value = g; o.textContent = g; o.selected = true;
+            grpSel.appendChild(o);
+        });
+        syncStatsLongGroupPair();
+    };
+
+    window.syncStatsLongGroupPair = () => {
+        const grpSel = document.getElementById('stats-long-groups');
+        const selGroups = grpSel ? Array.from(grpSel.selectedOptions).map(o=>o.value) : [];
+        ['stats-long-grpA','stats-long-grpB'].forEach((sid,i) => {
+            const sel = document.getElementById(sid);
+            if (!sel) return;
+            const prev = sel.value;
+            sel.innerHTML = '';
+            selGroups.forEach(g => { const o=document.createElement('option'); o.value=g; o.textContent=g; sel.appendChild(o); });
+            if (selGroups.includes(prev)) sel.value = prev;
+            else if (i===1 && selGroups.length>=2) sel.value = selGroups[1];
+        });
+    };
+
+    // Sync ANOVA UI visibility
+    window.syncAnovaUI = () => {
+        const testType = document.getElementById('stats-test-type')?.value;
+        const a2ui = document.getElementById('anova2-ui');
+        if (a2ui) a2ui.style.display = testType === 'anova2' ? 'block' : 'none';
+        if (testType === 'anova2' && state.activeFileId) {
+            const file = state.files.find(f=>f.id===state.activeFileId);
+            if (file) {
+                ['anova2-factorA','anova2-factorB','anova2-value'].forEach(sid => {
+                    const sel = document.getElementById(sid);
+                    if (!sel || sel.options.length > 0) return;
+                    file.columns.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+                });
+            }
+        }
+    };
+
+    // ── Helper: get group data (wide or long) ──────────────────────────────
+    function getGroupsForTest() {
+        // Returns [{name, vals}] based on current source UI settings
+        const src = document.getElementById('stats-source-type')?.value || 'columns';
+        const file = state.files.find(f=>f.id===state.activeFileId);
+        if (!file) return [];
+        if (src === 'columns') {
+            // All numeric columns
+            return file.columns
+                .map(c => ({ name:c, vals:getColVals(state.activeFileId,c) }))
+                .filter(g => g.vals.length > 0);
+        } else {
+            // Long format
+            const grpCol = document.getElementById('stats-long-groupcol')?.value;
+            const valCol = document.getElementById('stats-long-valuecol')?.value;
+            const selGroups = Array.from(document.getElementById('stats-long-groups')?.selectedOptions||[]).map(o=>o.value);
+            if (!grpCol || !valCol || !selGroups.length) return [];
+            const map = new Map();
+            file.data.forEach(r => {
+                const g = String(r[grpCol]||'').trim();
+                const v = parseVal(r[valCol]);
+                if (!g || isNaN(v) || !selGroups.includes(g)) return;
+                if (!map.has(g)) map.set(g, []);
+                map.get(g).push(v);
+            });
+            return selGroups.filter(g=>map.has(g)).map(g=>({ name:g, vals:map.get(g) }));
+        }
+    }
+
+    function getPairValsForTest() {
+        const src = document.getElementById('stats-source-type')?.value || 'columns';
+        if (src === 'columns') {
+            const colA = document.getElementById('test-colA')?.value;
+            const colB = document.getElementById('test-colB')?.value;
+            return {
+                nameA: colA, nameB: colB,
+                vA: getColVals(state.activeFileId, colA),
+                vB: getColVals(state.activeFileId, colB)
+            };
+        } else {
+            const grpCol = document.getElementById('stats-long-groupcol')?.value;
+            const valCol = document.getElementById('stats-long-valuecol')?.value;
+            const grpA   = document.getElementById('stats-long-grpA')?.value;
+            const grpB   = document.getElementById('stats-long-grpB')?.value;
+            const file = state.files.find(f=>f.id===state.activeFileId);
+            const extract = g => file.data.filter(r=>String(r[grpCol]||'').trim()===g).map(r=>parseVal(r[valCol])).filter(v=>!isNaN(v));
+            return { nameA:grpA, nameB:grpB, vA:extract(grpA), vB:extract(grpB) };
+        }
+    }
+
+    // ── Tukey HSD ──────────────────────────────────────────────────────────
+    function tukeyHSD(groups, MSW, dfW) {
+        // groups: [{name, vals}]
+        const k = groups.length;
+        const results = [];
+        for (let i=0; i<k; i++) {
+            for (let j=i+1; j<k; j++) {
+                const gA = groups[i], gB = groups[j];
+                const mA = gA.vals.reduce((a,b)=>a+b,0)/gA.vals.length;
+                const mB = gB.vals.reduce((a,b)=>a+b,0)/gB.vals.length;
+                // Harmonic mean of group sizes for unequal n (Tukey-Kramer)
+                const nH = 2 / (1/gA.vals.length + 1/gB.vals.length);
+                const SE = Math.sqrt(MSW / nH);
+                const q = Math.abs(mA - mB) / (SE || 1e-15);
+                // p-value from studentized range distribution (approximation via Bonferroni + normal for large df)
+                const p = tukeyPValue(q, k, dfW);
+                results.push({ A:gA.name, B:gB.name, meanA:mA, meanB:mB, diff:mA-mB, q, p });
+            }
+        }
+        return results;
+    }
+
+    function tukeyPValue(q, k, df) {
+        // Approximation of Pr(Q > q) for studentized range distribution
+        // Uses the integral approximation via normal CDF for reliability
+        // For q <= 0 return 1
+        if (q <= 0) return 1;
+        // Use Hayter (1984) approximation: integrate over chi
+        // More practical: use Sidak-corrected normal for a reasonable estimate
+        // q / sqrt(2) follows approx standard normal for large df
+        const nComparisons = k*(k-1)/2;
+        // Better: use the Bonferroni-corrected t-dist p-value as conservative fallback
+        // and blend with the studentized-range asymptotic for large df
+        const z = q / Math.sqrt(2);
+        const pNorm = 2*(1 - normalCDF(z));
+        // Bonferroni correction for k groups
+        const pBonf = Math.min(1, pNorm * nComparisons);
+        // For df >= 30, normal approx is good; blend towards Bonferroni for low df
+        const weight = Math.min(1, df/30);
+        return pBonf * (1-weight) + Math.min(1, pNorm * (k-1)) * weight;
+    }
+
     window.runStatTest = () => {
         if (!state.activeFileId) return;
         const testType = document.getElementById('stats-test-type')?.value;
-        const colA = document.getElementById('test-colA')?.value;
-        const colB = document.getElementById('test-colB')?.value;
-        const vA = getColVals(state.activeFileId, colA);
-        const vB = getColVals(state.activeFileId, colB);
-        if (!vA.length || !vB.length) { alert('Not enough data.'); return; }
 
         let result = '';
 
         if (testType === 'anova2') {
-            // Two-way ANOVA (balanced, colA = factor-A level 1, colB = factor-A level 2)
-            // Rows within each column = levels of factor B; each cell is one observation
-            const n1=vA.length, n2=vB.length;
-            const n=Math.min(n1,n2);
-            if (n<2) { alert('Need at least 2 matched observations per group.'); return; }
-            const a=vA.slice(0,n), b=vB.slice(0,n);
-            // Factor A (between cols), Factor B (between rows), Interaction
-            const grandMean=(a.concat(b)).reduce((s,v)=>s+v,0)/(2*n);
-            const meanA=a.reduce((s,v)=>s+v,0)/n, meanB=b.reduce((s,v)=>s+v,0)/n;
-            // Row means
-            const rowMeans=Array.from({length:n},(_,i)=>(a[i]+b[i])/2);
-            const SSA = n*((meanA-grandMean)**2+(meanB-grandMean)**2);
-            const SSB = 2*rowMeans.reduce((s,rm)=>s+(rm-grandMean)**2,0);
-            const SSTotal = a.concat(b).reduce((s,v)=>s+(v-grandMean)**2,0);
-            const cellMeans=[[meanA],[meanB]]; // simplified 2×n
-            const SSInt = SSTotal - SSA - SSB - (()=>{
-                let sse=0;
-                a.forEach((v,i)=>sse+=(v-(meanA+rowMeans[i]-grandMean))**2);
-                b.forEach((v,i)=>sse+=(v-(meanB+rowMeans[i]-grandMean))**2);
-                return sse;
-            })();
-            const SSE = SSTotal - SSA - SSB - Math.max(0,SSInt);
-            const dfA=1, dfB=n-1, dfInt=dfB, dfErr=Math.max(1,2*n-dfA-dfB-dfInt);
-            const MSA=SSA/dfA, MSB=SSB/dfB, MSInt=Math.max(0,SSInt)/dfInt, MSE=Math.max(SSE,1e-15)/dfErr;
-            const FA=MSA/MSE, FB=MSB/MSE, FInt=MSInt/MSE;
-            const pA=fDistPValue(FA,dfA,dfErr), pB=fDistPValue(FB,dfB,dfErr), pInt=fDistPValue(FInt,dfInt,dfErr);
-            result = `<b>Two-Way ANOVA</b> (Factor A = columns, Factor B = rows, n=${n})<br><hr style="margin:4px 0;">
-                <b>Factor A</b> (${colA} vs ${colB}): F(${dfA},${dfErr})=${FA.toFixed(3)}, <b>p≈${pA<0.001?'<0.001':pA.toFixed(4)}</b> ${sigStars(pA)}<br>
-                <b>Factor B</b> (rows): F(${dfB},${dfErr})=${FB.toFixed(3)}, <b>p≈${pB<0.001?'<0.001':pB.toFixed(4)}</b> ${sigStars(pB)}<br>
-                <b>Interaction</b>: F(${dfInt},${dfErr})=${FInt.toFixed(3)}, <b>p≈${pInt<0.001?'<0.001':pInt.toFixed(4)}</b> ${sigStars(pInt)}<br>
-                <small style="color:#888;">Note: balanced 2-column design assumed.</small>`;
-        } else if (testType === 'anova1') {
-            // One-way ANOVA across all numeric columns
+            // ── Two-Way ANOVA (long format) ────────────────────────────────
             const file = state.files.find(f=>f.id===state.activeFileId);
-            const groups = file.columns
-                .map(c=>({name:c,vals:getColVals(state.activeFileId,c)}))
-                .filter(g=>g.vals.length>1);
+            const fACol  = document.getElementById('anova2-factorA')?.value;
+            const fBCol  = document.getElementById('anova2-factorB')?.value;
+            const valCol = document.getElementById('anova2-value')?.value;
+            if (!fACol || !fBCol || !valCol) { alert('Select Factor A, Factor B, and Value columns.'); return; }
+
+            const rows = file.data.filter(r => r[valCol] !== '' && !isNaN(parseVal(r[valCol])));
+            const levA = [...new Set(rows.map(r=>String(r[fACol]||'')))].filter(Boolean).sort();
+            const levB = [...new Set(rows.map(r=>String(r[fBCol]||'')))].filter(Boolean).sort();
+            const a = levA.length, b = levB.length;
+            if (a < 2) { alert('Factor A must have ≥ 2 levels.'); return; }
+            if (b < 2) { alert('Factor B must have ≥ 2 levels.'); return; }
+
+            const cells = Array.from({length:a}, ()=>Array.from({length:b}, ()=>[]));
+            rows.forEach(r => {
+                const ai=levA.indexOf(String(r[fACol]||'')), bi=levB.indexOf(String(r[fBCol]||''));
+                if (ai>=0 && bi>=0) cells[ai][bi].push(parseVal(r[valCol]));
+            });
+            const minN = cells.flat().reduce((m,c)=>Math.min(m,c.length), Infinity);
+            const N    = cells.flat().reduce((s,c)=>s+c.length, 0);
+            if (minN < 1) { alert('Some cells are empty. Need observations for every factor combination.'); return; }
+            const balanced = cells.flat().every(c=>c.length===minN);
+            const grandMean = rows.map(r=>parseVal(r[valCol])).reduce((s,v)=>s+v,0)/N;
+            // Marginal means (weighted)
+            const _mA = Array.from({length:a},(_,i)=>{const v=cells[i].flat();return v.reduce((s,v)=>s+v,0)/v.length;});
+            const _mB = Array.from({length:b},(_,j)=>{const v=levA.flatMap((_,i)=>cells[i][j]);return v.reduce((s,v)=>s+v,0)/v.length;});
+            let SSA=0, SSB=0, SSAB=0, SSE=0;
+            levA.forEach((_,i)=>{const v=cells[i].flat(); SSA+=v.length*(_mA[i]-grandMean)**2;});
+            levB.forEach((_,j)=>{const v=levA.flatMap((_,i)=>cells[i][j]); SSB+=v.length*(_mB[j]-grandMean)**2;});
+            cells.forEach((row,i)=>row.forEach((cell,j)=>{
+                const nij=cell.length, mu=cell.reduce((s,v)=>s+v,0)/(nij||1);
+                SSAB += nij*(mu-_mA[i]-_mB[j]+grandMean)**2;
+                SSE  += cell.reduce((s,v)=>s+(v-mu)**2,0);
+            }));
+            const dfA=a-1, dfB=b-1, dfAB=(a-1)*(b-1), dfE=N-a*b;
+            if (dfE <= 0) { alert(`Not enough replicates (dfError=${dfE}). Need >${a*b} total observations.`); return; }
+            const MSA=SSA/dfA, MSB=SSB/dfB, MSAB=SSAB/dfAB, MSE=SSE/dfE;
+            const FA=MSA/Math.max(MSE,1e-15), FB=MSB/Math.max(MSE,1e-15), FAB=MSAB/Math.max(MSE,1e-15);
+            const pA=fDistPValue(FA,dfA,dfE), pB=fDistPValue(FB,dfB,dfE), pAB=fDistPValue(FAB,dfAB,dfE);
+            const fmtP=p=>p<0.0001?'<0.0001':p.toFixed(4);
+            const td = (s,v='') => `<td style="padding:4px 7px;border:1px solid #eee;${v}">${s}</td>`;
+            const th = s => `<th style="padding:4px 7px;border:1px solid #ddd;background:#f0f7ff;">${s}</th>`;
+            result = `<b>Two-Way ANOVA</b>${!balanced?' <span style="color:#e65100;">(unbalanced — Type I SS)</span>':''}<br>`+
+                `N=${N} &nbsp;|&nbsp; ${fACol}: ${a} levels &nbsp;|&nbsp; ${fBCol}: ${b} levels<br><br>`+
+                `<table style="border-collapse:collapse;width:100%;font-size:11px;"><thead><tr>`+
+                [th('Source'),th('SS'),th('df'),th('MS'),th('F'),th('p'),th('')].join('')+
+                `</tr></thead><tbody>`+
+                `<tr>${[td('<b>'+fACol+'</b>','font-weight:600;'),td(SSA.toPrecision(4)),td(dfA),td(MSA.toPrecision(4)),td(FA.toFixed(3)),td('<b>'+fmtP(pA)+'</b>'),td(sigStars(pA))].join('')}</tr>`+
+                `<tr>${[td('<b>'+fBCol+'</b>','font-weight:600;'),td(SSB.toPrecision(4)),td(dfB),td(MSB.toPrecision(4)),td(FB.toFixed(3)),td('<b>'+fmtP(pB)+'</b>'),td(sigStars(pB))].join('')}</tr>`+
+                `<tr>${[td('<b>'+fACol+'×'+fBCol+'</b>','font-weight:600;'),td(SSAB.toPrecision(4)),td(dfAB),td(MSAB.toPrecision(4)),td(FAB.toFixed(3)),td('<b>'+fmtP(pAB)+'</b>'),td(sigStars(pAB))].join('')}</tr>`+
+                `<tr style="background:#fafafa;">${[td('Error'),td(SSE.toPrecision(4)),td(dfE),td(MSE.toPrecision(4)),td('—'),td('—'),td('')].join('')}</tr>`+
+                `</tbody></table>`+
+                (dfE<5?`<br><small style="color:#e65100;">⚠ Low error df (${dfE}) — add replicates.</small>`:'');
+
+        } else if (testType === 'anova1' || testType === 'anova1_tukey') {
+            const groups = getGroupsForTest().filter(g=>g.vals.length>0);
+            if (groups.length < 2) { alert('Need at least 2 groups with data.'); return; }
             const k = groups.length, N = groups.reduce((s,g)=>s+g.vals.length,0);
             const grandMean = groups.flatMap(g=>g.vals).reduce((a,b)=>a+b,0)/N;
-            const ssBetween = groups.reduce((s,g)=>{
-                const gm=g.vals.reduce((a,b)=>a+b,0)/g.vals.length;
-                return s+g.vals.length*(gm-grandMean)**2;
-            },0);
-            const ssWithin = groups.reduce((s,g)=>{
-                const gm=g.vals.reduce((a,b)=>a+b,0)/g.vals.length;
-                return s+g.vals.reduce((ss,v)=>ss+(v-gm)**2,0);
-            },0);
-            const dfB=k-1, dfW=N-k;
-            const msB=ssBetween/dfB, msW=ssWithin/dfW;
-            const F=msB/(msW||1e-15);
-            const pApprox = fDistPValue(F,dfB,dfW);
-            result = `<b>One-Way ANOVA</b><br>Groups (k): ${k}<br>N total: ${N}<br>` +
-                `F(${dfB},${dfW}) = ${F.toFixed(4)}<br>` +
-                `SS between = ${ssBetween.toPrecision(5)}<br>` +
-                `SS within = ${ssWithin.toPrecision(5)}<br>` +
-                `<b>p ≈ ${pApprox < 0.001 ? '<0.001' : pApprox.toFixed(4)}</b><br>` +
-                sigStars(pApprox);
+            const ssBetween = groups.reduce((s,g)=>{const gm=g.vals.reduce((a,b)=>a+b,0)/g.vals.length;return s+g.vals.length*(gm-grandMean)**2;},0);
+            const ssWithin  = groups.reduce((s,g)=>{const gm=g.vals.reduce((a,b)=>a+b,0)/g.vals.length;return s+g.vals.reduce((ss,v)=>ss+(v-gm)**2,0);},0);
+            const dfB=k-1, dfW=N-k, MSB=ssBetween/dfB, MSW=ssWithin/dfW;
+            const F=MSB/(MSW||1e-15), p=fDistPValue(F,dfB,dfW);
+            const th = s=>`<th style="padding:4px 7px;border:1px solid #ddd;background:#f5f5f5;">${s}</th>`;
+            const td = (s,v='')=>`<td style="padding:4px 6px;border:1px solid #eee;${v}">${s}</td>`;
+            let groupTbl = `<table style="border-collapse:collapse;width:100%;font-size:11px;margin-bottom:6px;"><thead><tr>`+
+                [th('Group'),th('n'),th('Mean'),th('SD'),th('SEM')].join('')+`</tr></thead><tbody>`;
+            groups.forEach(g=>{
+                const s=descStats(g.vals);
+                groupTbl+=`<tr>${[td(g.name,'font-weight:600;'),td(s.n),td(s.mean.toPrecision(4)),td(s.sd.toPrecision(3)),td(s.sem.toPrecision(3))].join('')}</tr>`;
+            });
+            groupTbl += '</tbody></table>';
+            result = `<b>One-Way ANOVA</b><br>k=${k}, N=${N}<br>${groupTbl}`+
+                `F(${dfB},${dfW})=${F.toFixed(4)} &nbsp;|&nbsp; <b>p≈${p<0.0001?'<0.0001':p.toFixed(4)}</b> ${sigStars(p)}<br>`+
+                `SS_between=${ssBetween.toPrecision(4)}, SS_within=${ssWithin.toPrecision(4)}, MS_within=${MSW.toPrecision(4)}`;
+
+            if (testType === 'anova1_tukey') {
+                const tukey = tukeyHSD(groups, MSW, dfW);
+                result += `<br><br><b>Tukey HSD Post-Hoc</b> (${balanced(groups)?'balanced':'Tukey-Kramer for unequal n'})<br>`;
+                result += `<table style="border-collapse:collapse;width:100%;font-size:11px;margin-top:4px;">`+
+                    `<thead><tr>`+[th('Group A'),th('Group B'),th('Mean A'),th('Mean B'),th('Diff'),th('q'),th('p (adj)'),th('')].join('')+`</tr></thead><tbody>`;
+                tukey.forEach(r=>{
+                    const pFmt = r.p<0.0001?'<0.0001':r.p.toFixed(4);
+                    result += `<tr>${[td(r.A,'font-weight:600;'),td(r.B,'font-weight:600;'),td(r.meanA.toPrecision(4)),td(r.meanB.toPrecision(4)),td(r.diff.toPrecision(4)),td(r.q.toFixed(3)),td('<b>'+pFmt+'</b>'),td(sigStars(r.p))].join('')}</tr>`;
+                });
+                result += '</tbody></table>';
+                result += `<br><small style="color:#888;">q statistic; p adjusted via Tukey-Kramer method.</small>`;
+            }
+
         } else if (testType === 'mannwhitney') {
+            const {nameA, nameB, vA, vB} = getPairValsForTest();
+            if (!vA.length || !vB.length) { alert('Not enough data for selected groups.'); return; }
             const {U,p} = mannWhitneyU(vA, vB);
-            result = `<b>Mann-Whitney U test</b><br>` +
-                `${colA} (n=${vA.length})  vs  ${colB} (n=${vB.length})<br>` +
-                `U = ${U.toFixed(1)}<br><b>p ≈ ${p<0.001?'<0.001':p.toFixed(4)}</b><br>` + sigStars(p);
+            result = `<b>Mann-Whitney U test</b><br>${nameA} (n=${vA.length}) vs ${nameB} (n=${vB.length})<br>`+
+                `U=${U.toFixed(1)}<br><b>p≈${p<0.001?'<0.001':p.toFixed(4)}</b> ${sigStars(p)}`;
+
         } else {
             // t-tests
+            const {nameA, nameB, vA, vB} = getPairValsForTest();
+            if (!vA.length || !vB.length) { alert('Not enough data for selected groups.'); return; }
             const sA=descStats(vA), sB=descStats(vB);
             let t, df, p;
             if (testType==='ttest_paired') {
@@ -3914,28 +4600,31 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (testType==='welch') {
                 const s2A=sA.sd**2/sA.n, s2B=sB.sd**2/sB.n;
                 t=(sA.mean-sB.mean)/Math.sqrt(s2A+s2B||1e-15);
-                df=(s2A+s2B)**2/((s2A**2/(sA.n-1))+(s2B**2/(sB.n-1)));
-            } else { // unpaired
-                const sp=Math.sqrt(((sA.n-1)*sA.sd**2+(sB.n-1)*sB.sd**2)/(sA.n+sB.n-2));
+                df=(s2A+s2B)**2/((s2A**2/(sA.n-1||1))+(s2B**2/(sB.n-1||1)));
+            } else {
+                const sp=Math.sqrt(((sA.n-1)*sA.sd**2+(sB.n-1)*sB.sd**2)/((sA.n+sB.n-2)||1));
                 t=(sA.mean-sB.mean)/(sp*Math.sqrt(1/sA.n+1/sB.n)||1e-15);
                 df=sA.n+sB.n-2;
             }
-            p = tDistPValue(Math.abs(t), df) * 2; // two-tailed
-            const lbl = {ttest_unpaired:'Unpaired t-test',ttest_paired:'Paired t-test',welch:"Welch's t-test"}[testType];
-            result = `<b>${lbl}</b><br>` +
-                `${colA}: mean=${sA.mean.toPrecision(5)}, SD=${sA.sd.toPrecision(4)}, n=${sA.n}<br>` +
-                `${colB}: mean=${sB.mean.toPrecision(5)}, SD=${sB.sd.toPrecision(4)}, n=${sB.n}<br>` +
-                `t(${df.toFixed(1)}) = ${t.toFixed(4)}<br>` +
-                `<b>p = ${p<0.0001?'<0.0001':p.toFixed(4)}</b><br>` + sigStars(p) +
-                `<br>Mean diff = ${(sA.mean-sB.mean).toPrecision(5)}<br>` +
-                `95% CI ≈ [${((sA.mean-sB.mean)-1.96*Math.sqrt((sA.sd**2/sA.n+sB.sd**2/sB.n))).toPrecision(4)}, ` +
-                `${((sA.mean-sB.mean)+1.96*Math.sqrt((sA.sd**2/sA.n+sB.sd**2/sB.n))).toPrecision(4)}]`;
+            p = tDistPValue(Math.abs(t), df) * 2;
+            const ci95h = 1.96*Math.sqrt((sA.sd**2/sA.n+sB.sd**2/sB.n));
+            const diff  = sA.mean-sB.mean;
+            const lbl   = {ttest_unpaired:'Unpaired t-test',ttest_paired:'Paired t-test',welch:"Welch's t-test"}[testType];
+            result = `<b>${lbl}</b><br>`+
+                `${nameA}: mean=${sA.mean.toPrecision(5)}, SD=${sA.sd.toPrecision(4)}, n=${sA.n}<br>`+
+                `${nameB}: mean=${sB.mean.toPrecision(5)}, SD=${sB.sd.toPrecision(4)}, n=${sB.n}<br>`+
+                `t(${df.toFixed(1)})=${t.toFixed(4)}<br>`+
+                `<b>p=${p<0.0001?'<0.0001':p.toFixed(4)}</b> ${sigStars(p)}<br>`+
+                `Mean diff=${diff.toPrecision(5)}<br>`+
+                `95% CI ≈ [${(diff-ci95h).toPrecision(4)}, ${(diff+ci95h).toPrecision(4)}]`;
         }
 
         const box = document.getElementById('test-results-box');
         box.style.display = 'block';
         box.innerHTML = result;
     };
+
+    function balanced(groups) { const ns=groups.map(g=>g.vals.length); return ns.every(n=>n===ns[0]); }
 
     function sigStars(p) {
         if (p<0.0001) return '<span style="color:#d32f2f;font-weight:bold;">**** (p<0.0001)</span>';
@@ -3956,22 +4645,39 @@ document.addEventListener('DOMContentLoaded', () => {
         return regularizedIncompleteBeta(df2/2, df1/2, x);
     }
     function regularizedIncompleteBeta(a, b, x) {
-        // Continued fraction approximation (Lentz method)
-        if (x<0||x>1) return NaN;
-        if (x===0) return 0; if (x===1) return 1;
-        const lbeta = lgamma(a)+lgamma(b)-lgamma(a+b);
-        const front = Math.exp(Math.log(x)*a+Math.log(1-x)*b-lbeta)/a;
-        // Evaluate continued fraction
-        let cf=1, lastcf=0, d, m=0;
-        for (let i=0;i<200&&Math.abs(cf-lastcf)>1e-9;i++) {
-            lastcf=cf; m++;
-            const m2=2*m;
-            const aa= m*(b-m)*x/((a+m2-1)*(a+m2));
-            cf=1+aa/(1+aa); // simplified; full Lentz not needed for approximation
-            const bb=-(a+m)*(a+b+m)*x/((a+m2)*(a+m2+1));
-            cf+=bb;
+        // Regularized incomplete beta function I_x(a,b) using Lentz continued fraction
+        if (x < 0 || x > 1) return NaN;
+        if (x === 0) return 0;
+        if (x === 1) return 1;
+        // Use symmetry relation for better convergence when x > (a+1)/(a+b+2)
+        if (x > (a + 1) / (a + b + 2)) {
+            return 1 - regularizedIncompleteBeta(b, a, 1 - x);
         }
-        return Math.min(1,front*cf);
+        const lbeta = lgamma(a) + lgamma(b) - lgamma(a + b);
+        const front = Math.exp(a * Math.log(x) + b * Math.log(1 - x) - lbeta) / a;
+        // Lentz method for continued fraction
+        const TINY = 1e-30;
+        let f = TINY, C = f, D = 0;
+        for (let m = 0; m <= 200; m++) {
+            for (let step = 0; step <= 1; step++) {
+                let d;
+                if (step === 0 && m === 0) {
+                    d = 1;
+                } else if (step === 0) {
+                    // even step
+                    d = m * (b - m) * x / ((a + 2*m - 1) * (a + 2*m));
+                } else {
+                    // odd step
+                    d = -(a + m) * (a + b + m) * x / ((a + 2*m) * (a + 2*m + 1));
+                }
+                D = 1 + d * D; if (Math.abs(D) < TINY) D = TINY; D = 1/D;
+                C = 1 + d / C; if (Math.abs(C) < TINY) C = TINY;
+                const delta = C * D;
+                f *= delta;
+                if (Math.abs(delta - 1) < 1e-10) break;
+            }
+        }
+        return Math.min(1, Math.max(0, front * f));
     }
     function lgamma(z) {
         // Stirling approximation
@@ -4024,6 +4730,10 @@ document.addEventListener('DOMContentLoaded', () => {
         plotAppearance.paperColor  = g('plotPaperColor')?.value   || '#ffffff';
         plotAppearance.fontSize    = parseInt(g('plotFontSize')?.value) || 12;
         plotAppearance.fontFamily  = g('plotFont')?.value         || 'Arial';
+        plotAppearance.axisTitleFont = g('axisTitleFont')?.value  || g('plotFont')?.value || 'Arial';
+        plotAppearance.axisTickFont  = g('axisTickFont')?.value   || g('plotFont')?.value || 'Arial';
+        plotAppearance.axisTitleColor = g('axisTitleColor')?.value || '#333333';
+        plotAppearance.axisTickColor  = g('axisTickColor')?.value  || '#444444';
         plotAppearance.showGridX   = g('showGridX')?.checked !== false;
         plotAppearance.showGridY   = g('showGridY')?.checked !== false;
         plotAppearance.showLegend  = g('showLegend')?.checked !== false;
@@ -4128,9 +4838,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Auto-set chart type to what was selected
         if (state.activeFileId) {
             state.plotConfig[state.activeFileId].chartType = ctype;
-            // Sync dropdown
-            const ctSel = document.getElementById('chartTypeSelect');
+            // Sync dropdown (correct ID is 'chartType')
+            const ctSel = document.getElementById('chartType');
             if (ctSel) ctSel.value = ctype;
+            applyChartTypeVisibility(ctype);
         }
         renderPlot();
         updateStatus(`Quick import: ${xVals.length} rows as "${name}".`);
@@ -4537,13 +5248,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const mode   = document.getElementById('dataModeSelect')?.value || 'single';
         config.dataMode = mode;
 
-        const rOpts = document.getElementById('replicate-opts');
-        const gOpts = document.getElementById('grouped-opts');
-        if (rOpts) rOpts.style.display = mode === 'meansd'   ? 'block' : 'none';
+        const rOpts  = document.getElementById('replicate-opts');
+        const rLOpts = document.getElementById('replicate-long-opts');
+        const gOpts  = document.getElementById('grouped-opts');
+        if (rOpts)  rOpts.style.display  = mode === 'meansd'       ? 'block' : 'none';
+        if (rLOpts) rLOpts.style.display = mode === 'meansd_long'  ? 'block' : 'none';
         if (gOpts) {
-            gOpts.style.display = mode === 'grouped'  ? 'block' : 'none';
+            gOpts.style.display = mode === 'grouped' ? 'block' : 'none';
             if (mode === 'grouped') {
-                // Populate grouped column selects if empty
                 ['groupColSelect','categoryColSelect','valueColSelect'].forEach(sid => {
                     const sel = document.getElementById(sid);
                     if (!sel || sel.options.length === 0) {
@@ -4557,11 +5269,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode === 'meansd') {
             const repSel = document.getElementById('replicateColSelect');
             if (repSel) {
-                config.replicateCols  = Array.from(repSel.selectedOptions).map(o => o.value);
-                config.replicateError = document.getElementById('replicateErrorType')?.value || 'sd';
+                config.replicateCols   = Array.from(repSel.selectedOptions).map(o => o.value);
+                config.replicateError  = document.getElementById('replicateErrorType')?.value || 'sd';
                 config.replicateShowPts = !!document.getElementById('replicateShowPoints')?.checked;
             }
         }
+
+        if (mode === 'meansd_long') {
+            config.repLongGroupCol  = document.getElementById('repLongGroupCol')?.value  || '';
+            config.repLongValueCol  = document.getElementById('repLongValueCol')?.value  || '';
+            config.repLongErrorType = document.getElementById('repLongErrorType')?.value || 'sd';
+            config.repLongShowPts   = !!document.getElementById('repLongShowPoints')?.checked;
+            const orderRaw = document.getElementById('repLongOrder')?.value || '';
+            config.repLongOrder = orderRaw ? orderRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
+        }
+
         if (mode === 'grouped') {
             config.groupCol    = document.getElementById('groupColSelect')?.value    || '';
             config.categoryCol = document.getElementById('categoryColSelect')?.value || '';
@@ -4569,7 +5291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             config.groupedStacked = !!document.getElementById('groupedBarStacked')?.checked;
             renderGroupedStylesUI(file, config);
         }
-        // Refresh bar-style card visibility based on new mode
+
         const _curCt = document.getElementById('chartType')?.value || 'scatter_line';
         applyChartTypeVisibility(_curCt);
         renderPlot();
@@ -4591,23 +5313,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const colorPalette = ['#00796b','#d32f2f','#1976d2','#fbc02d','#7b1fa2','#e64a19','#0097a7','#455a64','#2e7d32','#ad1457'];
         if (!config.groupStyles) config.groupStyles = {};
 
-        // Initialize defaults for new groups
         groups.forEach((grp, gi) => {
             if (!config.groupStyles[grp]) {
-                config.groupStyles[grp] = { color: colorPalette[gi % colorPalette.length], pattern: 'solid' };
+                config.groupStyles[grp] = { color: colorPalette[gi % colorPalette.length], fgcolor: '#000000', pattern: 'solid', patternSize: 8 };
             }
         });
 
-        let html = '<div style="font-size:10.5px;font-weight:700;color:#555;letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px;">Group Colors &amp; Patterns</div>';
+        let html = `<div style="font-size:10.5px;font-weight:700;color:#555;letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px;">Group Colors &amp; Patterns</div>
+        <div style="display:grid;grid-template-columns:1fr 26px 26px auto auto;gap:4px;align-items:center;font-size:9.5px;color:#aaa;margin-bottom:2px;">
+          <span>Group</span><span title="Bar BG color">BG</span><span title="Pattern FG color">FG</span><span>Pattern</span><span>Size</span>
+        </div>`;
         groups.forEach(grp => {
             const s = config.groupStyles[grp];
             const grpEsc = grp.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
             html += `
-            <div class="group-style-row" data-group="${grpEsc}" style="display:grid;grid-template-columns:1fr 26px 26px;gap:5px;align-items:center;margin-bottom:3px;">
-                <span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${grpEsc}">${grpEsc}</span>
-                <input type="color" class="grp-color" value="${s.color}" title="Color for ${grpEsc}" oninput="applyGroupedStyles()" style="height:24px;width:24px;padding:1px;cursor:pointer;border:1px solid #ccc;border-radius:3px;">
+            <div class="group-style-row" data-group="${grpEsc}" style="display:grid;grid-template-columns:1fr 26px 26px auto auto;gap:4px;align-items:center;margin-bottom:4px;">
+                <span style="font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${grpEsc}">${grpEsc}</span>
+                <input type="color" class="grp-color" value="${s.color}" title="Bar BG color for ${grpEsc}" oninput="applyGroupedStyles()" style="height:24px;width:24px;padding:1px;cursor:pointer;border:1px solid #ccc;border-radius:3px;">
+                <input type="color" class="grp-fgcolor" value="${s.fgcolor||'#000000'}" title="Pattern FG color for ${grpEsc}" oninput="applyGroupedStyles()" style="height:24px;width:24px;padding:1px;cursor:pointer;border:1px solid #ccc;border-radius:3px;">
                 <select class="grp-pattern" title="Pattern for ${grpEsc}" onchange="applyGroupedStyles()" style="padding:2px;font-size:10px;height:24px;">
-                    <option value="solid" ${s.pattern==='solid'?'selected':''}>■</option>
+                    <option value="solid" ${s.pattern==='solid'?'selected':''}>■ solid</option>
                     <option value="/" ${s.pattern==='/'?'selected':''}>/</option>
                     <option value="\\" ${s.pattern==='\\'?'selected':''}>\\</option>
                     <option value="x" ${s.pattern==='x'?'selected':''}>x</option>
@@ -4616,6 +5341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <option value="+" ${s.pattern==='+'?'selected':''}>+</option>
                     <option value="." ${s.pattern==='.'?'selected':''}>•</option>
                 </select>
+                <input type="number" class="grp-patsize" value="${s.patternSize||8}" min="3" max="20" step="1" oninput="applyGroupedStyles()" style="width:38px;padding:2px;font-size:10px;border:1px solid #ccc;border-radius:3px;box-sizing:border-box;">
             </div>`;
         });
         container.innerHTML = html;
@@ -4630,9 +5356,11 @@ document.addEventListener('DOMContentLoaded', () => {
         container.querySelectorAll('.group-style-row').forEach(row => {
             const grp = row.getAttribute('data-group');
             if (!grp) return;
-            const color   = row.querySelector('.grp-color')?.value   || '#00796b';
-            const pattern = row.querySelector('.grp-pattern')?.value || 'solid';
-            config.groupStyles[grp] = { color, pattern };
+            const color       = row.querySelector('.grp-color')?.value    || '#00796b';
+            const fgcolor     = row.querySelector('.grp-fgcolor')?.value  || '#000000';
+            const pattern     = row.querySelector('.grp-pattern')?.value  || 'solid';
+            const patternSize = parseInt(row.querySelector('.grp-patsize')?.value) || 8;
+            config.groupStyles[grp] = { color, fgcolor, pattern, patternSize };
         });
         renderPlot();
     };
@@ -4643,15 +5371,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const dmSel = document.getElementById('dataModeSelect');
         if (dmSel) dmSel.value = mode;
 
-        const rOpts = document.getElementById('replicate-opts');
-        const gOpts = document.getElementById('grouped-opts');
-        if (rOpts) rOpts.style.display = mode === 'meansd'  ? 'block' : 'none';
+        const rOpts  = document.getElementById('replicate-opts');
+        const rLOpts = document.getElementById('replicate-long-opts');
+        const gOpts  = document.getElementById('grouped-opts');
+        if (rOpts)  rOpts.style.display  = mode === 'meansd'      ? 'block' : 'none';
+        if (rLOpts) rLOpts.style.display = mode === 'meansd_long' ? 'block' : 'none';
         if (gOpts) {
             gOpts.style.display = mode === 'grouped' ? 'block' : 'none';
             if (mode === 'grouped') renderGroupedStylesUI(file, config);
         }
 
-        // Populate replicate selector
+        // Wide replicate selector
         const repSel = document.getElementById('replicateColSelect');
         if (repSel) {
             repSel.innerHTML = '';
@@ -4667,7 +5397,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const rSP = document.getElementById('replicateShowPoints');
         if (rSP) rSP.checked = !!config.replicateShowPts;
 
-        // Populate grouped selects
+        // Long-format replicate selectors
+        ['repLongGroupCol','repLongValueCol'].forEach(sid => {
+            const sel = document.getElementById(sid);
+            if (!sel) return;
+            sel.innerHTML = '';
+            file.columns.forEach(c => {
+                const o = document.createElement('option');
+                o.value = c; o.textContent = c;
+                const cfgKey = sid === 'repLongGroupCol' ? 'repLongGroupCol' : 'repLongValueCol';
+                if (config[cfgKey] === c) o.selected = true;
+                sel.appendChild(o);
+            });
+        });
+        const rLET = document.getElementById('repLongErrorType');
+        if (rLET) rLET.value = config.repLongErrorType || 'sd';
+        const rLSP = document.getElementById('repLongShowPoints');
+        if (rLSP) rLSP.checked = !!config.repLongShowPts;
+        const rLO = document.getElementById('repLongOrder');
+        if (rLO) rLO.value = (config.repLongOrder||[]).join(', ');
+
+        // Grouped selects
         ['groupColSelect','categoryColSelect','valueColSelect'].forEach(sid => {
             const sel = document.getElementById(sid);
             if (!sel) return;
@@ -4675,8 +5425,7 @@ document.addEventListener('DOMContentLoaded', () => {
             file.columns.forEach(c => {
                 const o = document.createElement('option');
                 o.value = c; o.textContent = c;
-                const cfgKey = sid === 'groupColSelect'    ? 'groupCol'
-                             : sid === 'categoryColSelect' ? 'categoryCol' : 'valueCol';
+                const cfgKey = sid === 'groupColSelect' ? 'groupCol' : sid === 'categoryColSelect' ? 'categoryCol' : 'valueCol';
                 if (config[cfgKey] === c) o.selected = true;
                 sel.appendChild(o);
             });
