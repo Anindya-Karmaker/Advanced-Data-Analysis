@@ -103,7 +103,7 @@
     <div class="app-header">
         <div style="display:flex;align-items:center;gap:14px;">
             <div>
-                <h1 class="app-title">Advanced Data Analyzer <span style="font-size:13px;font-weight:400;color:#00796b;vertical-align:middle;background:#e0f2f1;border-radius:3px;padding:2px 7px;">v2.50</span></h1>
+                <h1 class="app-title">Advanced Data Analyzer <span style="font-size:13px;font-weight:400;color:#00796b;vertical-align:middle;background:#e0f2f1;border-radius:3px;padding:2px 7px;">v2.10</span></h1>
                 <p class="app-subtitle">Universal interactive plotter &amp; data analysis tool — XY, bar, area, box, histogram &amp; more.</p>
             </div>
         </div>
@@ -564,8 +564,9 @@
     </div>
     <div class="g2">
       <div><label>Plot Height (px)</label><input type="number" id="plotHeight" value="580" min="200" max="1200" step="10" onchange="applyPlotAppearance()"></div>
-      <div style="padding-top:16px;"><label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Show Legend</label></div>
+      <div><label>Plot Width (px) <span style="font-size:9px;color:#aaa;">0=auto</span></label><input type="number" id="plotWidth" value="0" min="0" max="2400" step="10" onchange="applyPlotAppearance()"></div>
     </div>
+    <div style="margin-top:5px;"><label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Show Legend</label></div>
   </div>
 
   <!-- Shift / Rescale (moved from Series tab) -->
@@ -727,6 +728,73 @@
     <div class="card-title"><i class="fa-solid fa-table-list"></i>Column Summary</div>
     <button onclick="runColumnSummary()" class="btn-b" style="font-size:11px;padding:7px;"><i class="fa-solid fa-table"></i> Summarize All Columns</button>
     <div id="col-summary-box" style="display:none;margin-top:8px;overflow-x:auto;font-size:11px;"></div>
+  </div>
+
+  <!-- Significance Brackets -->
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-brackets-curly"></i>Significance Brackets</div>
+
+    <!-- Click-to-select mode banner -->
+    <div id="bkt-select-banner" style="display:none;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:2px solid #1976d2;border-radius:6px;padding:9px 12px;margin-bottom:8px;text-align:center;">
+      <div style="font-weight:700;color:#0d47a1;font-size:12px;">📍 Click a bar/point on the plot</div>
+      <div id="bkt-select-hint" style="font-size:10.5px;color:#1565c0;margin-top:3px;">Click the <b>first</b> group</div>
+      <div id="bkt-select-status" style="font-size:11px;color:#333;margin-top:4px;min-height:16px;"></div>
+      <button onclick="cancelBracketSelect()" style="margin-top:6px;background:#e53935;color:white;border:none;border-radius:3px;padding:4px 12px;font-size:11px;cursor:pointer;width:auto;">✕ Cancel</button>
+    </div>
+
+    <!-- Main bracket button -->
+    <button id="bkt-start-btn" onclick="startBracketSelect()" class="btn-g" style="width:100%;margin-bottom:8px;padding:8px;font-size:12px;">
+      🖱️ Click two bars/points to draw bracket
+    </button>
+
+    <!-- Style options (collapsed by default) -->
+    <div id="bkt-style-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;cursor:pointer;" onclick="toggleBktStyle()">
+        <span style="font-size:10.5px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.4px;">Style Options</span>
+        <span id="bkt-style-arrow" style="font-size:10px;color:#888;">▼</span>
+      </div>
+      <div id="bkt-style-body" style="display:none;flex-direction:column;gap:6px;">
+        <div class="g2">
+          <div><label style="font-size:10.5px;">Significance label</label>
+            <select id="bkt-label" style="font-size:11px;" onchange="document.getElementById('bkt-custom-label').style.display=this.value==='custom'?'block':'none'">
+              <option value="auto">Auto from p-value</option>
+              <option value="ns">ns</option>
+              <option value="*">*</option>
+              <option value="**">**</option>
+              <option value="***">***</option>
+              <option value="****">****</option>
+              <option value="custom">Custom…</option>
+            </select>
+            <input type="text" id="bkt-custom-label" placeholder="e.g. p=0.023" style="display:none;margin-top:3px;font-size:11px;">
+          </div>
+          <div><label style="font-size:10.5px;">Color</label>
+            <input type="color" id="bkt-color" value="#222222" style="height:27px;cursor:pointer;width:100%;">
+          </div>
+        </div>
+        <div class="g2">
+          <div><label style="font-size:10.5px;">Font size (px)</label>
+            <input type="number" id="bkt-fontsize" value="13" min="8" max="28" style="font-size:11px;">
+          </div>
+          <div><label style="font-size:10.5px;">Line width (px)</label>
+            <input type="number" id="bkt-linewidth" value="2" min="0.5" max="5" step="0.5" style="font-size:11px;">
+          </div>
+        </div>
+        <div><label style="font-size:10.5px;">Pin Y <span style="font-weight:400;color:#888;">(leave blank — auto positions above bars)</span></label>
+          <input type="number" id="bkt-yoffset" value="" step="any" placeholder="← leave blank for auto" style="font-size:11px;" title="Only fill this if you want to manually override where the bracket line sits (in data Y units). Leave blank to auto-stack above bars.">
+        </div>
+        <div style="margin-top:2px;">
+          <button onclick="autoAddFromLastTest()" class="btn-b" style="font-size:11px;padding:6px;">⚡ Fill from last statistical test</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bracket list -->
+    <div id="bkt-list" style="display:none;margin-top:8px;">
+      <hr style="margin:6px 0;">
+      <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;">Active Brackets</div>
+      <div id="bkt-list-inner" style="display:flex;flex-direction:column;gap:3px;max-height:160px;overflow-y:auto;"></div>
+      <button onclick="clearAllBrackets()" class="btn-r" style="font-size:11px;padding:5px;margin-top:6px;">✖ Clear All</button>
+    </div>
   </div>
 </div>
 
@@ -1087,7 +1155,7 @@
 <footer>
     <p><strong>Developed by:</strong> Anindya Karmaker, PhD Candidate, McDonald-Nandi Lab.</p>
     <p><strong>Source:</strong> <a href="https://github.com/Anindya-Karmaker/Chromatogram-Plotter-Analyzer" target="_blank">View on GitHub</a></p>
-    <p><strong>Funding:</strong> NSF PFI Grant No. 2016563. &nbsp;|&nbsp; <strong>Version:</strong> v2.50 — Universal Data Plotter &amp; Analyzer</p>
+    <p><strong>Funding:</strong> NSF PFI Grant No. 2016563. &nbsp;|&nbsp; <strong>Version:</strong> v2.10 — Universal Data Plotter &amp; Analyzer</p>
 </footer>
 <script>
 // --- Global Variables/Functions for HTML access ---
@@ -1140,6 +1208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pendingWorkbook: null,  // cached parsed workbook for sheet switching
         pendingSheetName: null,
         annotations: [], // Custom peak labels for publication
+        sigBrackets: [], // Significance brackets (*, **, ns)
         labelMode: false,  // Toggle for adding labels
         xaxisRange: { start: null, end: null }, // Global X-axis range
         showLabels: true,   // Global label visibility
@@ -1461,7 +1530,211 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ── Axis title sub/superscript helpers ─────────────────────────────────
+    // ── Significance Brackets ──────────────────────────────────────────────
+    let _lastTestResult = null;
+    let _bktSelectState = null; // null | { step: 1|2, firstPoint: {x, xLabel, yTop} }
+
+    window.toggleBktStyle = () => {
+        const body  = document.getElementById('bkt-style-body');
+        const arrow = document.getElementById('bkt-style-arrow');
+        if (!body) return;
+        const open = body.style.display !== 'none';
+        body.style.display = open ? 'none' : 'flex';
+        if (arrow) arrow.textContent = open ? '▼' : '▲';
+    };
+
+    window.startBracketSelect = () => {
+        _bktSelectState = { step: 1, firstPoint: null };
+        const banner = document.getElementById('bkt-select-banner');
+        const btn    = document.getElementById('bkt-start-btn');
+        const hint   = document.getElementById('bkt-select-hint');
+        if (banner) banner.style.display = 'block';
+        if (btn)    btn.style.display = 'none';
+        if (hint)   hint.innerHTML = 'Click the <b>first</b> bar or point';
+        updateStatus('📍 Bracket mode: click first bar/point');
+
+        // Attach plotly_click listener
+        plotlyDiv.removeAllListeners('plotly_click');
+        plotlyDiv.on('plotly_click', _handleBracketClick);
+    };
+
+    window.cancelBracketSelect = () => {
+        _bktSelectState = null;
+        const banner = document.getElementById('bkt-select-banner');
+        const btn    = document.getElementById('bkt-start-btn');
+        if (banner) banner.style.display = 'none';
+        if (btn)    btn.style.display = 'block';
+        plotlyDiv.removeAllListeners('plotly_click');
+        updateStatus('Bracket selection cancelled.');
+        // Restore label click handler if label mode was on
+        if (state.labelMode && state._labelClickHandler) {
+            plotlyDiv.addEventListener('click', state._labelClickHandler);
+        }
+    };
+
+    function _getPointTop(point, traceIdx) {
+        // Returns the top of the bar/point (value + error bar)
+        const y = point.y ?? 0;
+        const trace = plotlyDiv.data && plotlyDiv.data[traceIdx];
+        let errUp = 0;
+        if (trace && trace.error_y) {
+            const ea = trace.error_y.array;
+            if (ea && ea[point.pointIndex] != null) errUp = ea[point.pointIndex];
+        }
+        return y + errUp;
+    }
+
+    function _handleBracketClick(data) {
+        if (!data.points || !data.points.length) return;
+        const pt = data.points[0];
+        const xLabel = String(pt.x ?? pt.label ?? '');
+        const yTop   = _getPointTop(pt, pt.curveNumber);
+
+        if (_bktSelectState.step === 1) {
+            _bktSelectState.firstPoint = { xLabel, yTop };
+            _bktSelectState.step = 2;
+            const hint   = document.getElementById('bkt-select-hint');
+            const status = document.getElementById('bkt-select-status');
+            if (hint)   hint.innerHTML = 'Now click the <b>second</b> bar or point';
+            if (status) status.textContent = `First: "${xLabel}" (top=${yTop.toPrecision(4)})`;
+            updateStatus(`📍 First group selected: "${xLabel}" — now click second`);
+        } else if (_bktSelectState.step === 2) {
+            const first  = _bktSelectState.firstPoint;
+            const second = { xLabel, yTop };
+
+            // Don't allow same group twice
+            if (first.xLabel === second.xLabel) {
+                updateStatus('⚠ Select a different group for the second point.');
+                return;
+            }
+
+            _placeBracketFromClick(first, second);
+            cancelBracketSelect();
+        }
+    }
+
+    function _placeBracketFromClick(first, second) {
+        // Read style settings
+        const lblSel  = document.getElementById('bkt-label')?.value || 'auto';
+        let label;
+        if (lblSel === 'auto') {
+            // Use last test result p-value if available
+            label = _lastTestResult?.p != null
+                ? (_lastTestResult.p < 0.0001 ? '****' : _lastTestResult.p < 0.001 ? '***' : _lastTestResult.p < 0.01 ? '**' : _lastTestResult.p < 0.05 ? '*' : 'ns')
+                : '**';
+        } else if (lblSel === 'custom') {
+            label = document.getElementById('bkt-custom-label')?.value.trim() || '*';
+        } else {
+            label = lblSel;
+        }
+        const color    = document.getElementById('bkt-color')?.value    || '#222222';
+        const fontsize = parseInt(document.getElementById('bkt-fontsize')?.value) || 13;
+        const linewidth= parseFloat(document.getElementById('bkt-linewidth')?.value) || 2;
+        const yOffRaw  = document.getElementById('bkt-yoffset')?.value?.trim();
+        const yOffset  = (yOffRaw && !isNaN(parseFloat(yOffRaw))) ? parseFloat(yOffRaw) : null;
+
+        if (!state.sigBrackets) state.sigBrackets = [];
+        state.sigBrackets.push({
+            id: Date.now(),
+            groupA:   first.xLabel,
+            groupB:   second.xLabel,
+            yTopA:    first.yTop,
+            yTopB:    second.yTop,
+            label, color, fontsize, linewidth,
+            yOffset: (yOffset != null ? yOffset : null),
+            _bracketLineY: (yOffset != null ? yOffset : null)  // null = auto-stack
+        });
+        renderBracketList();
+        renderPlot();
+        updateStatus(`Bracket added: ${label} (${first.xLabel} ↔ ${second.xLabel})`);
+    }
+
+    function renderBracketList() {
+        const list  = document.getElementById('bkt-list');
+        const inner = document.getElementById('bkt-list-inner');
+        if (!list || !inner) return;
+        if (!state.sigBrackets || state.sigBrackets.length === 0) {
+            list.style.display = 'none'; return;
+        }
+        list.style.display = 'block';
+        inner.innerHTML = '';
+        state.sigBrackets.forEach((bkt, idx) => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex;align-items:center;gap:5px;padding:4px 6px;background:#f9f9f9;border:1px solid #eee;border-radius:4px;font-size:11px;';
+            row.innerHTML = `
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                    <b style="color:${bkt.color||'#222'}">${bkt.label}</b>
+                    <span style="color:#888;font-size:10px;"> ${bkt.groupA} ↔ ${bkt.groupB}</span>
+                </span>
+                <button onclick="editSigBracket(${idx})" style="background:#1976d2;color:white;border:none;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;width:auto;">✏</button>
+                <button onclick="removeSigBracket(${idx})" style="background:#dc3545;color:white;border:none;border-radius:3px;padding:2px 7px;font-size:10px;cursor:pointer;width:auto;">✕</button>`;
+            inner.appendChild(row);
+        });
+    }
+
+    window.addSigBracket = () => {
+        // Legacy manual entry fallback (called from autoAddFromLastTest)
+        const gA = document.getElementById('bkt-groupA')?.value?.trim();
+        const gB = document.getElementById('bkt-groupB')?.value?.trim();
+        if (!gA || !gB) { startBracketSelect(); return; }
+        _placeBracketFromClick(
+            { xLabel: gA, yTop: 0 },
+            { xLabel: gB, yTop: 0 }
+        );
+    };
+
+    window.removeSigBracket = (idx) => {
+        state.sigBrackets.splice(idx, 1);
+        renderBracketList();
+        renderPlot();
+    };
+
+    window.clearAllBrackets = () => {
+        if (confirm('Remove all significance brackets?')) {
+            state.sigBrackets = [];
+            renderBracketList();
+            renderPlot();
+        }
+    };
+
+    window.editSigBracket = (idx) => {
+        const bkt = state.sigBrackets[idx];
+        if (!bkt) return;
+        // Delete and re-draw via click-select mode, pre-filling style
+        const color   = document.getElementById('bkt-color');
+        const fsz     = document.getElementById('bkt-fontsize');
+        const lw      = document.getElementById('bkt-linewidth');
+        const yOff    = document.getElementById('bkt-yoffset');
+        const lblSel  = document.getElementById('bkt-label');
+        const custLbl = document.getElementById('bkt-custom-label');
+        if (color)  color.value = bkt.color || '#222222';
+        if (fsz)    fsz.value   = bkt.fontsize || 13;
+        if (lw)     lw.value    = bkt.linewidth || 2;
+        if (yOff)   yOff.value  = bkt.yOffset != null ? bkt.yOffset : '';
+        if (lblSel) {
+            const known = ['ns','*','**','***','****'];
+            if (known.includes(bkt.label)) { lblSel.value = bkt.label; if (custLbl) custLbl.style.display='none'; }
+            else { lblSel.value = 'custom'; if (custLbl) { custLbl.style.display='block'; custLbl.value=bkt.label; } }
+        }
+        state.sigBrackets.splice(idx, 1);
+        renderBracketList();
+        renderPlot();
+        startBracketSelect();
+    };
+
+    window.autoAddFromLastTest = () => {
+        if (!_lastTestResult) { alert('Run a statistical test first (t-test, ANOVA, etc.), then click this.'); return; }
+        const { groupA, groupB, p } = _lastTestResult;
+        const lblSel  = document.getElementById('bkt-label');
+        const custLbl = document.getElementById('bkt-custom-label');
+        if (p != null && lblSel) {
+            const sigLabel = p < 0.0001 ? '****' : p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : 'ns';
+            lblSel.value = sigLabel;
+            if (custLbl) custLbl.style.display = 'none';
+        }
+        updateStatus('⚡ Style auto-filled — now click two bars to draw the bracket.');
+        startBracketSelect();
+    };
     // Track last focused axis input for toolbar inserts
     let _lastAxisInput = null;
     ['xAxisLabel','yAxisLabel','y2AxisLabel','y3AxisLabel'].forEach(id => {
@@ -1775,6 +2048,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sg('axisTitleFontSize',  pa.axisTitleFontSize || 13);
             sg('axisTickFontSize',   pa.axisTickFontSize  || 11);
             sg('plotHeight',         pa.height         || 580);
+            sg('plotWidth',          pa.width          || 0);
             sg('gridColor',          pa.gridColor      || '#e0e0e0');
             sg('gridWidth',          pa.gridWidth      || 1);
             sg('gridDash',           pa.gridDash       || 'solid');
@@ -1794,10 +2068,29 @@ document.addEventListener('DOMContentLoaded', () => {
             sc('tightAxesCheck',     !!pa.tightAxes);
         }
 
+        // Restore sigBrackets
+        state.sigBrackets = loadedState.sigBrackets || [];
+        renderBracketList();
+
         // Set active file and rebuild UI
         state.activeFileId = state.files.length > 0 ? state.files[0].id : null;
         renderFileList();
-        if (state.activeFileId) setActiveFile(state.activeFileId);
+        if (state.activeFileId) {
+            setActiveFile(state.activeFileId);
+        } else {
+            Plotly.purge(plotlyDiv);
+        }
+        // Force a fresh render after a brief delay to ensure DOM is ready
+        // and uirevision doesn't suppress the initial render
+        setTimeout(() => {
+            if (state.activeFileId) {
+                // Reset uirevision to force re-render
+                if (plotlyDiv && plotlyDiv.layout) {
+                    try { Plotly.relayout(plotlyDiv, { uirevision: Date.now() }); } catch(e) {}
+                }
+                renderPlot();
+            }
+        }, 50);
         updateStatus(`Loaded ${state.files.length} file(s) with ${state.annotations.length} label(s)`);
     }
 
@@ -2994,8 +3287,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ? [pa.xAxisMin!==null?pa.xAxisMin:'auto', pa.xAxisMax!==null?pa.xAxisMax:'auto'] : undefined;
 
         const _tightAxes = document.getElementById('tightAxesCheck')?.checked ?? false;
+        const _plotWidth  = pa.width  || null;
         const layout = {
-            autosize: true, height: (pa.height||580),
+            autosize: !_plotWidth, height: (pa.height||580),
+            width: _plotWidth || undefined,
             margin: { t: 40, r: rightMargin, b: 60, l: 70 },
             barmode: (state._layoutExtras && state._layoutExtras.barmode) || 'group',
             bargap: 0.15,
@@ -3172,6 +3467,170 @@ document.addEventListener('DOMContentLoaded', () => {
             layout.margin.b = minB;
         }
 
+        // ── Significance Brackets ──────────────────────────────────────────
+        if (state.sigBrackets && state.sigBrackets.length > 0) {
+            const _shapes = layout.shapes || [];
+
+            // Build x-label → current bar top map from live traces
+            // This ensures we always use the actual rendered bar tops including error bars
+            const _yAtX = new Map();
+            traces.forEach(tr => {
+                if (!tr.x || !tr.y) return;
+                tr.x.forEach((xv, i) => {
+                    const key = String(xv);
+                    const yVal = tr.y[i] != null ? tr.y[i] : 0;
+                    const errUp = tr.error_y?.array?.[i] || 0;
+                    const top = yVal + errUp;
+                    if (!_yAtX.has(key) || _yAtX.get(key) < top) _yAtX.set(key, top);
+                });
+            });
+
+            // Collect all category x-labels in order for midpoint math
+            const allCatX = [];
+            traces.forEach(tr => {
+                if (tr.x) tr.x.forEach(v => {
+                    const s = String(v);
+                    if (!allCatX.includes(s)) allCatX.push(s);
+                });
+            });
+
+            // Sort brackets by span (narrower first → lower stacking)
+            const bktsSorted = [...state.sigBrackets].sort((a, b) => {
+                const iA1 = allCatX.indexOf(String(a.groupA)), iA2 = allCatX.indexOf(String(a.groupB));
+                const iB1 = allCatX.indexOf(String(b.groupA)), iB2 = allCatX.indexOf(String(b.groupB));
+                const spanA = Math.abs((iA2 >= 0 && iA1 >= 0) ? iA2 - iA1 : 1);
+                const spanB = Math.abs((iB2 >= 0 && iB1 >= 0) ? iB2 - iB1 : 1);
+                return spanA - spanB;
+            });
+
+            // Compute actual data maximum for relative sizing (stable across zoom)
+            let dataMax = 0;
+            _yAtX.forEach(v => { if (v > dataMax) dataMax = v; });
+            state.sigBrackets.forEach(b => {
+                if ((b.yTopA || 0) > dataMax) dataMax = b.yTopA;
+                if ((b.yTopB || 0) > dataMax) dataMax = b.yTopB;
+            });
+            if (dataMax === 0) dataMax = 10;
+
+            // Use rendered axis range only for auto-extend decision (NOT for spacing math)
+            let axisBottom = 0, axisTop = null;
+            if (plotlyDiv._fullLayout?.yaxis?.range) {
+                axisBottom = plotlyDiv._fullLayout.yaxis.range[0];
+                axisTop    = plotlyDiv._fullLayout.yaxis.range[1];
+            }
+
+            // ALL spacing expressed as fraction of dataMax — NEVER of axisSpan.
+            // dataMax is fixed (doesn't change with zoom), so positions are stable.
+            const tipH_data  = dataMax * 0.025;   // tick height  = 2.5% of data max
+            const labelGap   = dataMax * 0.04;    // bracket→label gap = 4% of data max
+            const gapAbove   = dataMax * 0.05;    // gap above tallest bar = 5%
+            const stepSize   = dataMax * 0.12;    // stacking step = 12%
+
+            // Place brackets with collision-aware stacking
+            const placed = [];
+            const bktPositions = new Map();
+
+            bktsSorted.forEach(bkt => {
+                const gA = String(bkt.groupA), gB = String(bkt.groupB);
+
+                // Best bar top: max of stored click-time value and live trace value
+                const liveTopA = _yAtX.get(gA) ?? 0;
+                const liveTopB = _yAtX.get(gB) ?? 0;
+                const topA = Math.max(bkt.yTopA || 0, liveTopA);
+                const topB = Math.max(bkt.yTopB || 0, liveTopB);
+
+                // Scan all bars in the span between A and B
+                const iA = allCatX.indexOf(gA), iB = allCatX.indexOf(gB);
+                let spanMax = Math.max(topA, topB);
+                if (iA >= 0 && iB >= 0) {
+                    const lo = Math.min(iA, iB), hi = Math.max(iA, iB);
+                    allCatX.slice(lo, hi + 1).forEach(k => {
+                        const v = _yAtX.get(k) || 0;
+                        if (v > spanMax) spanMax = v;
+                    });
+                }
+
+                let bracketY;
+                if (bkt._bracketLineY != null) {
+                    // User manually positioned (drag or pin) — stable data-unit value
+                    bracketY = bkt._bracketLineY;
+                } else if (bkt.yOffset != null) {
+                    // Pin Y field: store as bracketLineY for stability
+                    bracketY = bkt.yOffset;
+                    bkt._bracketLineY = bracketY;
+                } else {
+                    // Auto: gap above tallest bar, then stack
+                    bracketY = spanMax + gapAbove;
+                    let tries = 0, colliding = true;
+                    while (colliding && tries++ < 30) {
+                        colliding = false;
+                        for (const p of placed) {
+                            if (bracketY <= p.y1 && bracketY + stepSize >= p.y0) {
+                                bracketY = p.y1 + gapAbove;
+                                colliding = true; break;
+                            }
+                        }
+                    }
+                }
+
+                const labelY = bracketY + tipH_data + labelGap;
+                placed.push({ y0: bracketY - tipH_data, y1: labelY + dataMax * 0.04 });
+                bktPositions.set(bkt.id, { bracketY, labelY, tipH_data });
+            });
+
+            // Auto-extend y-axis if any bracket label exceeds the current top
+            const maxBktTop = Math.max(...[...bktPositions.values()].map(p => p.labelY + dataMax * 0.05));
+            const _curTop = axisTop ?? dataMax * 1.3;
+            if (maxBktTop > _curTop) {
+                const newTop = maxBktTop * 1.08;
+                layout.yaxis.range = [layout.yaxis.range?.[0] ?? axisBottom, newTop];
+                layout.yaxis.autorange = false;
+            }
+
+            // Now draw shapes and annotations for each bracket (in original order)
+            state.sigBrackets.forEach(bkt => {
+                const gA = String(bkt.groupA), gB = String(bkt.groupB);
+                const pos = bktPositions.get(bkt.id);
+                if (!pos) return;
+                const { bracketY, labelY, tipH_data } = pos;
+                const color    = bkt.color    || '#222';
+                const fontsize = bkt.fontsize  || 13;
+                const lw       = bkt.linewidth || 2;
+
+                // Horizontal bar
+                _shapes.push({ type:'line', xref:'x', yref:'y', x0:gA, y0:bracketY, x1:gB, y1:bracketY, line:{color,width:lw}, name: `sigbkt_H_${bkt.id}` });
+                // Left tick (downward)
+                _shapes.push({ type:'line', xref:'x', yref:'y', x0:gA, y0:bracketY-tipH_data, x1:gA, y1:bracketY, line:{color,width:lw}, name: `sigbkt_L_${bkt.id}` });
+                // Right tick
+                _shapes.push({ type:'line', xref:'x', yref:'y', x0:gB, y0:bracketY-tipH_data, x1:gB, y1:bracketY, line:{color,width:lw}, name: `sigbkt_R_${bkt.id}` });
+
+                // Label centered between A and B
+                const iA = allCatX.indexOf(gA), iB = allCatX.indexOf(gB);
+                const annBase = {
+                    text: bkt.label, showarrow: false,
+                    font: { size: fontsize, color, family: pa.fontFamily || 'Arial' },
+                    xanchor: 'center', yanchor: 'bottom',
+                    name: `sigbkt_${bkt.id}`,
+                    bgcolor: state.dragLabelsMode ? 'rgba(255,243,224,0.75)' : 'transparent',
+                    bordercolor: state.dragLabelsMode ? '#ffb74d' : 'transparent',
+                    borderwidth: state.dragLabelsMode ? 1 : 0,
+                    borderpad: 3
+                };
+                if (iA >= 0 && iB >= 0 && allCatX.length > 1) {
+                    const midX = (iA === iB) ? gA : ((iA + iB) / 2);
+                    const bX = bkt._manualLabelX != null ? bkt._manualLabelX : midX;
+                    _annotsForLayout.push({ ...annBase, x: bX, y: labelY, xref:'x', yref:'y' });
+                } else {
+                    const numA = parseFloat(gA), numB = parseFloat(gB);
+                    const midX = (!isNaN(numA) && !isNaN(numB)) ? (numA + numB) / 2 : gA;
+                    const bX = bkt._manualLabelX != null ? bkt._manualLabelX : midX;
+                    _annotsForLayout.push({ ...annBase, x: bX, y: labelY, xref:'x', yref:'y' });
+                }
+            });
+
+            layout.shapes = _shapes;
+        }
+
         layout.annotations = _annotsForLayout;
 
         // Drag labels mode: Plotly edits config
@@ -3183,16 +3642,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 annotationPosition: true,
                 annotationTail: true,
                 annotationText: false,
-                legendPosition: true
+                legendPosition: true,
+                shapePosition: true
             } : {}
         });
 
         // Drag Labels Mode — attach/detach annotation event listeners
         plotlyDiv.removeAllListeners('plotly_clickannotation');
         plotlyDiv.removeAllListeners('plotly_relayout');
+
+        // Always listen for zoom/pan (range changes) so brackets stay positioned correctly
+        plotlyDiv.on('plotly_relayout', (eventData) => {
+            const keys = Object.keys(eventData);
+            const isZoomPan = keys.some(k =>
+                k === 'xaxis.range[0]' || k === 'xaxis.range[1]' ||
+                k === 'yaxis.range[0]' || k === 'yaxis.range[1]' ||
+                k === 'xaxis.autorange' || k === 'yaxis.autorange'
+            );
+            const isDoubleClick = keys.some(k => k === 'xaxis.autorange' || k === 'yaxis.autorange');
+
+            if (_dragModeOn) {
+                // In drag mode, also handle annotation/shape drags
+                handleDragRelayout(eventData);
+            }
+
+            if (isZoomPan && state.sigBrackets && state.sigBrackets.length > 0) {
+                // Re-render to recompute bracket y-axis extension against new range
+                // Use a small debounce to avoid firing mid-gesture
+                clearTimeout(plotlyDiv._bktZoomTimer);
+                plotlyDiv._bktZoomTimer = setTimeout(() => renderPlot(), 120);
+            }
+        });
+
         if (_dragModeOn) {
             plotlyDiv.on('plotly_clickannotation', handleDragAnnotationClick);
-            plotlyDiv.on('plotly_relayout', handleDragRelayout);
         }
 
         // Remove old plotly_click listener (we use native DOM click instead)
@@ -4441,7 +4924,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Tukey HSD ──────────────────────────────────────────────────────────
     function tukeyHSD(groups, MSW, dfW) {
-        // groups: [{name, vals}]
         const k = groups.length;
         const results = [];
         for (let i=0; i<k; i++) {
@@ -4449,11 +4931,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const gA = groups[i], gB = groups[j];
                 const mA = gA.vals.reduce((a,b)=>a+b,0)/gA.vals.length;
                 const mB = gB.vals.reduce((a,b)=>a+b,0)/gB.vals.length;
-                // Harmonic mean of group sizes for unequal n (Tukey-Kramer)
+                // Tukey-Kramer SE using harmonic mean of n for unequal group sizes
                 const nH = 2 / (1/gA.vals.length + 1/gB.vals.length);
                 const SE = Math.sqrt(MSW / nH);
                 const q = Math.abs(mA - mB) / (SE || 1e-15);
-                // p-value from studentized range distribution (approximation via Bonferroni + normal for large df)
                 const p = tukeyPValue(q, k, dfW);
                 results.push({ A:gA.name, B:gB.name, meanA:mA, meanB:mB, diff:mA-mB, q, p });
             }
@@ -4462,23 +4943,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function tukeyPValue(q, k, df) {
-        // Approximation of Pr(Q > q) for studentized range distribution
-        // Uses the integral approximation via normal CDF for reliability
-        // For q <= 0 return 1
+        // P(Q > q | k groups, df error degrees of freedom)
+        // Uses numerical integration of the studentized range distribution
+        // Q = (max_i - min_i) / sqrt(MSW/n) ~ q(k, df)
+        //
+        // P(Q ≤ q | k, ∞) = k ∫_{-∞}^{∞} [Φ(x+q) - Φ(x)]^{k-1} φ(x) dx
+        // P(Q ≤ q | k, df) = ∫_0^∞ P(Q ≤ q*t | k, ∞) * f_T(t) dt
+        // where T = chi(df)/sqrt(df) (normalised chi distribution)
+        // f_T(t) = [2^(1-df/2)/Γ(df/2)] * (df)^(df/2) * t^(df-1) * exp(-df*t²/2)
+
         if (q <= 0) return 1;
-        // Use Hayter (1984) approximation: integrate over chi
-        // More practical: use Sidak-corrected normal for a reasonable estimate
-        // q / sqrt(2) follows approx standard normal for large df
-        const nComparisons = k*(k-1)/2;
-        // Better: use the Bonferroni-corrected t-dist p-value as conservative fallback
-        // and blend with the studentized-range asymptotic for large df
-        const z = q / Math.sqrt(2);
-        const pNorm = 2*(1 - normalCDF(z));
-        // Bonferroni correction for k groups
-        const pBonf = Math.min(1, pNorm * nComparisons);
-        // For df >= 30, normal approx is good; blend towards Bonferroni for low df
-        const weight = Math.min(1, df/30);
-        return pBonf * (1-weight) + Math.min(1, pNorm * (k-1)) * weight;
+        if (!isFinite(q) || isNaN(q)) return 0;
+
+        // Inner: P(range of k N(0,1) ≤ w) via composite midpoint rule over [-7, 7]
+        function pRange(w) {
+            if (w <= 0) return 0;
+            if (w >= 20) return 1;
+            const n = 96;
+            const lo = -6, hi = Math.min(6, w + 4);
+            const h = (hi - lo) / n;
+            let s = 0;
+            const INV_SQRT2PI = 0.3989422804014327;
+            for (let i = 0; i < n; i++) {
+                const x = lo + (i + 0.5) * h;
+                const phi = INV_SQRT2PI * Math.exp(-0.5 * x * x);
+                const d = normalCDF(x + w) - normalCDF(x);
+                s += (d > 0 ? Math.pow(d, k - 1) : 0) * phi;
+            }
+            return Math.min(1, Math.max(0, k * s * h));
+        }
+
+        // For large df use the infinite-df approximation
+        if (df >= 1000) return 1 - pRange(q);
+
+        // Outer: integrate over T = chi(df)/sqrt(df)
+        // logNorm = log constant so that ∫ f_T(t) dt = 1
+        const logNorm = (1 - df / 2) * Math.log(2) - lgamma(df / 2) + (df / 2) * Math.log(df);
+        // Generous upper bound: T has mean ≈ 1, std ≈ 1/sqrt(2*df); use 5σ beyond mean
+        const tMax = 1.5 + 5 / Math.sqrt(df);
+        const nOuter = 64;
+        const h = tMax / nOuter;
+
+        let integral = 0;
+        for (let i = 0; i < nOuter; i++) {
+            const t = (i + 0.5) * h;
+            // Avoid log(0)
+            if (t <= 0) continue;
+            const logFT = logNorm + (df - 1) * Math.log(t) - 0.5 * df * t * t;
+            const fT = Math.exp(logFT);
+            integral += pRange(q * t) * fT * h;
+        }
+
+        return 1 - Math.min(1, Math.max(0, integral));
+    }
+
+    // Critical q value: find q such that P(Q > q | k, df) = alpha
+    // Uses bisection on tukeyPValue
+    function tukeyQCritical(k, df, alpha) {
+        alpha = alpha || 0.05;
+        let lo = 0, hi = 20;
+        for (let i = 0; i < 60; i++) {
+            const mid = (lo + hi) / 2;
+            if (tukeyPValue(mid, k, df) > alpha) lo = mid;
+            else hi = mid;
+        }
+        return (lo + hi) / 2;
     }
 
     window.runStatTest = () => {
@@ -4544,44 +5073,110 @@ document.addEventListener('DOMContentLoaded', () => {
                 (dfE<5?`<br><small style="color:#e65100;">⚠ Low error df (${dfE}) — add replicates.</small>`:'');
 
         } else if (testType === 'anova1' || testType === 'anova1_tukey') {
-            const groups = getGroupsForTest().filter(g=>g.vals.length>0);
+            const groups = getGroupsForTest().filter(g => g.vals.length > 0);
             if (groups.length < 2) { alert('Need at least 2 groups with data.'); return; }
-            const k = groups.length, N = groups.reduce((s,g)=>s+g.vals.length,0);
-            const grandMean = groups.flatMap(g=>g.vals).reduce((a,b)=>a+b,0)/N;
-            const ssBetween = groups.reduce((s,g)=>{const gm=g.vals.reduce((a,b)=>a+b,0)/g.vals.length;return s+g.vals.length*(gm-grandMean)**2;},0);
-            const ssWithin  = groups.reduce((s,g)=>{const gm=g.vals.reduce((a,b)=>a+b,0)/g.vals.length;return s+g.vals.reduce((ss,v)=>ss+(v-gm)**2,0);},0);
-            const dfB=k-1, dfW=N-k, MSB=ssBetween/dfB, MSW=ssWithin/dfW;
-            const F=MSB/(MSW||1e-15), p=fDistPValue(F,dfB,dfW);
-            const th = s=>`<th style="padding:4px 7px;border:1px solid #ddd;background:#f5f5f5;">${s}</th>`;
-            const td = (s,v='')=>`<td style="padding:4px 6px;border:1px solid #eee;${v}">${s}</td>`;
-            let groupTbl = `<table style="border-collapse:collapse;width:100%;font-size:11px;margin-bottom:6px;"><thead><tr>`+
-                [th('Group'),th('n'),th('Mean'),th('SD'),th('SEM')].join('')+`</tr></thead><tbody>`;
-            groups.forEach(g=>{
-                const s=descStats(g.vals);
-                groupTbl+=`<tr>${[td(g.name,'font-weight:600;'),td(s.n),td(s.mean.toPrecision(4)),td(s.sd.toPrecision(3)),td(s.sem.toPrecision(3))].join('')}</tr>`;
+
+            const k = groups.length;
+            const N = groups.reduce((s, g) => s + g.vals.length, 0);
+            const grandMean = groups.flatMap(g => g.vals).reduce((a, b) => a + b, 0) / N;
+
+            // SS between (model) and SS within (error)
+            const ssBetween = groups.reduce((s, g) => {
+                const gm = g.vals.reduce((a, b) => a + b, 0) / g.vals.length;
+                return s + g.vals.length * (gm - grandMean) ** 2;
+            }, 0);
+            const ssWithin = groups.reduce((s, g) => {
+                const gm = g.vals.reduce((a, b) => a + b, 0) / g.vals.length;
+                return s + g.vals.reduce((ss, v) => ss + (v - gm) ** 2, 0);
+            }, 0);
+            const ssTotal = ssBetween + ssWithin;
+
+            const dfB = k - 1, dfW = N - k;
+            const MSB = ssBetween / dfB;
+            const MSW = ssWithin / (dfW || 1);
+            const F = MSB / (MSW || 1e-15);
+            const p = fDistPValue(F, dfB, dfW);
+
+            // Effect size: eta-squared and omega-squared
+            const etaSq  = ssTotal > 0 ? ssBetween / ssTotal : 0;
+            const omegaSq = (ssBetween - dfB * MSW) / (ssTotal + MSW);
+
+            _lastTestResult = { groupA: groups[0]?.name, groupB: groups[1]?.name, p };
+
+            const th = s => `<th style="padding:4px 7px;border:1px solid #ddd;background:#f5f5f5;text-align:left;">${s}</th>`;
+            const td = (s, v='') => `<td style="padding:4px 6px;border:1px solid #eee;${v}">${s}</td>`;
+
+            // Group summary table
+            let groupTbl = `<table style="border-collapse:collapse;width:100%;font-size:11px;margin-bottom:8px;"><thead><tr>` +
+                [th('Group'), th('n'), th('Mean'), th('SD'), th('SEM'), th('95% CI')].join('') +
+                `</tr></thead><tbody>`;
+            groups.forEach(g => {
+                const s = descStats(g.vals);
+                const ci = s.n > 1 ? (1.96 * s.sem).toPrecision(3) : '—';
+                groupTbl += `<tr>${[
+                    td(g.name, 'font-weight:600;'),
+                    td(s.n),
+                    td(s.mean.toPrecision(4)),
+                    td(s.sd.toPrecision(3)),
+                    td(s.sem.toPrecision(3)),
+                    td(`±${ci}`)
+                ].join('')}</tr>`;
             });
             groupTbl += '</tbody></table>';
-            result = `<b>One-Way ANOVA</b><br>k=${k}, N=${N}<br>${groupTbl}`+
-                `F(${dfB},${dfW})=${F.toFixed(4)} &nbsp;|&nbsp; <b>p≈${p<0.0001?'<0.0001':p.toFixed(4)}</b> ${sigStars(p)}<br>`+
-                `SS_between=${ssBetween.toPrecision(4)}, SS_within=${ssWithin.toPrecision(4)}, MS_within=${MSW.toPrecision(4)}`;
+
+            // ANOVA table
+            const anovaTbl = `<table style="border-collapse:collapse;width:100%;font-size:11px;margin-bottom:6px;"><thead><tr>` +
+                [th('Source'), th('SS'), th('df'), th('MS'), th('F'), th('p')].join('') +
+                `</tr></thead><tbody>` +
+                `<tr>${[td('Between groups','font-weight:600;'), td(ssBetween.toPrecision(4)), td(dfB), td(MSB.toPrecision(4)), td(F.toFixed(4)), td(`<b>${p < 0.0001 ? '<0.0001' : p.toFixed(4)}</b> ${sigStars(p)}`)].join('')}</tr>` +
+                `<tr>${[td('Within groups (error)'), td(ssWithin.toPrecision(4)), td(dfW), td(MSW.toPrecision(4)), td('—'), td('—')].join('')}</tr>` +
+                `<tr style="background:#f9f9f9;">${[td('Total'), td(ssTotal.toPrecision(4)), td(N-1), td('—'), td('—'), td('—')].join('')}</tr>` +
+                `</tbody></table>`;
+
+            result = `<b>One-Way ANOVA</b> — k=${k} groups, N=${N} observations<br><br>` +
+                groupTbl + anovaTbl +
+                `η²=${etaSq.toFixed(3)} &nbsp;|&nbsp; ω²=${omegaSq.toFixed(3)} &nbsp;|&nbsp; MSW=${MSW.toPrecision(4)}` +
+                `<br><small style="color:#888;">η²: proportion of variance explained. ω²: bias-corrected effect size.</small>`;
 
             if (testType === 'anova1_tukey') {
                 const tukey = tukeyHSD(groups, MSW, dfW);
-                result += `<br><br><b>Tukey HSD Post-Hoc</b> (${balanced(groups)?'balanced':'Tukey-Kramer for unequal n'})<br>`;
-                result += `<table style="border-collapse:collapse;width:100%;font-size:11px;margin-top:4px;">`+
-                    `<thead><tr>`+[th('Group A'),th('Group B'),th('Mean A'),th('Mean B'),th('Diff'),th('q'),th('p (adj)'),th('')].join('')+`</tr></thead><tbody>`;
-                tukey.forEach(r=>{
-                    const pFmt = r.p<0.0001?'<0.0001':r.p.toFixed(4);
-                    result += `<tr>${[td(r.A,'font-weight:600;'),td(r.B,'font-weight:600;'),td(r.meanA.toPrecision(4)),td(r.meanB.toPrecision(4)),td(r.diff.toPrecision(4)),td(r.q.toFixed(3)),td('<b>'+pFmt+'</b>'),td(sigStars(r.p))].join('')}</tr>`;
+                // Critical q value for 95% CI
+                const qCrit = tukeyQCritical(k, dfW, 0.05);
+
+                let tukeyTbl = `<table style="border-collapse:collapse;width:100%;font-size:11px;margin-top:4px;"><thead><tr>` +
+                    [th('A'), th('B'), th('Δ mean'), th('95% CI'), th('q'), th('p adj'), th('')].join('') +
+                    `</tr></thead><tbody>`;
+
+                tukey.forEach(r => {
+                    // 95% CI for the mean difference: ±q_crit * SE
+                    const nH  = 2 / (1/groups.find(g=>g.name===r.A).vals.length + 1/groups.find(g=>g.name===r.B).vals.length);
+                    const SE  = Math.sqrt(MSW / nH);
+                    const moe = qCrit * SE;
+                    const ciLo = (r.diff - moe).toPrecision(4);
+                    const ciHi = (r.diff + moe).toPrecision(4);
+                    const pFmt = r.p < 0.0001 ? '<0.0001' : r.p.toFixed(4);
+                    tukeyTbl += `<tr>${[
+                        td(r.A, 'font-weight:600;'),
+                        td(r.B, 'font-weight:600;'),
+                        td(r.diff.toPrecision(4)),
+                        td(`[${ciLo}, ${ciHi}]`),
+                        td(r.q.toFixed(3)),
+                        td(`<b>${pFmt}</b>`),
+                        td(sigStars(r.p))
+                    ].join('')}</tr>`;
                 });
-                result += '</tbody></table>';
-                result += `<br><small style="color:#888;">q statistic; p adjusted via Tukey-Kramer method.</small>`;
+                tukeyTbl += '</tbody></table>';
+
+                result += `<br><br><b>Tukey HSD Post-Hoc</b> (${balanced(groups) ? 'balanced' : 'Tukey-Kramer, unequal n'})<br>`;
+                result += `q<sub>crit</sub>(α=0.05, k=${k}, df=${dfW}) ≈ ${qCrit.toFixed(3)}<br>` + tukeyTbl;
+                result += `<small style="color:#888;">95% CI: mean difference ± q<sub>crit</sub>×SE. Pairs below the diagonal are significant if CI excludes 0.</small>`;
             }
 
         } else if (testType === 'mannwhitney') {
             const {nameA, nameB, vA, vB} = getPairValsForTest();
             if (!vA.length || !vB.length) { alert('Not enough data for selected groups.'); return; }
             const {U,p} = mannWhitneyU(vA, vB);
+            _lastTestResult = { groupA: nameA, groupB: nameB, p };
             result = `<b>Mann-Whitney U test</b><br>${nameA} (n=${vA.length}) vs ${nameB} (n=${vB.length})<br>`+
                 `U=${U.toFixed(1)}<br><b>p≈${p<0.001?'<0.001':p.toFixed(4)}</b> ${sigStars(p)}`;
 
@@ -4606,10 +5201,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 t=(sA.mean-sB.mean)/(sp*Math.sqrt(1/sA.n+1/sB.n)||1e-15);
                 df=sA.n+sB.n-2;
             }
-            p = tDistPValue(Math.abs(t), df) * 2;
+            p = tDistPValue(Math.abs(t), df);  // tDistPValue returns the two-tailed p directly via I_x(df/2, 0.5)
             const ci95h = 1.96*Math.sqrt((sA.sd**2/sA.n+sB.sd**2/sB.n));
             const diff  = sA.mean-sB.mean;
             const lbl   = {ttest_unpaired:'Unpaired t-test',ttest_paired:'Paired t-test',welch:"Welch's t-test"}[testType];
+            _lastTestResult = { groupA: nameA, groupB: nameB, p };
             result = `<b>${lbl}</b><br>`+
                 `${nameA}: mean=${sA.mean.toPrecision(5)}, SD=${sA.sd.toPrecision(4)}, n=${sA.n}<br>`+
                 `${nameB}: mean=${sB.mean.toPrecision(5)}, SD=${sB.sd.toPrecision(4)}, n=${sB.n}<br>`+
@@ -4622,6 +5218,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const box = document.getElementById('test-results-box');
         box.style.display = 'block';
         box.innerHTML = result;
+        // Also add a quick button to add bracket from this result
+        if (_lastTestResult) {
+            box.innerHTML += `<div style="margin-top:8px;"><button onclick="autoAddFromLastTest()" class="btn-b" style="font-size:10.5px;padding:5px;">⚡ Add Significance Bracket from this result</button></div>`;
+        }
     };
 
     function balanced(groups) { const ns=groups.map(g=>g.vals.length); return ns.every(n=>n===ns[0]); }
@@ -4738,7 +5338,8 @@ document.addEventListener('DOMContentLoaded', () => {
         plotAppearance.showGridY   = g('showGridY')?.checked !== false;
         plotAppearance.showLegend  = g('showLegend')?.checked !== false;
         plotAppearance.zeroLine    = g('plotZeroLine')?.checked !== false;
-        plotAppearance.height      = parseInt(g('plotHeight')?.value) || 580;
+        plotAppearance.height  = parseInt(g('plotHeight')?.value) || 580;
+        plotAppearance.width   = (parseInt(g('plotWidth')?.value) || 0) || null; // null = autosize
         plotAppearance.axisTitleFontSize = parseInt(g('axisTitleFontSize')?.value) || 13;
         plotAppearance.axisTickFontSize  = parseInt(g('axisTickFontSize')?.value)  || 11;
         // Axis line controls
@@ -5043,9 +5644,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── Relayout: persist dragged annotation positions back to state ──
     function handleDragRelayout(eventData) {
         const annotKeys = Object.keys(eventData).filter(k => k.startsWith('annotations['));
-        if (annotKeys.length === 0) return;
+        const shapeKeys = Object.keys(eventData).filter(k => k.startsWith('shapes['));
+        if (annotKeys.length === 0 && shapeKeys.length === 0) return;
 
         const plotAnnotations = plotlyDiv.layout && plotlyDiv.layout.annotations ? plotlyDiv.layout.annotations : [];
+        const plotShapes = plotlyDiv.layout && plotlyDiv.layout.shapes ? plotlyDiv.layout.shapes : [];
         let changed = false;
 
         annotKeys.forEach(key => {
@@ -5072,6 +5675,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // ── Significance bracket annotations ──
+            if (annName.startsWith('sigbkt_')) {
+                const bktId = parseInt(annName.replace('sigbkt_', ''));
+                const bkt = state.sigBrackets && state.sigBrackets.find(b => b.id === bktId);
+                if (bkt) {
+                    if (prop === 'y') {
+                        // val = new label Y in data coords.
+                        // Back-calculate bracket line Y using FIXED dataMax offsets (not axisSpan).
+                        // We need dataMax — compute it the same way renderPlot does.
+                        let dm = 0;
+                        state.files.forEach(f => {
+                            const cfg = state.plotConfig[f.id];
+                            if (!cfg) return;
+                            f.data.forEach(r => {
+                                const yv = parseVal(r[cfg.yCol]);
+                                if (!isNaN(yv) && yv > dm) dm = yv;
+                            });
+                        });
+                        state.sigBrackets.forEach(b => {
+                            if ((b.yTopA||0) > dm) dm = b.yTopA;
+                            if ((b.yTopB||0) > dm) dm = b.yTopB;
+                        });
+                        if (dm === 0) dm = 10;
+                        const tipH  = dm * 0.025;
+                        const lGap  = dm * 0.04;
+                        bkt._bracketLineY = val - tipH - lGap;
+                        bkt._manualLabelY = null;
+                        bkt._manualY = null;
+                        bkt.yOffset = null; // clear pin when dragged
+                        changed = true;
+                    }
+                    if (prop === 'x') {
+                        bkt._manualLabelX = val;
+                        changed = true;
+                    }
+                }
+                return;
+            }
+
             // ── Custom peak/label annotations ──
             const stateAnn = state.annotations.find(a => a.text === plotAnn.text);
             if (!stateAnn) return;
@@ -5079,6 +5721,39 @@ document.addEventListener('DOMContentLoaded', () => {
             if (prop === 'y')  { stateAnn.y = val; changed = true; }
             if (prop === 'ax') { stateAnn.ax = val; changed = true; }
             if (prop === 'ay') { stateAnn.ay = val; changed = true; }
+        });
+
+        // ── Shape dragging (Significance bracket lines) ──
+        shapeKeys.forEach(key => {
+            const m = key.match(/shapes\[(\d+)\]\.(.+)/);
+            if (!m) return;
+            const plotIdx = parseInt(m[1]);
+            const prop = m[2];
+            const val = eventData[key];
+            const plotShape = plotShapes[plotIdx];
+            if (!plotShape) return;
+            
+            const shapeName = plotShape.name || '';
+            if (shapeName.startsWith('sigbkt_H_') || shapeName.startsWith('sigbkt_L_') || shapeName.startsWith('sigbkt_R_')) {
+                const bktId = parseInt(shapeName.split('_').pop());
+                const bkt = state.sigBrackets && state.sigBrackets.find(b => b.id === bktId);
+                if (bkt && (prop === 'y0' || prop === 'y1')) {
+                    // For horizontal bar (H): y0 = y1 = bracketLineY
+                    // For ticks (L/R): y1 = bracketLineY, y0 = bracketLineY - tipH
+                    let newBracketY = parseFloat(val);
+                    if (shapeName.includes('_H_')) {
+                        newBracketY = parseFloat(val); // both y0 and y1 are bracketY
+                    } else {
+                        // For ticks, y1 is the top (bracket line)
+                        newBracketY = prop === 'y1' ? parseFloat(val) : parseFloat(plotShape.y1 ?? val);
+                    }
+                    bkt._bracketLineY = newBracketY;
+                    bkt._manualLabelY = null;
+                    bkt._manualY = null;
+                    bkt.yOffset = null;
+                    changed = true;
+                }
+            }
         });
 
         if (changed) {
@@ -5101,6 +5776,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleDragAnnotationClick(event) {
         const plotAnn = event.annotation;
         const annName = plotAnn.name || '';
+
+        // ── Bracket annotation: allow edit modal ──
+        if (annName.startsWith('sigbkt_')) {
+            const bktId = parseInt(annName.replace('sigbkt_', ''));
+            const bkt = state.sigBrackets && state.sigBrackets.find(b => b.id === bktId);
+            if (!bkt) return;
+            
+            _currentDragAxisKey = null;
+            _currentDragAnnotId = 'sigbkt_' + bktId;
+            
+            const plainText = (bkt.label || '').replace(/<[^>]*>/g, '');
+            const isBold = (bkt.label || '').includes('<b>');
+            const fontSize = bkt.fontsize || 13;
+            const fontColor = bkt.color || '#222222';
+            
+            document.getElementById('dragAnnotTextInput').value = plainText;
+            document.getElementById('dragAnnotFontSize').value = fontSize;
+            document.getElementById('dragAnnotBold').checked = isBold;
+            document.getElementById('dragAnnotColor').value = fontColor;
+            document.getElementById('dragAnnotDeleteBtn').style.display = 'inline-block';
+            document.getElementById('dragAnnotModalTitle').textContent = '✏️ Edit Bracket Symbol';
+            updateDragAnnotPreview();
+            document.getElementById('dragAnnotationEditModal').style.display = 'block';
+            return;
+        }
 
         // ── Axis title annotation? ──
         if (_axisAnnotNames[annName]) {
@@ -5177,6 +5877,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // ── Editing a significance bracket ──
+        if (typeof _currentDragAnnotId === 'string' && _currentDragAnnotId.startsWith('sigbkt_')) {
+            const bktId = parseInt(_currentDragAnnotId.replace('sigbkt_', ''));
+            const bkt = state.sigBrackets.find(b => b.id === bktId);
+            if (!bkt) return;
+            
+            bkt.label = isBold ? `<b>${newText}</b>` : newText;
+            bkt.fontsize = fontSize;
+            bkt.color = color;
+            
+            closeDragAnnotationModal();
+            _saveDragState();
+            renderPlot();
+            updateStatus(`✓ Bracket updated: "${newText}"`);
+            return;
+        }
+
         // ── Editing a custom label ──
         if (_currentDragAnnotId === null) return;
         const stateAnn = state.annotations.find(a => a.id === _currentDragAnnotId);
@@ -5199,12 +5916,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.deleteDragAnnot = function () {
         if (_currentDragAnnotId === null) return;
-        if (!confirm('Delete this label?')) return;
-        state.annotations = state.annotations.filter(a => a.id !== _currentDragAnnotId);
+        if (!confirm('Delete this item?')) return;
+        
+        if (typeof _currentDragAnnotId === 'string' && _currentDragAnnotId.startsWith('sigbkt_')) {
+            const bktId = parseInt(_currentDragAnnotId.replace('sigbkt_', ''));
+            state.sigBrackets = state.sigBrackets.filter(b => b.id !== bktId);
+        } else {
+            state.annotations = state.annotations.filter(a => a.id !== _currentDragAnnotId);
+        }
+        
         closeDragAnnotationModal();
         _saveDragState();
         renderPlot();
-        updateStatus('🗑 Label deleted');
+        updateStatus('🗑 Item deleted');
     };
 
     window.closeDragAnnotationModal = function () {
