@@ -2,40 +2,29 @@
 
 A powerful, browser-based tool for visualizing, analyzing, and performing statistical tests on generic graphical data, chromatography data, and custom CSV/Excel sheets. No installation required.
 
-<img width="1597" height="979" alt="image" src="https://github.com/user-attachments/assets/6506fde2-4726-43b3-8552-608c2d3e2d4f" />
 
 ## 🧬 Overview
 
-This tool was originally created for analyzing chromatography data, but has evolved into a fully-featured Advanced Data Analyzer. It provides researchers a fast, private, and flexible way to analyze datasets without being tied to proprietary software. It runs entirely in your web browser, meaning your experimental data never leaves your computer. It's designed to be intuitive for daily lab use while providing powerful features for in-depth statistical analysis, peak tracking, and generating publication-ready figures.
+This tool was created for MALDI-TOF data, but has evolved into a fully-featured Advanced Data Analyzer. It provides researchers a fast, private, and flexible way to analyze datasets without being tied to proprietary software. It runs entirely in your web browser, meaning your experimental data never leaves your computer. It's designed to be intuitive for daily lab use while providing powerful features for in-depth statistical analysis, peak tracking, and generating publication-ready figures.
 
 ## 🚀 Key Features
 
 -   **Smart Data Import:**
     -   **Custom Import Wizard:** Map columns from generic CSV or Excel (`.xlsx`, `.xls`) files.
-    -   **ÄKTA Native Support:** Parses tab-delimited `.txt` or `.csv` files from GE Unicorn software, automatically extracting units and variable names.
-    -   **Baseline Correction:** Automatically detects negative UV values upon import and offers to offset the baseline to zero.
 -   **Session Management:** Save your entire analysis state—including data, annotations, integration bounds, and visual settings—into a single `.json` file to resume work later.
 -   **Interactive Multi-Axis Plotting:**
     -   Visualize multiple variables on a single plot with synchronized axes.
-    -   **Auto-scaling Baseline:** The "UV (Baseline Corrected)" axis automatically synchronizes with the main UV axis for accurate comparison.
     -   Full control over line color, thickness, style, markers, and labels.
 -   **Advanced Statistical Analysis:**
     -   **Comprehensive Testing:** Perform built-in T-Tests, One-Way ANOVA, Two-Way ANOVA, and Tukey HSD post-hoc analysis natively.
     -   **Replicate Data Modes:** Combine multiple replicate traces automatically with dynamically generated standard deviation error bars.
--   **Advanced Peak Analysis & Integration:**
-    -   **Auto Peak Detection:** Automatically identify peaks based on customizable height and distance thresholds.
-    -   **Net Area Calculation:** Toggle **"Use UV-Baseline Corrected Data"** to calculate the area *between* the raw UV signal and the baseline signal.
-    -   **Visual Integration:** Toggle **"Show Region"** to visually shade the specific area being integrated with customizable colors.
-    -   Automatically calculates **Peak Area**, **Volume**, **Asymmetry Factor (As)**, and **HETP**.
 -   **Rich Annotations & Significance Brackets:**
     -   **Drag Labels Mode:** Add, move, and edit fully customizable text labels dynamically.
     -   **Significance Brackets:** Use "auto-add from last test" to seamlessly link stats test results to bracket markers (*, **, ns) directly on the plot. Brackets can be dragged and individually styled.
-    -   **Fraction Management:** Automatically import or manually add/edit fraction markers.
-    -   **Label Regions:** Highlight specific phases (e.g., "Load", "Elution") with colored background regions.
 -   **Publication-Ready Styling:**
     -   **Professional Axis Styling:** Enable and customize **Minor Ticks** for both X and Y axes.
     -   **Typography Control:** Customize font sizes and toggle **Bold** styles independently for Titles, Axes, Fractions, and Regions.
-    -   **High-Res Export:** Save plots as PNGs at up to 3x resolution.
+    -   **High-Res Export:** Save plots as PNGs at high resolution.
     -   **Fine-Grained Control:** Adjust legend positions, label rotation, and offsets via a dedicated settings panel.
 -   **100% Client-Side:** Your data is processed locally in your browser. Nothing is ever uploaded to a server, ensuring complete data privacy.
 
@@ -46,56 +35,6 @@ No installation is needed!
 1.  **Visit the Live Tool:** [https://github.com/Anindya-Karmaker/Advanced-Data-Analysis](https://github.com/Anindya-Karmaker/Advanced-Data-Analysis)
 2.  **Or Download:** Download the `index.html` file from this repository and open it in any modern web browser (like Chrome, Firefox, or Safari).
 
----
-
-### Step-by-Step Workflow
-
-#### 1. Import Your Data
-Use **📁 Open ÄKTA File** for Unicorn exports. If the tool detects negative UV values (e.g., baseline drift), a prompt will appear asking if you wish to zero the baseline automatically. Use **⚙️ Custom Import** for standard datasets, CSV, and Excel spreadsheets.
-
-#### 2. Customize the Plot
-Use the **📊 Plot Selection & Styling** panel.
--   Select variables or setup replicative data groupings.
--   Customize line styles (solid, dot, dash), widths, markers, and colors.
--   Toggle **Fractions** and **Regions** visibility.
--   Manually set the **X-axis range** for precise views, or double-click the chart to autoscale.
-
-![The main styling panel showing controls for data traces, fractions, and regions.](https://github.com/user-attachments/assets/82dd8dcf-2999-48a9-a941-c845176cfd29)
-
-#### 3. Annotate the Chart & Apply Statistics
--   **Test Significance:** Perform ANOVA or pair-wise testing directly via the **Statistics** module.
--   **Add Brackets:** Instantly apply significance brackets to the graph corresponding to testing output.
--   **Drag Labels Mode:** Position labels and brackets exactly where you need them. 
--   **Label Regions:** Define colored background zones to mark graphical phases.
-
-<img width="800" height="695" alt="image" src="https://github.com/user-attachments/assets/1c781915-ddab-4fe1-bfc9-fdeb3ec8bee5" />
-
-<img width="798" height="435" alt="image" src="https://github.com/user-attachments/assets/03cbbf2e-6fc5-4243-bbf4-4bb6e6549e24" />
-
-#### 4. Analyze Peaks & Integrate
-Go to the **📐 Integration & Analysis** panel:
-1.  **Peak Detection:** Use **"📍 Show Peaks"** to automatically find local maxima. Adjust "Min Height" and "Min Distance" to filter noise.
-2.  **Select Variable:** Choose `UV` (or your protein signal).
-3.  **Set Range:** Use the `Start` and `End` fields to bracket your peak.
-4.  **Baseline Subtraction:** Check **"Use UV-Baseline Corrected Data"** to subtract the baseline signal from the calculation.
-5.  **Visualize:** Check **"Show Region"** to fill the integrated area with color.
-6.  **Results:** View real-time calculations for Area, Volume, Asymmetry, and HETP.
-  
-<img width="329" height="481" alt="image" src="https://github.com/user-attachments/assets/71ac620e-bee6-464e-adb8-ecac32dbae88" />
-<img width="318" height="149" alt="image" src="https://github.com/user-attachments/assets/067bcc5a-8ad7-4392-b7ca-b5cc69c76cb0" />
-
-#### 5. Calculate Concentration
-Click **🧪 Calculate Concentration**. The tool uses the integrated area (Net Area if baseline correction is active) and your input parameters (Extinction Coefficient, Path Length, MW) to calculate total milligrams.
-
-<img width="798" height="682" alt="image" src="https://github.com/user-attachments/assets/8490113a-0915-4a69-a7d0-6496193f2b79" />
-
-#### 6. Fine-Tune Appearance & Export
--   **Customize Fonts & Layout:** Click **⚙️ Font and Style Settings** to open the advanced editor. Here you can change the chart title, font family, element sizes, make fonts **Bold**, adjust label rotation/offsets, and enable **Minor Ticks** for a professional, publication-ready look.
--   **Save or Copy:** Use the `Save as PNG` button to choose a resolution and download the image, or `Copy to Clipboard` to capture the plot for quick use elsewhere.
-
-<img width="598" height="830" alt="image" src="https://github.com/user-attachments/assets/c4c0be45-a5d6-44f0-bece-d1ed85b85d6f" />
-
-<img width="595" height="407" alt="image" src="https://github.com/user-attachments/assets/e748063f-0bd4-47f5-9987-5cfad3c0b551" />
 
 ## 🛠️ Built With
 
@@ -107,23 +46,23 @@ Click **🧪 Calculate Concentration**. The tool uses the integrated area (Net A
 
 ## 📄 License
 
-Developed by Anindya Karmaker. All rights reserved. Unauthorized copy or distribution of this application is strictly prohibited. For inquiries or feedback, please contact the [McDonald-Nandi Lab](https://mcdonald-nandi.ech.ucdavis.edu/).
+Uses the MIT License so anyone can use it and modify it. 
 
 ## Citation
 
 If you use **Advanced Data Analyzer** in your research, presentations, or publications, please cite it as follows:
 
 **APA Format:**
-> Karmaker, A., McCormick, A., Nandi, S., & McDonald, K. (2025). *Advanced Data Analyzer* [Software]. McDonald-Nandi Lab, University of California, Davis. https://github.com/Anindya-Karmaker/Advanced-Data-Analysis
+> Karmaker, A., McCormick, A., Nandi, S., & McDonald, K. (2026). *Advanced Data Analyzer* [Software]. McDonald-Nandi Lab, University of California, Davis. https://github.com/Anindya-Karmaker/Advanced-Data-Analysis
 
 **BibTeX:**
 ```bibtex
-@software{AdvancedDataAnalyzer2025,
+@software{AdvancedDataAnalyzer2026,
   author = {Karmaker, Anindya and McCormick, Alison and Nandi, Somen and McDonald, Karen},
   title = {Advanced Data Analyzer},
-  year = {2025},
+  year = {2026},
   url = {https://github.com/Anindya-Karmaker/Advanced-Data-Analysis},
   organization = {McDonald-Nandi Lab, University of California, Davis},
-  version = {4.0}
+  version = {2.1}
 }
 ```
