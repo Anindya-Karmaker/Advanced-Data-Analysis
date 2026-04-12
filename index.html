@@ -853,39 +853,24 @@
                                 <div id="errbar-minus-row" style="display:none;margin-bottom:6px;"><label>− Error
                                         Column</label><select id="errorBarMinusCol"
                                         onchange="applyChartTypeSettings()"></select></div>
+                                </div>
                             </div>
 
-                            <!-- Trace Identity & Style -->
+                            <!-- Error Bar -->
                             <div class="card">
-                                <div class="card-title"><i class="fa-solid fa-palette"></i>Trace Identity &amp; Style
+                                <div class="card-title"><i class="fa-solid fa-palette"></i>Error Bar
                                 </div>
                                 <div class="g2" style="margin-bottom:6px;">
                                     <div><label>Dataset Name</label><input type="text" id="styleTraceName"
                                             oninput="applyStyleSettings()"></div>
-                                    <div><label>Line / Bar Color</label><input type="color" id="styleColor"
-                                            style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"></div>
-                                </div>
-                                <div class="g2" style="margin-bottom:6px;">
-                                    <div><label>Marker Color</label><input type="color" id="styleMarkerColor"
-                                            style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"
-                                            title="Independent color for scatter points"></div>
                                     <div><label>Error Bar Color</label><input type="color" id="styleErrorBarColor"
                                             style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"
                                             title="Color for error bars"></div>
                                 </div>
-                                <div class="g2" style="margin-bottom:6px;">
-                                    <div><label>Fill Color <span
-                                                style="font-size:9px;color:#aaa;">(area)</span></label><input
-                                            type="color" id="styleAreaFillColor" style="height:28px;cursor:pointer;"
-                                            oninput="applyStyleSettings()" title="Fill color for area charts"></div>
-                                    <div><label>Fill Opacity %</label><input type="number" id="styleAreaFillOpacity"
-                                            value="18" min="0" max="100" step="5" oninput="applyStyleSettings()"></div>
-                                </div>
                                 <div class="g2">
-                                    <div><label>Opacity (%)</label><input type="number" id="styleOpacity" value="100"
-                                            min="0" max="100" step="5" oninput="applyStyleSettings()"></div>
-                                    <div><label>Line Width</label><input type="number" id="styleLineWidth" value="2"
-                                            min="0.5" max="20" step="0.5" oninput="applyStyleSettings()"></div>
+                                    <div><label>Error Bar Thickness</label><input type="number" id="styleErrorBarThickness" value="1.5"
+                                            min="0.1" max="10" step="0.1" oninput="applyStyleSettings()"></div>
+                                    <div></div>
                                 </div>
                             </div>
 
@@ -2331,6 +2316,7 @@
                 if (g('styleColor')) config.color = g('styleColor').value;
                 if (g('styleMarkerColor')) config.markerColor = g('styleMarkerColor').value;
                 if (g('styleErrorBarColor')) config.errorBarColor = g('styleErrorBarColor').value;
+                if (g('styleErrorBarThickness')) config.errorBarThickness = parseFloat(g('styleErrorBarThickness').value) || 1.5;
                 if (g('styleAreaFillColor')) config.areaFillColor = g('styleAreaFillColor').value;
                 if (g('styleAreaFillOpacity')) config.areaFillOpacity = parseInt(g('styleAreaFillOpacity').value) || 18;
                 if (g('styleLineWidth')) config.lineWidth = parseFloat(g('styleLineWidth').value) || 2;
@@ -3759,6 +3745,7 @@
                 state.files.forEach(file => {
                     const config = state.plotConfig[file.id];
                     if (config.visible === false) return;
+                    const _ebThickness = config.errorBarThickness || 1.5;
 
                     const chartType = config.chartType || 'scatter_line';
                     const yAxisKey = config.yaxisSide === 'right2' ? 'y3'
@@ -3886,13 +3873,13 @@
                                 return config.replicateShowPts ? `${label} (n=${ns[i]})` : label;
                             });
                         }
-                        const _errYSpec = { type: 'data', array: errVals, visible: true, color: _errColor2, thickness: 1.5, width: 6 };
+                        const _errYSpec = { type: 'data', array: errVals, visible: true, color: _errColor2, thickness: _ebThickness, width: 6 };
                         const validMask = means.map((m, i) => !isNaN(m));
                         const filtX = plotXVals.filter((_, i) => validMask[i]);
                         const filtY = means.filter((_, i) => validMask[i]);
                         const filtEr = errVals.filter((_, i) => validMask[i]);
                         const filtTx = _barTxt2 ? _barTxt2.filter((_, i) => validMask[i]) : null;
-                        const filtErrSpec = { type: 'data', array: filtEr, visible: true, color: _errColor2, thickness: 1.5, width: 6 };
+                        const filtErrSpec = { type: 'data', array: filtEr, visible: true, color: _errColor2, thickness: _ebThickness, width: 6 };
                         const _mkrObj2 = { color: _fillCol2, opacity: _barOp2, line: { color: _bordCol2, width: _bordW2 } };
                         if (_patObj2) _mkrObj2.pattern = _patObj2;
                         traces.push(isBar
@@ -3981,7 +3968,7 @@
                         const filtMeans = means.filter((_, i) => validMask[i]);
                         const filtErr = errVals.filter((_, i) => validMask[i]);
                         const filtNs = ns.filter((_, i) => validMask[i]);
-                        const _errSpec = { type: 'data', array: filtErr, visible: true, color: _errClrL, thickness: 1.5, width: 6 };
+                        const _errSpec = { type: 'data', array: filtErr, visible: true, color: _errClrL, thickness: _ebThickness, width: 6 };
                         traces.push(isBar
                             ? {
                                 type: 'bar', x: filtGrps, y: filtMeans, name: config.traceName + ' (mean±' + errType + ')', yaxis: yKey,
@@ -4071,7 +4058,7 @@
                         traces.push({
                             x: barLabels, y: means, type: 'bar', name: config.traceName + ' (mean)',
                             marker: { color: config.color, opacity: 0.9, line: { color: 'rgba(255,255,255,.4)', width: .5 } },
-                            error_y: { type: 'data', array: sds, visible: true, color: _legEbColor, thickness: 1.5, width: 6 },
+                            error_y: { type: 'data', array: sds, visible: true, color: _legEbColor, thickness: _ebThickness, width: 6 },
                             yaxis: config.yaxisSide === 'right' ? 'y2' : 'y'
                         });
                         return;
@@ -4143,21 +4130,21 @@
                     const _ebColor = config.errorBarColor || config.color;
                     if (ec.show) {
                         if (ec.type === 'symmetric' && ec.col) {
-                            errorBar = { type: 'data', array: file.data.map(r => parseVal(r[ec.col]) || 0), visible: true, color: _ebColor, thickness: 1.5, width: 6 };
+                            errorBar = { type: 'data', array: file.data.map(r => parseVal(r[ec.col]) || 0), visible: true, color: _ebColor, thickness: _ebThickness, width: 6 };
                         } else if (ec.type === 'asymmetric' && ec.colPlus && ec.colMinus) {
                             errorBar = {
                                 type: 'data',
                                 array: file.data.map(r => parseVal(r[ec.colPlus]) || 0),
                                 arrayminus: file.data.map(r => parseVal(r[ec.colMinus]) || 0),
-                                visible: true, color: _ebColor, thickness: 1.5, width: 6
+                                visible: true, color: _ebColor, thickness: _ebThickness, width: 6
                             };
                         } else if (ec.type === 'percent') {
-                            errorBar = { type: 'percent', value: ec.percent || 5, visible: true, color: _ebColor, thickness: 1.5, width: 6 };
+                            errorBar = { type: 'percent', value: ec.percent || 5, visible: true, color: _ebColor, thickness: _ebThickness, width: 6 };
                         } else if (ec.type === 'constant') {
-                            errorBar = { type: 'constant', value: ec.constant || 0, visible: true, color: _ebColor, thickness: 1.5, width: 6 };
+                            errorBar = { type: 'constant', value: ec.constant || 0, visible: true, color: _ebColor, thickness: _ebThickness, width: 6 };
                         } else if (ec.type === 'sqrt') {
                             // sqrt error: array = sqrt of each y value
-                            errorBar = { type: 'data', array: plotY.map(v => Math.sqrt(Math.abs(v))), visible: true, color: _ebColor, thickness: 1.5, width: 6 };
+                            errorBar = { type: 'data', array: plotY.map(v => Math.sqrt(Math.abs(v))), visible: true, color: _ebColor, thickness: _ebThickness, width: 6 };
                         }
                     }
 
@@ -4433,10 +4420,11 @@
                 if (layout.yaxis2) layout.yaxis2.title = { text: '' };
                 if (layout.yaxis3) layout.yaxis3.title = { text: '' };
 
-                // Fix jumping axes: default to the perfectly computed margins from the last non-drag render!
+                // Fix jumping axes: default to the perfectly computed margins from the last render or current fullLayout
                 let cm = { l: 80, r: 40, t: 50, b: 60 };
                 if (plotlyDiv && plotlyDiv._fullLayout && plotlyDiv._fullLayout.margin) {
-                    cm = plotlyDiv._fullLayout.margin;
+                    const fl = plotlyDiv._fullLayout;
+                    cm = { l: fl.margin.l, r: fl.margin.r, t: fl.margin.t, b: fl.margin.b };
                 }
 
                 if (state.dragLabelsMode) {
@@ -4446,10 +4434,11 @@
                     if (layout.yaxis2) layout.yaxis2.automargin = false;
                     if (layout.yaxis3) layout.yaxis3.automargin = false;
 
-                    layout.margin.t = Math.max(layout.margin.t || 0, cm.t);
-                    layout.margin.b = Math.max(layout.margin.b || 0, cm.b);
-                    layout.margin.l = Math.max(layout.margin.l || 0, cm.l);
-                    layout.margin.r = Math.max(layout.margin.r || 0, cm.r);
+                    // Stick to the current margins to avoid jumps during drag
+                    layout.margin.t = cm.t;
+                    layout.margin.b = cm.b;
+                    layout.margin.l = cm.l;
+                    layout.margin.r = cm.r;
                 }
 
                 const plotW = layout.width || (plotlyDiv ? plotlyDiv.offsetWidth : 800) || 800;
