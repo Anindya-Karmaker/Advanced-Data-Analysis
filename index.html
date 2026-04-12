@@ -725,6 +725,43 @@
                                 </div>
                             </div>
 
+                            <!-- Axis Ranges -->
+                            <div class="card">
+                                <div class="card-title"><i class="fa-solid fa-arrows-left-right"></i>Axis Ranges</div>
+                                <div style="margin-bottom:5px;">
+                                    <label
+                                        style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;font-size:11.5px;">
+                                        <input type="checkbox" id="tightAxesCheck" onchange="applyPlotAppearance()">
+                                        <span><strong>Tight axes</strong> — X &amp; Y meet at data origin (0,0
+                                            corner)</span>
+                                    </label>
+                                </div>
+                                <hr style="margin:6px 0 5px;">
+                                <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Range Override
+                                    (blank = auto)</div>
+                                <div class="g2" style="margin-bottom:5px;">
+                                    <div><label>X min</label><input type="number" id="xAxisMinOverride" placeholder="Auto"
+                                            step="any" onchange="applyPlotAppearance()"></div>
+                                    <div><label>X max</label><input type="number" id="xAxisMaxOverride" placeholder="Auto"
+                                            step="any" onchange="applyPlotAppearance()"></div>
+                                </div>
+                                <div class="g2" style="margin-bottom:5px;">
+                                    <div><label>Y min</label><input type="number" id="yAxisMin" placeholder="Auto" step="any"
+                                            onchange="applyPlotAppearance()"></div>
+                                    <div><label>Y max</label><input type="number" id="yAxisMax" placeholder="Auto" step="any"
+                                            onchange="applyPlotAppearance()"></div>
+                                </div>
+                                <hr style="margin:5px 0;">
+                                <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Global X Clamp
+                                </div>
+                                <div class="g2">
+                                    <div><label>Start</label><input type="number" id="xAxisStart" placeholder="Min"
+                                            onchange="updateGlobalXRange()"></div>
+                                    <div><label>End</label><input type="number" id="xAxisEnd" placeholder="Max"
+                                            onchange="updateGlobalXRange()"></div>
+                                </div>
+                            </div>
+
                             <!-- Data Mode / Replicates -->
                             <div class="card">
                                 <div class="card-title"><i class="fa-solid fa-layer-group"></i>Data Mode &amp;
@@ -872,59 +909,54 @@
                             </div>
                         </div>
 
-                        <!-- Line / Marker Style -->
-                         
-                        <div class="card" id="line-style-card" style="flex-direction:column;gap:7px;">
-                            <div class="card-title"><i class="fa-solid fa-pen-nib"></i>Line / Marker Style</div>
-                            <div class="g2">
-                                <div><label>Draw Mode</label>
-                                    <select id="styleMode" onchange="applyStyleSettings()">
-                                        <option value="lines">Lines only</option>
-                                        <option value="markers">Points only</option>
-                                        <option value="lines+markers">Lines + Points</option>
-                                    </select>
-                                </div>
-                                <div><label>Dash Style</label>
-                                    <select id="styleLineDash" onchange="applyStyleSettings()">
-                                        <option value="solid">Solid</option>
-                                        <option value="dash">Dashed</option>
-                                        <option value="dot">Dotted</option>
-                                        <option value="dashdot">Dash-Dot</option>
-                                        <option value="longdash">Long Dash</option>
-                                    </select>
-                                </div>
+                        <!-- 2-Point Calibration (moved from Series tab) -->
+                        <div class="card">
+                            <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>2-Point Calibration</div>
+                            <div
+                                style="display:grid;grid-template-columns:60px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:6px;">
+                                <span></span><span style="color:#0288d1;text-align:center;font-weight:600;">X
+                                    axis</span><span style="color:#e65100;text-align:center;font-weight:600;">Y
+                                    axis</span>
+                                <label style="margin:0;">P1 data</label><input type="number" id="calXData1" placeholder="0"
+                                    step="any"><input type="number" id="calYData1" placeholder="0" step="any">
+                                <label style="margin:0;">P1 real</label><input type="number" id="calXReal1" placeholder="0"
+                                    step="any"><input type="number" id="calYReal1" placeholder="0" step="any">
+                                <label style="margin:0;">P2 data</label><input type="number" id="calXData2"
+                                    placeholder="100" step="any"><input type="number" id="calYData2" placeholder="1"
+                                    step="any">
+                                <label style="margin:0;">P2 real</label><input type="number" id="calXReal2"
+                                    placeholder="100" step="any"><input type="number" id="calYReal2" placeholder="1000"
+                                    step="any">
                             </div>
-                            <div class="g2">
-                                <div><label>Marker Symbol</label>
-                                    <select id="styleMarkerSymbol" onchange="applyStyleSettings()">
-                                        <option value="circle">● Circle</option>
-                                        <option value="square">■ Square</option>
-                                        <option value="diamond">◆ Diamond</option>
-                                        <option value="triangle-up">▲ Triangle Up</option>
-                                        <option value="triangle-down">▼ Triangle Down</option>
-                                        <option value="cross">✚ Cross</option>
-                                        <option value="x">✕ X</option>
-                                        <option value="star">★ Star</option>
-                                        <option value="hexagram">⬡ Hexagram</option>
-                                        <option value="circle-open">○ Circle (open)</option>
-                                        <option value="square-open">□ Square (open)</option>
-                                        <option value="diamond-open">◇ Diamond (open)</option>
-                                        <option value="triangle-up-open">△ Triangle (open)</option>
-                                    </select>
-                                </div>
-                                <div><label>Marker Size (px)</label>
-                                    <input type="number" id="styleMarkerSize" value="8" min="2" max="40" step="1"
-                                        oninput="applyStyleSettings()">
-                                </div>
+                            <div class="g2" style="gap:5px;">
+                                <button onclick="applyAxisCalibration()" class="btn-g"
+                                    style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
+                                <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
+                                        class="fa-solid fa-rotate-left"></i> Reset</button>
                             </div>
-                            <div class="g2">
-                                <div><label>Area Fill Color</label>
-                                    <input type="color" id="styleAreaFillColor" value="#3498db" oninput="applyStyleSettings()">
-                                </div>
-                                <div><label>Fill Opacity</label>
-                                    <input type="range" id="styleAreaFillOpacity" value="100    " min="10" max="100" step="1"
-                                        oninput="applyStyleSettings()">
-                                </div>
+                        </div> 
+                        
+                        <!-- Shift / Rescale (moved to Series tab) -->
+                        <div class="card">
+                            <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale
+                                Active Dataset</div>
+                            <p style="font-size:10px;color:#888;margin-bottom:6px;">new = (old + offset) × scale</p>
+                            <div class="sag" style="margin-bottom:5px;">
+                                <span></span><span style="font-size:10px;color:#888;text-align:center;">Offset
+                                    (+)</span><span style="font-size:10px;color:#888;text-align:center;">Scale
+                                    (×)</span>
+                                <label>X</label><input type="number" id="axisShiftXOffset" value="0" step="any"
+                                    placeholder="0"><input type="number" id="axisShiftXScale" value="1" step="any"
+                                    placeholder="1">
+                                <label>Y</label><input type="number" id="axisShiftYOffset" value="0" step="any"
+                                    placeholder="0"><input type="number" id="axisShiftYScale" value="1" step="any"
+                                    placeholder="1">
+                            </div>
+                            <div class="g2" style="gap:5px;">
+                                <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;"><i
+                                        class="fa-solid fa-check"></i> Apply</button>
+                                <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
+                                        class="fa-solid fa-rotate-left"></i> Reset</button>
                             </div>
                         </div>
 
@@ -1005,6 +1037,60 @@
                     
                     <!-- ══ TAB: AXIS & STYLE ══ -->
                     <div class="tab-pane" id="tab-axis">
+                        <!-- Line / Marker Style -->
+                        <div class="card" id="line-style-card" style="flex-direction:column;gap:7px;">
+                            <div class="card-title"><i class="fa-solid fa-pen-nib"></i>Line / Marker Style</div>
+                            <div class="g2">
+                                <div><label>Draw Mode</label>
+                                    <select id="styleMode" onchange="applyStyleSettings()">
+                                        <option value="lines">Lines only</option>
+                                        <option value="markers">Points only</option>
+                                        <option value="lines+markers">Lines + Points</option>
+                                    </select>
+                                </div>
+                                <div><label>Dash Style</label>
+                                    <select id="styleLineDash" onchange="applyStyleSettings()">
+                                        <option value="solid">Solid</option>
+                                        <option value="dash">Dashed</option>
+                                        <option value="dot">Dotted</option>
+                                        <option value="dashdot">Dash-Dot</option>
+                                        <option value="longdash">Long Dash</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Marker Symbol</label>
+                                    <select id="styleMarkerSymbol" onchange="applyStyleSettings()">
+                                        <option value="circle">● Circle</option>
+                                        <option value="square">■ Square</option>
+                                        <option value="diamond">◆ Diamond</option>
+                                        <option value="triangle-up">▲ Triangle Up</option>
+                                        <option value="triangle-down">▼ Triangle Down</option>
+                                        <option value="cross">✚ Cross</option>
+                                        <option value="x">✕ X</option>
+                                        <option value="star">★ Star</option>
+                                        <option value="hexagram">⬡ Hexagram</option>
+                                        <option value="circle-open">○ Circle (open)</option>
+                                        <option value="square-open">□ Square (open)</option>
+                                        <option value="diamond-open">◇ Diamond (open)</option>
+                                        <option value="triangle-up-open">△ Triangle (open)</option>
+                                    </select>
+                                </div>
+                                <div><label>Marker Size (px)</label>
+                                    <input type="number" id="styleMarkerSize" value="8" min="2" max="40" step="1"
+                                        oninput="applyStyleSettings()">
+                                </div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Area Fill Color</label>
+                                    <input type="color" id="styleAreaFillColor" value="#3498db" oninput="applyStyleSettings()">
+                                </div>
+                                <div><label>Fill Opacity</label>
+                                    <input type="range" id="styleAreaFillOpacity" value="100    " min="10" max="100" step="1"
+                                        oninput="applyStyleSettings()">
+                                </div>
+                            </div>
+                        </div>
                         <!-- Axis Titles -->
                         <div class="card">
                             <div class="card-title"><i class="fa-solid fa-tag"></i>Axis Titles</div>
@@ -1138,43 +1224,7 @@
                             <button onclick="applyGridSettings()" class="btn-a"
                                 style="width:100%;padding:6px;font-size:10.5px;margin-top:4px;">Apply Grid
                                 Settings</button>
-                        </div>
-                    <!-- Axis Ranges -->
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-arrows-left-right"></i>Axis Ranges</div>
-                        <div style="margin-bottom:5px;">
-                            <label
-                                style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;font-size:11.5px;">
-                                <input type="checkbox" id="tightAxesCheck" onchange="applyPlotAppearance()">
-                                <span><strong>Tight axes</strong> — X &amp; Y meet at data origin (0,0
-                                    corner)</span>
-                            </label>
-                        </div>
-                        <hr style="margin:6px 0 5px;">
-                        <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Range Override
-                            (blank = auto)</div>
-                        <div class="g2" style="margin-bottom:5px;">
-                            <div><label>X min</label><input type="number" id="xAxisMinOverride" placeholder="Auto"
-                                    step="any" onchange="applyPlotAppearance()"></div>
-                            <div><label>X max</label><input type="number" id="xAxisMaxOverride" placeholder="Auto"
-                                    step="any" onchange="applyPlotAppearance()"></div>
-                        </div>
-                        <div class="g2" style="margin-bottom:5px;">
-                            <div><label>Y min</label><input type="number" id="yAxisMin" placeholder="Auto" step="any"
-                                    onchange="applyPlotAppearance()"></div>
-                            <div><label>Y max</label><input type="number" id="yAxisMax" placeholder="Auto" step="any"
-                                    onchange="applyPlotAppearance()"></div>
-                        </div>
-                        <hr style="margin:5px 0;">
-                        <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Global X Clamp
-                        </div>
-                        <div class="g2">
-                            <div><label>Start</label><input type="number" id="xAxisStart" placeholder="Min"
-                                    onchange="updateGlobalXRange()"></div>
-                            <div><label>End</label><input type="number" id="xAxisEnd" placeholder="Max"
-                                    onchange="updateGlobalXRange()"></div>
-                        </div>
-                    </div>
+                        </div>                    
 
                     <!-- Grid & Axis Lines -->
                     <div class="card">
@@ -1284,57 +1334,6 @@
                                 style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
                                     type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Show
                                 Legend</label></div>
-                    </div>
-
-                    <!-- Shift / Rescale (moved from Series tab) -->
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale
-                            Active Dataset</div>
-                        <p style="font-size:10px;color:#888;margin-bottom:6px;">new = (old + offset) × scale</p>
-                        <div class="sag" style="margin-bottom:5px;">
-                            <span></span><span style="font-size:10px;color:#888;text-align:center;">Offset
-                                (+)</span><span style="font-size:10px;color:#888;text-align:center;">Scale
-                                (×)</span>
-                            <label>X</label><input type="number" id="axisShiftXOffset" value="0" step="any"
-                                placeholder="0"><input type="number" id="axisShiftXScale" value="1" step="any"
-                                placeholder="1">
-                            <label>Y</label><input type="number" id="axisShiftYOffset" value="0" step="any"
-                                placeholder="0"><input type="number" id="axisShiftYScale" value="1" step="any"
-                                placeholder="1">
-                        </div>
-                        <div class="g2" style="gap:5px;">
-                            <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;"><i
-                                    class="fa-solid fa-check"></i> Apply</button>
-                            <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
-                                    class="fa-solid fa-rotate-left"></i> Reset</button>
-                        </div>
-                    </div>
-
-                    <!-- 2-Point Calibration (moved from Series tab) -->
-                    <div class="card">
-                        <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>2-Point Calibration</div>
-                        <div
-                            style="display:grid;grid-template-columns:60px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:6px;">
-                            <span></span><span style="color:#0288d1;text-align:center;font-weight:600;">X
-                                axis</span><span style="color:#e65100;text-align:center;font-weight:600;">Y
-                                axis</span>
-                            <label style="margin:0;">P1 data</label><input type="number" id="calXData1" placeholder="0"
-                                step="any"><input type="number" id="calYData1" placeholder="0" step="any">
-                            <label style="margin:0;">P1 real</label><input type="number" id="calXReal1" placeholder="0"
-                                step="any"><input type="number" id="calYReal1" placeholder="0" step="any">
-                            <label style="margin:0;">P2 data</label><input type="number" id="calXData2"
-                                placeholder="100" step="any"><input type="number" id="calYData2" placeholder="1"
-                                step="any">
-                            <label style="margin:0;">P2 real</label><input type="number" id="calXReal2"
-                                placeholder="100" step="any"><input type="number" id="calYReal2" placeholder="1000"
-                                step="any">
-                        </div>
-                        <div class="g2" style="gap:5px;">
-                            <button onclick="applyAxisCalibration()" class="btn-g"
-                                style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
-                            <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
-                                    class="fa-solid fa-rotate-left"></i> Reset</button>
-                        </div>
                     </div>
 
                     <!-- Quick Trace Override -->
