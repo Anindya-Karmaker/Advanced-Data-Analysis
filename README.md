@@ -32,7 +32,7 @@ This tool was created for MALDI-TOF data, but has evolved into a fully-featured 
 
 No installation is needed!
 
-1.  **Visit the Live Tool:** [https://github.com/Anindya-Karmaker/Advanced-Data-Analysis](https://github.com/Anindya-Karmaker/Advanced-Data-Analysis)
+1.  **Visit the Live Tool:** [https://github.com/Anindya-Karmaker/Advanced-Data-Analyzer](https://github.com/Anindya-Karmaker/Advanced-Data-Analyzer)
 2.  **Or Download:** Download the `index.html` file from this repository and open it in any modern web browser (like Chrome, Firefox, or Safari).
 
 
@@ -53,7 +53,7 @@ Uses the MIT License so anyone can use it and modify it.
 If you use **Advanced Data Analyzer** in your research, presentations, or publications, please cite it as follows:
 
 **APA Format:**
-> Karmaker, A., McCormick, A., Nandi, S., & McDonald, K. (2026). *Advanced Data Analyzer* [Software]. McDonald-Nandi Lab, University of California, Davis. https://github.com/Anindya-Karmaker/Advanced-Data-Analysis
+> Karmaker, A., McCormick, A., Nandi, S., & McDonald, K. (2026). *Advanced Data Analyzer* [Software]. McDonald-Nandi Lab, University of California, Davis. https://github.com/Anindya-Karmaker/Advanced-Data-Analyzer
 
 **BibTeX:**
 ```bibtex
@@ -61,7 +61,7 @@ If you use **Advanced Data Analyzer** in your research, presentations, or public
   author = {Karmaker, Anindya and McCormick, Alison and Nandi, Somen and McDonald, Karen},
   title = {Advanced Data Analyzer},
   year = {2026},
-  url = {https://github.com/Anindya-Karmaker/Advanced-Data-Analysis},
+  url = {https://github.com/Anindya-Karmaker/Advanced-Data-Analyzer},
   organization = {McDonald-Nandi Lab, University of California, Davis},
   version = {2.1}
 }
