@@ -689,8 +689,6 @@
                                     <div><label>Type</label>
                                         <select id="chartType" onchange="applyChartTypeSettings()">
                                             <option value="scatter_line">Line Chart</option>
-                                            <option value="scatter_point">Scatter (Points)</option>
-                                            <option value="scatter_both">Line + Points</option>
                                             <option value="bar">Bar Chart</option>
                                             <option value="area">Area</option>
                                             <option value="step">Step Chart</option>
@@ -875,6 +873,7 @@
                         </div>
 
                         <!-- Line / Marker Style -->
+                         
                         <div class="card" id="line-style-card" style="flex-direction:column;gap:7px;">
                             <div class="card-title"><i class="fa-solid fa-pen-nib"></i>Line / Marker Style</div>
                             <div class="g2">
@@ -915,6 +914,15 @@
                                 </div>
                                 <div><label>Marker Size (px)</label>
                                     <input type="number" id="styleMarkerSize" value="8" min="2" max="40" step="1"
+                                        oninput="applyStyleSettings()">
+                                </div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Area Fill Color</label>
+                                    <input type="color" id="styleAreaFillColor" value="#3498db" oninput="applyStyleSettings()">
+                                </div>
+                                <div><label>Fill Opacity</label>
+                                    <input type="range" id="styleAreaFillOpacity" value="100    " min="10" max="100" step="1"
                                         oninput="applyStyleSettings()">
                                 </div>
                             </div>
@@ -1997,8 +2005,6 @@
                             <label><i class="fa-solid fa-chart-column" style="color:#00796b;"></i> Chart Type:</label>
                             <select id="importChartType">
                                 <option value="scatter_line">Line Chart</option>
-                                <option value="scatter_point">Scatter (Points)</option>
-                                <option value="scatter_both">Line + Points</option>
                                 <option value="bar">Bar Chart</option>
                                 <option value="area">Area Chart</option>
                                 <option value="step">Step Chart</option>
