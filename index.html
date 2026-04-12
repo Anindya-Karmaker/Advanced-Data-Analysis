@@ -853,149 +853,148 @@
                                 <div id="errbar-minus-row" style="display:none;margin-bottom:6px;"><label>− Error
                                         Column</label><select id="errorBarMinusCol"
                                         onchange="applyChartTypeSettings()"></select></div>
-                                </div>
                             </div>
-
-                            <!-- Error Bar -->
-                            <div class="card">
-                                <div class="card-title"><i class="fa-solid fa-palette"></i>Error Bar
-                                </div>
-                                <div class="g2" style="margin-bottom:6px;">
-                                    <div><label>Dataset Name</label><input type="text" id="styleTraceName"
-                                            oninput="applyStyleSettings()"></div>
-                                    <div><label>Error Bar Color</label><input type="color" id="styleErrorBarColor"
-                                            style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"
-                                            title="Color for error bars"></div>
-                                </div>
-                                <div class="g2">
-                                    <div><label>Error Bar Thickness</label><input type="number" id="styleErrorBarThickness" value="1.5"
-                                            min="0.1" max="10" step="0.1" oninput="applyStyleSettings()"></div>
-                                    <div></div>
-                                </div>
-                            </div>
-
-                            <!-- Line / Marker Style -->
-                            <div class="card" id="line-style-card" style="flex-direction:column;gap:7px;">
-                                <div class="card-title"><i class="fa-solid fa-pen-nib"></i>Line / Marker Style</div>
-                                <div class="g2">
-                                    <div><label>Draw Mode</label>
-                                        <select id="styleMode" onchange="applyStyleSettings()">
-                                            <option value="lines">Lines only</option>
-                                            <option value="markers">Points only</option>
-                                            <option value="lines+markers">Lines + Points</option>
-                                        </select>
-                                    </div>
-                                    <div><label>Dash Style</label>
-                                        <select id="styleLineDash" onchange="applyStyleSettings()">
-                                            <option value="solid">Solid</option>
-                                            <option value="dash">Dashed</option>
-                                            <option value="dot">Dotted</option>
-                                            <option value="dashdot">Dash-Dot</option>
-                                            <option value="longdash">Long Dash</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="g2">
-                                    <div><label>Marker Symbol</label>
-                                        <select id="styleMarkerSymbol" onchange="applyStyleSettings()">
-                                            <option value="circle">● Circle</option>
-                                            <option value="square">■ Square</option>
-                                            <option value="diamond">◆ Diamond</option>
-                                            <option value="triangle-up">▲ Triangle Up</option>
-                                            <option value="triangle-down">▼ Triangle Down</option>
-                                            <option value="cross">✚ Cross</option>
-                                            <option value="x">✕ X</option>
-                                            <option value="star">★ Star</option>
-                                            <option value="hexagram">⬡ Hexagram</option>
-                                            <option value="circle-open">○ Circle (open)</option>
-                                            <option value="square-open">□ Square (open)</option>
-                                            <option value="diamond-open">◇ Diamond (open)</option>
-                                            <option value="triangle-up-open">△ Triangle (open)</option>
-                                        </select>
-                                    </div>
-                                    <div><label>Marker Size (px)</label>
-                                        <input type="number" id="styleMarkerSize" value="8" min="2" max="40" step="1"
-                                            oninput="applyStyleSettings()">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Bar Style -->
-                            <div class="card" id="bar-style-card" style="display:none;flex-direction:column;gap:8px;">
-                                <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Bar Style</div>
-                                <div class="g2">
-                                    <div><label>Bar BG Color <span
-                                                style="font-size:9px;color:#aaa;">(fill/base)</span></label><input
-                                            type="color" id="barBgColor" style="height:28px;cursor:pointer;"
-                                            oninput="applyChartTypeSettings()"></div>
-                                    <div><label>Pattern FG Color <span
-                                                style="font-size:9px;color:#aaa;">(lines)</span></label><input
-                                            type="color" id="barFgColor" value="#000000"
-                                            style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()">
-                                    </div>
-                                </div>
-                                <div class="g2">
-                                    <div><label>Pattern Fill</label>
-                                        <select id="barPatternShape" onchange="applyChartTypeSettings()">
-                                            <option value="solid">Solid (no pattern)</option>
-                                            <option value="/">╱ Stripes Right</option>
-                                            <option value="\">\╲ Stripes Left</option>
-                                            <option value="x">✕ Cross-hatch</option>
-                                            <option value="-">— Horizontal</option>
-                                            <option value="|">| Vertical</option>
-                                            <option value="+">+ Grid</option>
-                                            <option value=".">• Dots</option>
-                                        </select>
-                                    </div>
-                                    <div><label>Pattern Size</label><input type="number" id="barPatternSize" value="8"
-                                            min="2" max="24" step="1" oninput="applyChartTypeSettings()"></div>
-                                </div>
-                                <div class="g2">
-                                    <div><label>Border Color</label><input type="color" id="barBorderColor"
-                                            value="#000000" style="height:28px;cursor:pointer;"
-                                            oninput="applyChartTypeSettings()"></div>
-                                    <div><label>Border Width</label><input type="number" id="barBorderWidth" value="0"
-                                            min="0" max="6" step="0.5" oninput="applyChartTypeSettings()"></div>
-                                </div>
-                                <div class="g2">
-                                    <div><label>Bar Opacity (%)</label><input type="number" id="barOpacity" value="85"
-                                            min="0" max="100" step="5" oninput="applyChartTypeSettings()"></div>
-                                    <div></div>
-                                </div>
-                                <hr style="margin:4px 0;">
-                                <div style="display:flex;align-items:center;gap:6px;">
-                                    <input type="checkbox" id="barShowLabels" onchange="applyChartTypeSettings()">
-                                    <label style="margin:0;font-size:11.5px;cursor:pointer;" for="barShowLabels">Show
-                                        value labels</label>
-                                </div>
-                                <div class="g2" style="margin-top:4px;">
-                                    <div><label>Position</label><select id="barLabelPosition"
-                                            onchange="applyChartTypeSettings()">
-                                            <option value="outside">Outside top</option>
-                                            <option value="inside">Inside top</option>
-                                            <option value="center">Inside center</option>
-                                        </select></div>
-                                    <div><label>Format</label><select id="barLabelFormat"
-                                            onchange="applyChartTypeSettings()">
-                                            <option value="value">Value</option>
-                                            <option value="percent">Percent</option>
-                                            <option value="scientific">Scientific</option>
-                                        </select></div>
-                                </div>
-                                <div class="g2">
-                                    <div><label>Font Size</label><input type="number" id="barLabelFontSize" value="11"
-                                            min="7" max="24" oninput="applyChartTypeSettings()"></div>
-                                    <div><label>Font Color</label><input type="color" id="barLabelFontColor"
-                                            value="#333333" style="height:28px;cursor:pointer;"
-                                            oninput="applyChartTypeSettings()"></div>
-                                </div>
-                            </div>
-
-                            <button id="remove-file-btn" class="btn-r" style="font-size:11px;padding:7px;"><i
-                                    class="fa-solid fa-trash"></i> Remove This Dataset</button>
                         </div>
-                    </div>
 
+                        <!-- Error Bar -->
+                        <div class="card">
+                            <div class="card-title"><i class="fa-solid fa-palette"></i>Error Bar
+                            </div>
+                            <div class="g2" style="margin-bottom:6px;">
+                                <div><label>Dataset Name</label><input type="text" id="styleTraceName"
+                                        oninput="applyStyleSettings()"></div>
+                                <div><label>Error Bar Color</label><input type="color" id="styleErrorBarColor"
+                                        style="height:28px;cursor:pointer;" oninput="applyStyleSettings()"
+                                        title="Color for error bars"></div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Error Bar Thickness</label><input type="number" id="styleErrorBarThickness"
+                                        value="1.5" min="0.1" max="10" step="0.1" oninput="applyStyleSettings()"></div>
+                                <div></div>
+                            </div>
+                        </div>
+
+                        <!-- Line / Marker Style -->
+                        <div class="card" id="line-style-card" style="flex-direction:column;gap:7px;">
+                            <div class="card-title"><i class="fa-solid fa-pen-nib"></i>Line / Marker Style</div>
+                            <div class="g2">
+                                <div><label>Draw Mode</label>
+                                    <select id="styleMode" onchange="applyStyleSettings()">
+                                        <option value="lines">Lines only</option>
+                                        <option value="markers">Points only</option>
+                                        <option value="lines+markers">Lines + Points</option>
+                                    </select>
+                                </div>
+                                <div><label>Dash Style</label>
+                                    <select id="styleLineDash" onchange="applyStyleSettings()">
+                                        <option value="solid">Solid</option>
+                                        <option value="dash">Dashed</option>
+                                        <option value="dot">Dotted</option>
+                                        <option value="dashdot">Dash-Dot</option>
+                                        <option value="longdash">Long Dash</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Marker Symbol</label>
+                                    <select id="styleMarkerSymbol" onchange="applyStyleSettings()">
+                                        <option value="circle">● Circle</option>
+                                        <option value="square">■ Square</option>
+                                        <option value="diamond">◆ Diamond</option>
+                                        <option value="triangle-up">▲ Triangle Up</option>
+                                        <option value="triangle-down">▼ Triangle Down</option>
+                                        <option value="cross">✚ Cross</option>
+                                        <option value="x">✕ X</option>
+                                        <option value="star">★ Star</option>
+                                        <option value="hexagram">⬡ Hexagram</option>
+                                        <option value="circle-open">○ Circle (open)</option>
+                                        <option value="square-open">□ Square (open)</option>
+                                        <option value="diamond-open">◇ Diamond (open)</option>
+                                        <option value="triangle-up-open">△ Triangle (open)</option>
+                                    </select>
+                                </div>
+                                <div><label>Marker Size (px)</label>
+                                    <input type="number" id="styleMarkerSize" value="8" min="2" max="40" step="1"
+                                        oninput="applyStyleSettings()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bar Style -->
+                        <div class="card" id="bar-style-card" style="display:none;flex-direction:column;gap:8px;">
+                            <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Bar Style</div>
+                            <div class="g2">
+                                <div><label>Bar BG Color <span
+                                            style="font-size:9px;color:#aaa;">(fill/base)</span></label><input
+                                        type="color" id="barBgColor" style="height:28px;cursor:pointer;"
+                                        oninput="applyChartTypeSettings()"></div>
+                                <div><label>Pattern FG Color <span
+                                            style="font-size:9px;color:#aaa;">(lines)</span></label><input type="color"
+                                        id="barFgColor" value="#000000" style="height:28px;cursor:pointer;"
+                                        oninput="applyChartTypeSettings()">
+                                </div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Pattern Fill</label>
+                                    <select id="barPatternShape" onchange="applyChartTypeSettings()">
+                                        <option value="solid">Solid (no pattern)</option>
+                                        <option value="/">╱ Stripes Right</option>
+                                        <option value="\">\╲ Stripes Left</option>
+                                        <option value="x">✕ Cross-hatch</option>
+                                        <option value="-">— Horizontal</option>
+                                        <option value="|">| Vertical</option>
+                                        <option value="+">+ Grid</option>
+                                        <option value=".">• Dots</option>
+                                    </select>
+                                </div>
+                                <div><label>Pattern Size</label><input type="number" id="barPatternSize" value="8"
+                                        min="2" max="24" step="1" oninput="applyChartTypeSettings()"></div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Border Color</label><input type="color" id="barBorderColor" value="#000000"
+                                        style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+                                <div><label>Border Width</label><input type="number" id="barBorderWidth" value="0"
+                                        min="0" max="6" step="0.5" oninput="applyChartTypeSettings()"></div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Bar Opacity (%)</label><input type="number" id="barOpacity" value="85"
+                                        min="0" max="100" step="5" oninput="applyChartTypeSettings()"></div>
+                                <div></div>
+                            </div>
+                            <hr style="margin:4px 0;">
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                <input type="checkbox" id="barShowLabels" onchange="applyChartTypeSettings()">
+                                <label style="margin:0;font-size:11.5px;cursor:pointer;" for="barShowLabels">Show
+                                    value labels</label>
+                            </div>
+                            <div class="g2" style="margin-top:4px;">
+                                <div><label>Position</label><select id="barLabelPosition"
+                                        onchange="applyChartTypeSettings()">
+                                        <option value="outside">Outside top</option>
+                                        <option value="inside">Inside top</option>
+                                        <option value="center">Inside center</option>
+                                    </select></div>
+                                <div><label>Format</label><select id="barLabelFormat"
+                                        onchange="applyChartTypeSettings()">
+                                        <option value="value">Value</option>
+                                        <option value="percent">Percent</option>
+                                        <option value="scientific">Scientific</option>
+                                    </select></div>
+                            </div>
+                            <div class="g2">
+                                <div><label>Font Size</label><input type="number" id="barLabelFontSize" value="11"
+                                        min="7" max="24" oninput="applyChartTypeSettings()"></div>
+                                <div><label>Font Color</label><input type="color" id="barLabelFontColor" value="#333333"
+                                        style="height:28px;cursor:pointer;" oninput="applyChartTypeSettings()"></div>
+                            </div>
+                        </div>
+
+                        <button id="remove-file-btn" class="btn-r" style="font-size:11px;padding:7px;"><i
+                                class="fa-solid fa-trash"></i> Remove This Dataset</button>
+                    </div>
+                
+
+                    
                     <!-- ══ TAB: AXIS & STYLE ══ -->
                     <div class="tab-pane" id="tab-axis">
                         <!-- Axis Titles -->
@@ -1004,8 +1003,7 @@
                             <!-- Rich text toolbar for axis labels -->
                             <div
                                 style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px;padding:5px 6px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;align-items:center;">
-                                <span
-                                    style="font-size:9.5px;color:#888;margin-right:2px;white-space:nowrap;">Format:</span>
+                                <span style="font-size:9.5px;color:#888;margin-right:2px;white-space:nowrap;">Format:</span>
                                 <button type="button" onclick="axisInsert('sup')" title="Superscript (e.g. m²)"
                                     style="width:auto;padding:2px 7px;font-size:11px;background:#fff;border:1px solid #ccc;border-radius:3px;cursor:pointer;margin:0;">x<sup
                                         style="font-size:8px">n</sup></button>
@@ -1041,14 +1039,14 @@
                                     style="width:100%;padding:7px;font-size:12px;border:1px solid #ccc;border-radius:4px;margin-top:2px;">
                             </div>
                             <div class="g2" style="margin-bottom:5px;">
-                                <div><label>X Title</label><input type="text" id="xAxisLabel"
-                                        placeholder="e.g. Time (s)" oninput="updateActiveAxisLabels()"></div>
-                                <div><label>Y Title</label><input type="text" id="yAxisLabel"
-                                        placeholder="e.g. Intensity" oninput="updateActiveAxisLabels()"></div>
+                                <div><label>X Title</label><input type="text" id="xAxisLabel" placeholder="e.g. Time (s)"
+                                        oninput="updateActiveAxisLabels()"></div>
+                                <div><label>Y Title</label><input type="text" id="yAxisLabel" placeholder="e.g. Intensity"
+                                        oninput="updateActiveAxisLabels()"></div>
                             </div>
                             <div class="g2" style="margin-bottom:5px;">
-                                <div><label>Y2 Title</label><input type="text" id="y2AxisLabel"
-                                        placeholder="Secondary Y" oninput="updateActiveAxisLabels()"></div>
+                                <div><label>Y2 Title</label><input type="text" id="y2AxisLabel" placeholder="Secondary Y"
+                                        oninput="updateActiveAxisLabels()"></div>
                                 <div><label>Y3 Title</label><input type="text" id="y3AxisLabel" placeholder="Tertiary Y"
                                         oninput="updateActiveAxisLabels()"></div>
                             </div>
@@ -1059,8 +1057,8 @@
                             <div class="g2" style="margin-bottom:5px;">
                                 <div><label>Title Font Size (pt)</label><input type="number" id="axisTitleFontSize"
                                         value="13" min="8" max="28" oninput="applyPlotAppearance()"></div>
-                                <div><label>Tick Font Size (pt)</label><input type="number" id="axisTickFontSize"
-                                        value="11" min="6" max="24" oninput="applyPlotAppearance()"></div>
+                                <div><label>Tick Font Size (pt)</label><input type="number" id="axisTickFontSize" value="11"
+                                        min="6" max="24" oninput="applyPlotAppearance()"></div>
                             </div>
                             <div class="g2" style="margin-bottom:5px;">
                                 <div><label>Title Font Family</label>
@@ -1089,9 +1087,8 @@
                                 </div>
                             </div>
                             <div class="g2">
-                                <div><label>Axis Title Color</label><input type="color" id="axisTitleColor"
-                                        value="#333333" style="height:28px;cursor:pointer;"
-                                        onchange="applyPlotAppearance()"></div>
+                                <div><label>Axis Title Color</label><input type="color" id="axisTitleColor" value="#333333"
+                                        style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
                                 <div><label>Tick Color</label><input type="color" id="axisTickColor" value="#444444"
                                         style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
                             </div>
@@ -1101,14 +1098,14 @@
                                 Grid & Spacing</div>
                             <div style="font-size:9.5px;color:#888;margin-bottom:8px;">"Major Axis Units" sets the gap
                                 between main grid lines. "Minor Axis Units" adds sub-divisions.</div>
-
+    
                             <div
                                 style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;align-items:end;">
                                 <div style="font-size:10px;font-weight:600;color:#666;">Axis</div>
                                 <div style="font-size:10px;font-weight:600;color:#666;">Major Units</div>
                                 <div style="font-size:10px;font-weight:600;color:#666;">Minor Units</div>
                             </div>
-
+    
                             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px;">
                                 <div style="font-size:11px;padding-top:6px;">X-Axis</div>
                                 <input type="number" id="gridMajorX" step="any" placeholder="Auto"
@@ -1134,562 +1131,557 @@
                                 style="width:100%;padding:6px;font-size:10.5px;margin-top:4px;">Apply Grid
                                 Settings</button>
                         </div>
-
-                        <!-- Axis Ranges -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-arrows-left-right"></i>Axis Ranges</div>
-                            <div style="margin-bottom:5px;">
-                                <label
-                                    style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;font-size:11.5px;">
-                                    <input type="checkbox" id="tightAxesCheck" onchange="applyPlotAppearance()">
-                                    <span><strong>Tight axes</strong> — X &amp; Y meet at data origin (0,0
-                                        corner)</span>
-                                </label>
-                            </div>
-                            <hr style="margin:6px 0 5px;">
-                            <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Range Override
-                                (blank = auto)</div>
-                            <div class="g2" style="margin-bottom:5px;">
-                                <div><label>X min</label><input type="number" id="xAxisMinOverride" placeholder="Auto"
-                                        step="any" onchange="applyPlotAppearance()"></div>
-                                <div><label>X max</label><input type="number" id="xAxisMaxOverride" placeholder="Auto"
-                                        step="any" onchange="applyPlotAppearance()"></div>
-                            </div>
-                            <div class="g2" style="margin-bottom:5px;">
-                                <div><label>Y min</label><input type="number" id="yAxisMin" placeholder="Auto"
-                                        step="any" onchange="applyPlotAppearance()"></div>
-                                <div><label>Y max</label><input type="number" id="yAxisMax" placeholder="Auto"
-                                        step="any" onchange="applyPlotAppearance()"></div>
-                            </div>
-                            <hr style="margin:5px 0;">
-                            <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Global X Clamp
-                            </div>
-                            <div class="g2">
-                                <div><label>Start</label><input type="number" id="xAxisStart" placeholder="Min"
-                                        onchange="updateGlobalXRange()"></div>
-                                <div><label>End</label><input type="number" id="xAxisEnd" placeholder="Max"
-                                        onchange="updateGlobalXRange()"></div>
-                            </div>
-                        </div>
-
-                        <!-- Grid & Axis Lines -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-border-all"></i>Grid &amp; Axis Lines</div>
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
-                                        type="checkbox" id="showGridX" checked onchange="applyPlotAppearance()"> X
-                                    Grid</label>
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
-                                        type="checkbox" id="showMinorGridX" onchange="applyPlotAppearance()"> Minor
-                                    X</label>
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
-                                        type="checkbox" id="showGridY" checked onchange="applyPlotAppearance()"> Y
-                                    Grid</label>
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
-                                        type="checkbox" id="showMinorGridY" onchange="applyPlotAppearance()"> Minor
-                                    Y</label>
-                            </div>
-                            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
-                                        type="checkbox" id="plotZeroLine" checked onchange="applyPlotAppearance()"> Zero
-                                    Line</label>
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
-                                        type="checkbox" id="mirrorAxes" onchange="applyPlotAppearance()"> Mirror
-                                    Axes</label>
-                            </div>
-                            <div class="g2" style="margin-bottom:5px;">
-                                <div><label>Major Color</label><input type="color" id="gridColor" value="#e0e0e0"
-                                        style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
-                                <div><label>Minor Color</label><input type="color" id="minorGridColor" value="#f2f2f2"
-                                        style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
-                            </div>
-                            <div class="g2" style="margin-bottom:5px;">
-                                <div><label>Major Width</label><input type="number" id="gridWidth" value="1" min="0.5"
-                                        max="5" step="0.5" onchange="applyPlotAppearance()"></div>
-                                <div><label>Minor Width</label><input type="number" id="minorGridWidth" value="0.5"
-                                        min="0.1" max="3" step="0.1" onchange="applyPlotAppearance()"></div>
-                            </div>
-                            <div style="margin-bottom:5px;"><label>Grid Dash</label>
-                                <select id="gridDash" onchange="applyPlotAppearance()">
-                                    <option value="solid">Solid</option>
-                                    <option value="dot">Dotted</option>
-                                    <option value="dash">Dashed</option>
-                                    <option value="longdash">Long Dash</option>
-                                    <option value="dashdot">Dash-Dot</option>
-                                </select>
-                            </div>
-                            <hr style="margin:5px 0;">
-                            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px;">
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
-                                        type="checkbox" id="showAxisLineX" checked onchange="applyPlotAppearance()"> X
-                                    axis line</label>
-                                <label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
-                                        type="checkbox" id="showAxisLineY" checked onchange="applyPlotAppearance()"> Y
-                                    axis line</label>
-                            </div>
-                            <div class="g2">
-                                <div><label>Axis Line Color</label><input type="color" id="axisLineColor"
-                                        value="#444444" style="height:28px;cursor:pointer;"
-                                        onchange="applyPlotAppearance()"></div>
-                                <div><label>Axis Line Width</label><input type="number" id="axisLineWidth" value="1"
-                                        min="0.5" max="5" step="0.5" onchange="applyPlotAppearance()"></div>
-                            </div>
-                        </div>
-
-                        <!-- Plot Appearance -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-paintbrush"></i>Plot Appearance</div>
-                            <div class="g2" style="margin-bottom:5px;">
-                                <div><label>Plot Background</label><input type="color" id="plotBgColor" value="#fcfcfc"
-                                        style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
-                                <div><label>Paper Color</label><input type="color" id="plotPaperColor" value="#ffffff"
-                                        style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
-                            </div>
-                            <div class="g2" style="margin-bottom:5px;">
-                                <div><label>Global Font Size</label><input type="number" id="plotFontSize" value="12"
-                                        min="8" max="24" onchange="applyPlotAppearance()"></div>
-                                <div><label>Global Font Family</label>
-                                    <select id="plotFont" onchange="applyPlotAppearance()">
-                                        <option value="Arial">Arial</option>
-                                        <option value="Helvetica">Helvetica</option>
-                                        <option value="'Times New Roman'">Times New Roman</option>
-                                        <option value="Georgia">Georgia</option>
-                                        <option value="'Courier New'">Courier New</option>
-                                        <option value="Verdana">Verdana</option>
-                                        <option value="Tahoma">Tahoma</option>
-                                        <option value="Calibri">Calibri</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="g2">
-                                <div><label>Plot Height (px)</label><input type="number" id="plotHeight" value="580"
-                                        min="200" max="1200" step="10" onchange="applyPlotAppearance()"></div>
-                                <div><label>Plot Width (px) <span
-                                            style="font-size:9px;color:#aaa;">0=auto</span></label><input type="number"
-                                        id="plotWidth" value="0" min="0" max="2400" step="10"
-                                        onchange="applyPlotAppearance()"></div>
-                            </div>
-                            <div style="margin-top:5px;"><label
-                                    style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
-                                        type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Show
-                                    Legend</label></div>
-                        </div>
-
-                        <!-- Shift / Rescale (moved from Series tab) -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale
-                                Active Dataset</div>
-                            <p style="font-size:10px;color:#888;margin-bottom:6px;">new = (old + offset) × scale</p>
-                            <div class="sag" style="margin-bottom:5px;">
-                                <span></span><span style="font-size:10px;color:#888;text-align:center;">Offset
-                                    (+)</span><span style="font-size:10px;color:#888;text-align:center;">Scale
-                                    (×)</span>
-                                <label>X</label><input type="number" id="axisShiftXOffset" value="0" step="any"
-                                    placeholder="0"><input type="number" id="axisShiftXScale" value="1" step="any"
-                                    placeholder="1">
-                                <label>Y</label><input type="number" id="axisShiftYOffset" value="0" step="any"
-                                    placeholder="0"><input type="number" id="axisShiftYScale" value="1" step="any"
-                                    placeholder="1">
-                            </div>
-                            <div class="g2" style="gap:5px;">
-                                <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;"><i
-                                        class="fa-solid fa-check"></i> Apply</button>
-                                <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
-                                        class="fa-solid fa-rotate-left"></i> Reset</button>
-                            </div>
-                        </div>
-
-                        <!-- 2-Point Calibration (moved from Series tab) -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>2-Point Calibration</div>
-                            <div
-                                style="display:grid;grid-template-columns:60px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:6px;">
-                                <span></span><span style="color:#0288d1;text-align:center;font-weight:600;">X
-                                    axis</span><span style="color:#e65100;text-align:center;font-weight:600;">Y
-                                    axis</span>
-                                <label style="margin:0;">P1 data</label><input type="number" id="calXData1"
-                                    placeholder="0" step="any"><input type="number" id="calYData1" placeholder="0"
-                                    step="any">
-                                <label style="margin:0;">P1 real</label><input type="number" id="calXReal1"
-                                    placeholder="0" step="any"><input type="number" id="calYReal1" placeholder="0"
-                                    step="any">
-                                <label style="margin:0;">P2 data</label><input type="number" id="calXData2"
-                                    placeholder="100" step="any"><input type="number" id="calYData2" placeholder="1"
-                                    step="any">
-                                <label style="margin:0;">P2 real</label><input type="number" id="calXReal2"
-                                    placeholder="100" step="any"><input type="number" id="calYReal2" placeholder="1000"
-                                    step="any">
-                            </div>
-                            <div class="g2" style="gap:5px;">
-                                <button onclick="applyAxisCalibration()" class="btn-g"
-                                    style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
-                                <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
-                                        class="fa-solid fa-rotate-left"></i> Reset</button>
-                            </div>
-                        </div>
-
-                        <!-- Quick Trace Override -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-palette"></i>Active Trace Quick Override</div>
-                            <div class="g2" style="margin-bottom:5px;">
-                                <div><label>Color</label><input type="color" id="quickTraceColor" value="#00796b"
-                                        style="height:28px;cursor:pointer;" onchange="applyQuickTraceColor()"></div>
-                                <div><label>Opacity (%)</label><input type="number" id="quickTraceOpacity" value="100"
-                                        min="0" max="100" step="5" onchange="applyQuickTraceColor()"></div>
-                            </div>
-                            <div class="g2">
-                                <div><label>Line Width (px)</label><input type="number" id="quickTraceWidth" value="2"
-                                        min="0.5" max="20" step="0.5" onchange="applyQuickTraceColor()"></div>
-                                <div><label>Dash Style</label>
-                                    <select id="quickTraceDash" onchange="applyQuickTraceColor()">
-                                        <option value="solid">Solid</option>
-                                        <option value="dash">Dashed</option>
-                                        <option value="dot">Dotted</option>
-                                        <option value="dashdot">Dash-Dot</option>
-                                        <option value="longdash">Long Dash</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ══ TAB: ANALYSIS ══ -->
-                    <div class="tab-pane" id="tab-analysis">
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-wave-square"></i>Smoothing</div>
-                            <div style="margin-bottom:7px;"><label>Method</label>
-                                <select id="smoothing-method" onchange="updateActiveSmoothing()">
-                                    <option value="movingAverage">Moving Average</option>
-                                    <option value="savitzkyGolay">Savitzky-Golay</option>
-                                </select>
-                            </div>
-                            <div class="sr">
-                                <div class="sr-hd"><label>Window (points)</label><span id="smoothing-value">0</span>
-                                </div><input type="range" id="smoothing-slider" min="0" max="400" value="0" step="1">
-                            </div>
-                            <div id="sg-poly-options" style="display:none;"><label>Polynomial Order</label><input
-                                    type="number" id="sg-poly-order" value="2" min="1" max="6"
-                                    onchange="updateActiveSmoothing()"></div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-magnifying-glass-chart"></i>Peak Detection
-                            </div>
-                            <div style="display:flex;gap:14px;margin-bottom:7px;">
-                                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input
-                                        type="checkbox" id="show-peaks-check" onchange="updatePeakAnalysis()">
-                                    Show</label>
-                                <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input
-                                        type="checkbox" id="highlight-peaks-check" onchange="updatePeakAnalysis()">
-                                    Highlight</label>
-                            </div>
-                            <div class="sr">
-                                <div class="sr-hd"><label>Min Prominence (%)</label><span id="peak-height-val">0</span>
-                                </div><input type="range" id="peakHeightSlider" min="0" max="100" step="1" value="0">
-                            </div>
-                            <div class="stats-box" id="peak-stats-box" style="display:none;">
-                                <div class="stats-row"><span>Peaks found</span><strong id="peak-count">0</strong></div>
-                                <div class="stats-row"><span>Max Y</span><strong id="peak-max-y">-</strong></div>
-                                <div class="stats-row" style="border:none;"><span>Max at X</span><strong
-                                        id="peak-max-x">-</strong></div>
-                            </div>
-                        </div>
-                        <div class="card" id="bg-correction-panel">
-                            <div class="card-title"><i class="fa-solid fa-eraser"></i>Background Correction</div>
-                            <div style="margin-bottom:7px;"><label>Method</label>
-                                <select id="bg-method" onchange="updateBgCorrection()">
-                                    <option value="none">None</option>
-                                    <option value="linear">Linear (Endpoints)</option>
-                                    <option value="rollingball">Rolling Ball</option>
-                                    <option value="polynomial">Polynomial Envelope</option>
-                                    <option value="als">Asymmetric LS (ALS)</option>
-                                </select>
-                            </div>
-                            <div id="bg-radius-row" style="display:none;">
-                                <div class="sr">
-                                    <div class="sr-hd"><label>Radius/Window</label><span id="bg-radius-val">50</span>
-                                    </div><input type="range" id="bg-radius" min="5" max="300" value="50"
-                                        oninput="document.getElementById('bg-radius-val').textContent=this.value;updateBgCorrection()">
-                                </div>
-                            </div>
-                            <div id="bg-order-row" style="display:none;margin-bottom:7px;"><label>Polynomial
-                                    Order</label><input type="number" id="bg-order" min="1" max="6" value="2"
-                                    onchange="updateBgCorrection()"></div>
-                            <div id="bg-lam-row" style="display:none;">
-                                <div class="sr">
-                                    <div class="sr-hd"><label>ALS Smoothness (log λ)</label><span
-                                            id="bg-lam-val">5</span></div><input type="range" id="bg-lam" min="1"
-                                        max="9" value="5"
-                                        oninput="document.getElementById('bg-lam-val').textContent=this.value;updateBgCorrection()">
-                                </div>
-                            </div>
-                            <div class="sr">
-                                <div class="sr-hd"><label>Strength (%)</label><span id="bg-strength-val">100</span>
-                                </div><input type="range" id="bg-strength" min="0" max="100" value="100"
-                                    oninput="document.getElementById('bg-strength-val').textContent=this.value;updateBgCorrection()">
-                            </div>
-                            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:4px;"><input
-                                    type="checkbox" id="bg-show-baseline" onchange="updateBgCorrection()"> Show baseline
-                                on plot</label>
-                            <div id="bg-prev-plot" class="bg-prev" style="display:none;"></div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-chart-simple"></i>Trendline Fit</div>
-                            <select id="trendline-type">
-                                <option value="none">None</option>
-                                <option value="linear">Linear (y=mx+b)</option>
-                                <option value="polynomial">Polynomial (Order 2)</option>
-                                <option value="power">Power (y=ax^b)</option>
-                                <option value="exponential">Exponential (y=ae^bx)</option>
-                                <option value="logarithmic">Logarithmic (y=a+bln(x))</option>
-                            </select>
-                            <div id="trendline-stats" class="stats-box" style="display:none;margin-top:7px;"></div>
-                        </div>
-                        <hr style="margin:4px 0;">
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Descriptive Statistics</div>
-                            <div style="margin-bottom:7px;"><label>Column to analyze</label><select
-                                    id="stats-col-select"></select></div>
-                            <button onclick="runDescriptiveStats()" class="btn-g"
-                                style="font-size:11px;padding:7px;margin-bottom:0;"><i class="fa-solid fa-play"></i>
-                                Compute</button>
-                            <div id="desc-stats-box" class="stats-box"
-                                style="display:none;margin-top:8px;font-family:monospace;font-size:11px;line-height:1.7;">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-not-equal"></i>Compare Groups</div>
-
-                            <!-- Data source selector -->
-                            <div style="margin-bottom:7px;"><label>Data source</label>
-                                <select id="stats-source-type" onchange="syncStatsSourceUI()">
-                                    <option value="columns">Wide format — each column is a group</option>
-                                    <option value="rows">Long format — group label column + value column</option>
-                                </select>
-                            </div>
-
-                            <!-- Wide format: pick two columns -->
-                            <div id="stats-wide-ui">
-                                <div class="g2" style="margin-bottom:6px;">
-                                    <div><label>Group A column</label><select id="test-colA"></select></div>
-                                    <div><label>Group B column</label><select id="test-colB"></select></div>
-                                </div>
-                            </div>
-
-                            <!-- Long format: pick group col + value col + filter which groups -->
-                            <div id="stats-long-ui" style="display:none;">
-                                <div class="g2" style="margin-bottom:5px;">
-                                    <div><label>Group label column</label><select id="stats-long-groupcol"
-                                            onchange="syncStatsLongGroups()"></select></div>
-                                    <div><label>Value column</label><select id="stats-long-valuecol"></select></div>
-                                </div>
-                                <div style="margin-bottom:5px;">
-                                    <label>Groups to compare <span
-                                            style="font-weight:400;color:#888;font-size:10px;">(Ctrl+click for
-                                            multi-select; ANOVA/Tukey uses all selected)</span></label>
-                                    <select id="stats-long-groups" multiple style="height:72px;font-size:11.5px;"
-                                        onchange="syncStatsLongGroupPair()"></select>
-                                </div>
-                                <div class="g2" style="margin-bottom:2px;">
-                                    <div><label style="font-size:10.5px;color:#888;">Pair — Group A</label><select
-                                            id="stats-long-grpA" style="font-size:11px;"></select></div>
-                                    <div><label style="font-size:10.5px;color:#888;">Pair — Group B</label><select
-                                            id="stats-long-grpB" style="font-size:11px;"></select></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom:7px;margin-top:5px;"><label>Statistical test</label>
-                                <select id="stats-test-type" onchange="syncAnovaUI()">
-                                    <option value="ttest_unpaired">Unpaired t-test</option>
-                                    <option value="ttest_paired">Paired t-test</option>
-                                    <option value="welch">Welch t-test</option>
-                                    <option value="mannwhitney">Mann-Whitney U</option>
-                                    <option value="anova1">One-Way ANOVA</option>
-                                    <option value="anova1_tukey">One-Way ANOVA + Tukey HSD post-hoc</option>
-                                    <option value="anova2">Two-Way ANOVA</option>
-                                </select>
-                            </div>
-
-                            <!-- Two-way ANOVA extra controls -->
-                            <div id="anova2-ui"
-                                style="display:none;background:#f0f7ff;border:1px solid #c5d9f0;border-radius:4px;padding:8px;margin-bottom:7px;">
-                                <div style="font-size:10.5px;font-weight:700;color:#1565c0;margin-bottom:5px;">2-Way
-                                    ANOVA Setup (Long Format)</div>
-                                <p style="font-size:10px;color:#555;margin:0 0 5px;">Data must be in long format: one
-                                    column for Factor A, one for Factor B, one for the response value.</p>
-                                <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Factor A column (e.g.
-                                        Treatment)</label><select id="anova2-factorA" style="font-size:11px;"></select>
-                                </div>
-                                <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Factor B column (e.g.
-                                        Time)</label><select id="anova2-factorB" style="font-size:11px;"></select></div>
-                                <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Response/Value
-                                        column</label><select id="anova2-value" style="font-size:11px;"></select></div>
-                            </div>
-
-                            <button onclick="runStatTest()" class="btn-g"
-                                style="font-size:11px;padding:7px;margin-bottom:0;"><i class="fa-solid fa-flask"></i>
-                                Run Test</button>
-                            <div id="test-results-box" class="stats-box"
-                                style="display:none;margin-top:8px;font-size:11px;line-height:1.7;overflow-x:auto;">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-table-list"></i>Column Summary</div>
-                            <button onclick="runColumnSummary()" class="btn-b" style="font-size:11px;padding:7px;"><i
-                                    class="fa-solid fa-table"></i> Summarize All Columns</button>
-                            <div id="col-summary-box"
-                                style="display:none;margin-top:8px;overflow-x:auto;font-size:11px;"></div>
-                        </div>
-
-                        <!-- Significance Brackets -->
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-brackets-curly"></i>Significance Brackets
-                            </div>
-
-                            <!-- Click-to-select mode banner -->
-                            <div id="bkt-select-banner"
-                                style="display:none;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:2px solid #1976d2;border-radius:6px;padding:9px 12px;margin-bottom:8px;text-align:center;">
-                                <div style="font-weight:700;color:#0d47a1;font-size:12px;">📍 Click a bar/point on the
-                                    plot</div>
-                                <div id="bkt-select-hint" style="font-size:10.5px;color:#1565c0;margin-top:3px;">Click
-                                    the <b>first</b> group</div>
-                                <div id="bkt-select-status"
-                                    style="font-size:11px;color:#333;margin-top:4px;min-height:16px;"></div>
-                                <button onclick="cancelBracketSelect()"
-                                    style="margin-top:6px;background:#e53935;color:white;border:none;border-radius:3px;padding:4px 12px;font-size:11px;cursor:pointer;width:auto;">✕
-                                    Cancel</button>
-                            </div>
-
-                            <!-- Main bracket button -->
-                            <button id="bkt-start-btn" onclick="startBracketSelect()" class="btn-g"
-                                style="width:100%;margin-bottom:8px;padding:8px;font-size:12px;">
-                                🖱️ Click two bars/points to draw bracket
-                            </button>
-
-                            <!-- Style options (collapsed by default) -->
-                            <div id="bkt-style-section">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;cursor:pointer;"
-                                    onclick="toggleBktStyle()">
-                                    <span
-                                        style="font-size:10.5px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.4px;">Style
-                                        Options</span>
-                                    <span id="bkt-style-arrow" style="font-size:10px;color:#888;">▼</span>
-                                </div>
-                                <div id="bkt-style-body" style="display:none;flex-direction:column;gap:6px;">
-                                    <div class="g2">
-                                        <div><label style="font-size:10.5px;">Significance label</label>
-                                            <select id="bkt-label" style="font-size:11px;"
-                                                onchange="document.getElementById('bkt-custom-label').style.display=this.value==='custom'?'block':'none'">
-                                                <option value="auto">Auto from p-value</option>
-                                                <option value="ns">ns</option>
-                                                <option value="*">*</option>
-                                                <option value="**">**</option>
-                                                <option value="***">***</option>
-                                                <option value="****">****</option>
-                                                <option value="custom">Custom…</option>
-                                            </select>
-                                            <input type="text" id="bkt-custom-label" placeholder="e.g. p=0.023"
-                                                style="display:none;margin-top:3px;font-size:11px;">
-                                        </div>
-                                        <div><label style="font-size:10.5px;">Color</label>
-                                            <input type="color" id="bkt-color" value="#222222"
-                                                style="height:27px;cursor:pointer;width:100%;">
-                                        </div>
-                                    </div>
-                                    <div class="g2">
-                                        <div><label style="font-size:10.5px;">Font size (px)</label>
-                                            <input type="number" id="bkt-fontsize" value="13" min="8" max="28"
-                                                style="font-size:11px;">
-                                        </div>
-                                        <div><label style="font-size:10.5px;">Line width (px)</label>
-                                            <input type="number" id="bkt-linewidth" value="2" min="0.5" max="5"
-                                                step="0.5" style="font-size:11px;">
-                                        </div>
-                                    </div>
-                                    <div><label style="font-size:10.5px;">Pin Y <span
-                                                style="font-weight:400;color:#888;">(leave blank — auto positions above
-                                                bars)</span></label>
-                                        <input type="number" id="bkt-yoffset" value="" step="any"
-                                            placeholder="← leave blank for auto" style="font-size:11px;"
-                                            title="Only fill this if you want to manually override where the bracket line sits (in data Y units). Leave blank to auto-stack above bars.">
-                                    </div>
-                                    <div style="margin-top:2px;">
-                                        <button onclick="autoAddFromLastTest()" class="btn-b"
-                                            style="font-size:11px;padding:6px;">⚡ Fill from last statistical
-                                            test</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Bracket list -->
-                            <div id="bkt-list" style="display:none;margin-top:8px;">
-                                <hr style="margin:6px 0;">
-                                <div
-                                    style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;">
-                                    Active Brackets</div>
-                                <div id="bkt-list-inner"
-                                    style="display:flex;flex-direction:column;gap:3px;max-height:160px;overflow-y:auto;">
-                                </div>
-                                <button onclick="clearAllBrackets()" class="btn-r"
-                                    style="font-size:11px;padding:5px;margin-top:6px;">✖ Clear All</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ══ TAB: EXPORT ══ -->
-                    <div class="tab-pane" id="tab-export">
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-image"></i>Save Plot as Image</div>
-                            <button
-                                onclick="const dims = getPlotExportDims(); Plotly.downloadImage('plotly-div',{format:'png',width:dims.w,height:dims.h,filename:'plot',scale:2})"
-                                class="btn-g" style="margin-bottom:5px;"><i class="fa-solid fa-image"></i> Save PNG
-                                (high-res 2×)</button>
-                            <button
-                                onclick="const dims = getPlotExportDims(); Plotly.downloadImage('plotly-div',{format:'png',width:dims.w,height:dims.h,filename:'plot'})"
-                                class="btn-b" style="margin-bottom:5px;"><i class="fa-solid fa-image"></i> Save PNG
-                                (screen)</button>
-                            <button onclick="copyPlotToClipboard()" class="btn-b"><i class="fa-solid fa-copy"></i> Copy
-                                to Clipboard</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-title"><i class="fa-solid fa-bezier-curve"></i>Export Vector / Data</div>
-                            <button onclick="exportSVG()" class="btn-b" style="margin-bottom:5px;"><i
-                                    class="fa-solid fa-bezier-curve"></i> Save Plot as SVG</button>
-                            <button onclick="exportActiveCSV()" class="btn-b"><i class="fa-solid fa-file-csv"></i>
-                                Export Active Dataset (.csv)</button>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-title" style="justify-content:space-between;">
-                                <span><i class="fa-solid fa-tags" style="color:#00796b;"></i> Custom Labels</span>
-                                <label
-                                    style="margin:0;font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;"><input
-                                        type="checkbox" id="showLabelsCheck" checked onchange="toggleAllLabels()"> Show
-                                    all</label>
-                            </div>
-                            <button id="toggleLabelBtn" onclick="toggleLabelMode()" class="btn-b"
-                                style="margin-bottom:5px;">🏷️ Click anywhere to add label</button>
+                    <!-- Axis Ranges -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-arrows-left-right"></i>Axis Ranges</div>
+                        <div style="margin-bottom:5px;">
                             <label
-                                style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0 0 6px;font-size:11px;padding:5px 8px;background:#f0f7f0;border-radius:4px;border:1px solid #c8e6c9;">
-                                <input type="checkbox" id="labelSnapCheck"> <span><strong>Snap to nearest data
-                                        point</strong> — auto-align label to trace</span>
+                                style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;font-size:11.5px;">
+                                <input type="checkbox" id="tightAxesCheck" onchange="applyPlotAppearance()">
+                                <span><strong>Tight axes</strong> — X &amp; Y meet at data origin (0,0
+                                    corner)</span>
                             </label>
-                            <button onclick="openLabelManager()" class="btn-b" style="margin-bottom:5px;">📋 Manage
-                                Labels</button>
-                            <button onclick="clearLabels()" class="btn-r">✖ Clear All Labels</button>
+                        </div>
+                        <hr style="margin:6px 0 5px;">
+                        <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Range Override
+                            (blank = auto)</div>
+                        <div class="g2" style="margin-bottom:5px;">
+                            <div><label>X min</label><input type="number" id="xAxisMinOverride" placeholder="Auto"
+                                    step="any" onchange="applyPlotAppearance()"></div>
+                            <div><label>X max</label><input type="number" id="xAxisMaxOverride" placeholder="Auto"
+                                    step="any" onchange="applyPlotAppearance()"></div>
+                        </div>
+                        <div class="g2" style="margin-bottom:5px;">
+                            <div><label>Y min</label><input type="number" id="yAxisMin" placeholder="Auto" step="any"
+                                    onchange="applyPlotAppearance()"></div>
+                            <div><label>Y max</label><input type="number" id="yAxisMax" placeholder="Auto" step="any"
+                                    onchange="applyPlotAppearance()"></div>
+                        </div>
+                        <hr style="margin:5px 0;">
+                        <div style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;">Global X Clamp
+                        </div>
+                        <div class="g2">
+                            <div><label>Start</label><input type="number" id="xAxisStart" placeholder="Min"
+                                    onchange="updateGlobalXRange()"></div>
+                            <div><label>End</label><input type="number" id="xAxisEnd" placeholder="Max"
+                                    onchange="updateGlobalXRange()"></div>
                         </div>
                     </div>
 
-                </div><!-- /tab-content-area -->
-            </div><!-- /controls-panel -->
-        </div><!-- /main-grid -->
+                    <!-- Grid & Axis Lines -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-border-all"></i>Grid &amp; Axis Lines</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
+                                    type="checkbox" id="showGridX" checked onchange="applyPlotAppearance()"> X
+                                Grid</label>
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
+                                    type="checkbox" id="showMinorGridX" onchange="applyPlotAppearance()"> Minor
+                                X</label>
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
+                                    type="checkbox" id="showGridY" checked onchange="applyPlotAppearance()"> Y
+                                Grid</label>
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:10px;"><input
+                                    type="checkbox" id="showMinorGridY" onchange="applyPlotAppearance()"> Minor
+                                Y</label>
+                        </div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
+                                    type="checkbox" id="plotZeroLine" checked onchange="applyPlotAppearance()"> Zero
+                                Line</label>
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
+                                    type="checkbox" id="mirrorAxes" onchange="applyPlotAppearance()"> Mirror
+                                Axes</label>
+                        </div>
+                        <div class="g2" style="margin-bottom:5px;">
+                            <div><label>Major Color</label><input type="color" id="gridColor" value="#e0e0e0"
+                                    style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+                            <div><label>Minor Color</label><input type="color" id="minorGridColor" value="#f2f2f2"
+                                    style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+                        </div>
+                        <div class="g2" style="margin-bottom:5px;">
+                            <div><label>Major Width</label><input type="number" id="gridWidth" value="1" min="0.5"
+                                    max="5" step="0.5" onchange="applyPlotAppearance()"></div>
+                            <div><label>Minor Width</label><input type="number" id="minorGridWidth" value="0.5"
+                                    min="0.1" max="3" step="0.1" onchange="applyPlotAppearance()"></div>
+                        </div>
+                        <div style="margin-bottom:5px;"><label>Grid Dash</label>
+                            <select id="gridDash" onchange="applyPlotAppearance()">
+                                <option value="solid">Solid</option>
+                                <option value="dot">Dotted</option>
+                                <option value="dash">Dashed</option>
+                                <option value="longdash">Long Dash</option>
+                                <option value="dashdot">Dash-Dot</option>
+                            </select>
+                        </div>
+                        <hr style="margin:5px 0;">
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px;">
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
+                                    type="checkbox" id="showAxisLineX" checked onchange="applyPlotAppearance()"> X
+                                axis line</label>
+                            <label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
+                                    type="checkbox" id="showAxisLineY" checked onchange="applyPlotAppearance()"> Y
+                                axis line</label>
+                        </div>
+                        <div class="g2">
+                            <div><label>Axis Line Color</label><input type="color" id="axisLineColor" value="#444444"
+                                    style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+                            <div><label>Axis Line Width</label><input type="number" id="axisLineWidth" value="1"
+                                    min="0.5" max="5" step="0.5" onchange="applyPlotAppearance()"></div>
+                        </div>
+                    </div>
+
+                    <!-- Plot Appearance -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-paintbrush"></i>Plot Appearance</div>
+                        <div class="g2" style="margin-bottom:5px;">
+                            <div><label>Plot Background</label><input type="color" id="plotBgColor" value="#fcfcfc"
+                                    style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+                            <div><label>Paper Color</label><input type="color" id="plotPaperColor" value="#ffffff"
+                                    style="height:28px;cursor:pointer;" onchange="applyPlotAppearance()"></div>
+                        </div>
+                        <div class="g2" style="margin-bottom:5px;">
+                            <div><label>Global Font Size</label><input type="number" id="plotFontSize" value="12"
+                                    min="8" max="24" onchange="applyPlotAppearance()"></div>
+                            <div><label>Global Font Family</label>
+                                <select id="plotFont" onchange="applyPlotAppearance()">
+                                    <option value="Arial">Arial</option>
+                                    <option value="Helvetica">Helvetica</option>
+                                    <option value="'Times New Roman'">Times New Roman</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="'Courier New'">Courier New</option>
+                                    <option value="Verdana">Verdana</option>
+                                    <option value="Tahoma">Tahoma</option>
+                                    <option value="Calibri">Calibri</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="g2">
+                            <div><label>Plot Height (px)</label><input type="number" id="plotHeight" value="580"
+                                    min="200" max="1200" step="10" onchange="applyPlotAppearance()"></div>
+                            <div><label>Plot Width (px) <span
+                                        style="font-size:9px;color:#aaa;">0=auto</span></label><input type="number"
+                                    id="plotWidth" value="0" min="0" max="2400" step="10"
+                                    onchange="applyPlotAppearance()"></div>
+                        </div>
+                        <div style="margin-top:5px;"><label
+                                style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;font-size:11px;"><input
+                                    type="checkbox" id="showLegend" checked onchange="applyPlotAppearance()"> Show
+                                Legend</label></div>
+                    </div>
+
+                    <!-- Shift / Rescale (moved from Series tab) -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-arrows-up-down-left-right"></i>Shift / Rescale
+                            Active Dataset</div>
+                        <p style="font-size:10px;color:#888;margin-bottom:6px;">new = (old + offset) × scale</p>
+                        <div class="sag" style="margin-bottom:5px;">
+                            <span></span><span style="font-size:10px;color:#888;text-align:center;">Offset
+                                (+)</span><span style="font-size:10px;color:#888;text-align:center;">Scale
+                                (×)</span>
+                            <label>X</label><input type="number" id="axisShiftXOffset" value="0" step="any"
+                                placeholder="0"><input type="number" id="axisShiftXScale" value="1" step="any"
+                                placeholder="1">
+                            <label>Y</label><input type="number" id="axisShiftYOffset" value="0" step="any"
+                                placeholder="0"><input type="number" id="axisShiftYScale" value="1" step="any"
+                                placeholder="1">
+                        </div>
+                        <div class="g2" style="gap:5px;">
+                            <button onclick="applyAxisShift()" class="btn-g" style="font-size:11px;padding:6px;"><i
+                                    class="fa-solid fa-check"></i> Apply</button>
+                            <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
+                                    class="fa-solid fa-rotate-left"></i> Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- 2-Point Calibration (moved from Series tab) -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-ruler-combined"></i>2-Point Calibration</div>
+                        <div
+                            style="display:grid;grid-template-columns:60px 1fr 1fr;gap:4px;align-items:center;font-size:10.5px;margin-bottom:6px;">
+                            <span></span><span style="color:#0288d1;text-align:center;font-weight:600;">X
+                                axis</span><span style="color:#e65100;text-align:center;font-weight:600;">Y
+                                axis</span>
+                            <label style="margin:0;">P1 data</label><input type="number" id="calXData1" placeholder="0"
+                                step="any"><input type="number" id="calYData1" placeholder="0" step="any">
+                            <label style="margin:0;">P1 real</label><input type="number" id="calXReal1" placeholder="0"
+                                step="any"><input type="number" id="calYReal1" placeholder="0" step="any">
+                            <label style="margin:0;">P2 data</label><input type="number" id="calXData2"
+                                placeholder="100" step="any"><input type="number" id="calYData2" placeholder="1"
+                                step="any">
+                            <label style="margin:0;">P2 real</label><input type="number" id="calXReal2"
+                                placeholder="100" step="any"><input type="number" id="calYReal2" placeholder="1000"
+                                step="any">
+                        </div>
+                        <div class="g2" style="gap:5px;">
+                            <button onclick="applyAxisCalibration()" class="btn-g"
+                                style="font-size:11px;padding:6px;"><i class="fa-solid fa-check"></i> Apply</button>
+                            <button onclick="resetAxisShift()" class="btn-b" style="font-size:11px;padding:6px;"><i
+                                    class="fa-solid fa-rotate-left"></i> Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Trace Override -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-palette"></i>Active Trace Quick Override</div>
+                        <div class="g2" style="margin-bottom:5px;">
+                            <div><label>Color</label><input type="color" id="quickTraceColor" value="#00796b"
+                                    style="height:28px;cursor:pointer;" onchange="applyQuickTraceColor()"></div>
+                            <div><label>Opacity (%)</label><input type="number" id="quickTraceOpacity" value="100"
+                                    min="0" max="100" step="5" onchange="applyQuickTraceColor()"></div>
+                        </div>
+                        <div class="g2">
+                            <div><label>Line Width (px)</label><input type="number" id="quickTraceWidth" value="2"
+                                    min="0.5" max="20" step="0.5" onchange="applyQuickTraceColor()"></div>
+                            <div><label>Dash Style</label>
+                                <select id="quickTraceDash" onchange="applyQuickTraceColor()">
+                                    <option value="solid">Solid</option>
+                                    <option value="dash">Dashed</option>
+                                    <option value="dot">Dotted</option>
+                                    <option value="dashdot">Dash-Dot</option>
+                                    <option value="longdash">Long Dash</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ TAB: ANALYSIS ══ -->
+                <div class="tab-pane" id="tab-analysis">
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-wave-square"></i>Smoothing</div>
+                        <div style="margin-bottom:7px;"><label>Method</label>
+                            <select id="smoothing-method" onchange="updateActiveSmoothing()">
+                                <option value="movingAverage">Moving Average</option>
+                                <option value="savitzkyGolay">Savitzky-Golay</option>
+                            </select>
+                        </div>
+                        <div class="sr">
+                            <div class="sr-hd"><label>Window (points)</label><span id="smoothing-value">0</span>
+                            </div><input type="range" id="smoothing-slider" min="0" max="400" value="0" step="1">
+                        </div>
+                        <div id="sg-poly-options" style="display:none;"><label>Polynomial Order</label><input
+                                type="number" id="sg-poly-order" value="2" min="1" max="6"
+                                onchange="updateActiveSmoothing()"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-magnifying-glass-chart"></i>Peak Detection
+                        </div>
+                        <div style="display:flex;gap:14px;margin-bottom:7px;">
+                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input
+                                    type="checkbox" id="show-peaks-check" onchange="updatePeakAnalysis()">
+                                Show</label>
+                            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;margin:0;"><input
+                                    type="checkbox" id="highlight-peaks-check" onchange="updatePeakAnalysis()">
+                                Highlight</label>
+                        </div>
+                        <div class="sr">
+                            <div class="sr-hd"><label>Min Prominence (%)</label><span id="peak-height-val">0</span>
+                            </div><input type="range" id="peakHeightSlider" min="0" max="100" step="1" value="0">
+                        </div>
+                        <div class="stats-box" id="peak-stats-box" style="display:none;">
+                            <div class="stats-row"><span>Peaks found</span><strong id="peak-count">0</strong></div>
+                            <div class="stats-row"><span>Max Y</span><strong id="peak-max-y">-</strong></div>
+                            <div class="stats-row" style="border:none;"><span>Max at X</span><strong
+                                    id="peak-max-x">-</strong></div>
+                        </div>
+                    </div>
+                    <div class="card" id="bg-correction-panel">
+                        <div class="card-title"><i class="fa-solid fa-eraser"></i>Background Correction</div>
+                        <div style="margin-bottom:7px;"><label>Method</label>
+                            <select id="bg-method" onchange="updateBgCorrection()">
+                                <option value="none">None</option>
+                                <option value="linear">Linear (Endpoints)</option>
+                                <option value="rollingball">Rolling Ball</option>
+                                <option value="polynomial">Polynomial Envelope</option>
+                                <option value="als">Asymmetric LS (ALS)</option>
+                            </select>
+                        </div>
+                        <div id="bg-radius-row" style="display:none;">
+                            <div class="sr">
+                                <div class="sr-hd"><label>Radius/Window</label><span id="bg-radius-val">50</span>
+                                </div><input type="range" id="bg-radius" min="5" max="300" value="50"
+                                    oninput="document.getElementById('bg-radius-val').textContent=this.value;updateBgCorrection()">
+                            </div>
+                        </div>
+                        <div id="bg-order-row" style="display:none;margin-bottom:7px;"><label>Polynomial
+                                Order</label><input type="number" id="bg-order" min="1" max="6" value="2"
+                                onchange="updateBgCorrection()"></div>
+                        <div id="bg-lam-row" style="display:none;">
+                            <div class="sr">
+                                <div class="sr-hd"><label>ALS Smoothness (log λ)</label><span id="bg-lam-val">5</span>
+                                </div><input type="range" id="bg-lam" min="1" max="9" value="5"
+                                    oninput="document.getElementById('bg-lam-val').textContent=this.value;updateBgCorrection()">
+                            </div>
+                        </div>
+                        <div class="sr">
+                            <div class="sr-hd"><label>Strength (%)</label><span id="bg-strength-val">100</span>
+                            </div><input type="range" id="bg-strength" min="0" max="100" value="100"
+                                oninput="document.getElementById('bg-strength-val').textContent=this.value;updateBgCorrection()">
+                        </div>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;margin-top:4px;"><input
+                                type="checkbox" id="bg-show-baseline" onchange="updateBgCorrection()"> Show baseline
+                            on plot</label>
+                        <div id="bg-prev-plot" class="bg-prev" style="display:none;"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-chart-simple"></i>Trendline Fit</div>
+                        <select id="trendline-type">
+                            <option value="none">None</option>
+                            <option value="linear">Linear (y=mx+b)</option>
+                            <option value="polynomial">Polynomial (Order 2)</option>
+                            <option value="power">Power (y=ax^b)</option>
+                            <option value="exponential">Exponential (y=ae^bx)</option>
+                            <option value="logarithmic">Logarithmic (y=a+bln(x))</option>
+                        </select>
+                        <div id="trendline-stats" class="stats-box" style="display:none;margin-top:7px;"></div>
+                    </div>
+                    <hr style="margin:4px 0;">
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-chart-bar"></i>Descriptive Statistics</div>
+                        <div style="margin-bottom:7px;"><label>Column to analyze</label><select
+                                id="stats-col-select"></select></div>
+                        <button onclick="runDescriptiveStats()" class="btn-g"
+                            style="font-size:11px;padding:7px;margin-bottom:0;"><i class="fa-solid fa-play"></i>
+                            Compute</button>
+                        <div id="desc-stats-box" class="stats-box"
+                            style="display:none;margin-top:8px;font-family:monospace;font-size:11px;line-height:1.7;">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-not-equal"></i>Compare Groups</div>
+
+                        <!-- Data source selector -->
+                        <div style="margin-bottom:7px;"><label>Data source</label>
+                            <select id="stats-source-type" onchange="syncStatsSourceUI()">
+                                <option value="columns">Wide format — each column is a group</option>
+                                <option value="rows">Long format — group label column + value column</option>
+                            </select>
+                        </div>
+
+                        <!-- Wide format: pick two columns -->
+                        <div id="stats-wide-ui">
+                            <div class="g2" style="margin-bottom:6px;">
+                                <div><label>Group A column</label><select id="test-colA"></select></div>
+                                <div><label>Group B column</label><select id="test-colB"></select></div>
+                            </div>
+                        </div>
+
+                        <!-- Long format: pick group col + value col + filter which groups -->
+                        <div id="stats-long-ui" style="display:none;">
+                            <div class="g2" style="margin-bottom:5px;">
+                                <div><label>Group label column</label><select id="stats-long-groupcol"
+                                        onchange="syncStatsLongGroups()"></select></div>
+                                <div><label>Value column</label><select id="stats-long-valuecol"></select></div>
+                            </div>
+                            <div style="margin-bottom:5px;">
+                                <label>Groups to compare <span
+                                        style="font-weight:400;color:#888;font-size:10px;">(Ctrl+click for
+                                        multi-select; ANOVA/Tukey uses all selected)</span></label>
+                                <select id="stats-long-groups" multiple style="height:72px;font-size:11.5px;"
+                                    onchange="syncStatsLongGroupPair()"></select>
+                            </div>
+                            <div class="g2" style="margin-bottom:2px;">
+                                <div><label style="font-size:10.5px;color:#888;">Pair — Group A</label><select
+                                        id="stats-long-grpA" style="font-size:11px;"></select></div>
+                                <div><label style="font-size:10.5px;color:#888;">Pair — Group B</label><select
+                                        id="stats-long-grpB" style="font-size:11px;"></select></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom:7px;margin-top:5px;"><label>Statistical test</label>
+                            <select id="stats-test-type" onchange="syncAnovaUI()">
+                                <option value="ttest_unpaired">Unpaired t-test</option>
+                                <option value="ttest_paired">Paired t-test</option>
+                                <option value="welch">Welch t-test</option>
+                                <option value="mannwhitney">Mann-Whitney U</option>
+                                <option value="anova1">One-Way ANOVA</option>
+                                <option value="anova1_tukey">One-Way ANOVA + Tukey HSD post-hoc</option>
+                                <option value="anova2">Two-Way ANOVA</option>
+                            </select>
+                        </div>
+
+                        <!-- Two-way ANOVA extra controls -->
+                        <div id="anova2-ui"
+                            style="display:none;background:#f0f7ff;border:1px solid #c5d9f0;border-radius:4px;padding:8px;margin-bottom:7px;">
+                            <div style="font-size:10.5px;font-weight:700;color:#1565c0;margin-bottom:5px;">2-Way
+                                ANOVA Setup (Long Format)</div>
+                            <p style="font-size:10px;color:#555;margin:0 0 5px;">Data must be in long format: one
+                                column for Factor A, one for Factor B, one for the response value.</p>
+                            <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Factor A column (e.g.
+                                    Treatment)</label><select id="anova2-factorA" style="font-size:11px;"></select>
+                            </div>
+                            <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Factor B column (e.g.
+                                    Time)</label><select id="anova2-factorB" style="font-size:11px;"></select></div>
+                            <div style="margin-bottom:4px;"><label style="font-size:10.5px;">Response/Value
+                                    column</label><select id="anova2-value" style="font-size:11px;"></select></div>
+                        </div>
+
+                        <button onclick="runStatTest()" class="btn-g"
+                            style="font-size:11px;padding:7px;margin-bottom:0;"><i class="fa-solid fa-flask"></i>
+                            Run Test</button>
+                        <div id="test-results-box" class="stats-box"
+                            style="display:none;margin-top:8px;font-size:11px;line-height:1.7;overflow-x:auto;">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-table-list"></i>Column Summary</div>
+                        <button onclick="runColumnSummary()" class="btn-b" style="font-size:11px;padding:7px;"><i
+                                class="fa-solid fa-table"></i> Summarize All Columns</button>
+                        <div id="col-summary-box" style="display:none;margin-top:8px;overflow-x:auto;font-size:11px;">
+                        </div>
+                    </div>
+
+                    <!-- Significance Brackets -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-brackets-curly"></i>Significance Brackets
+                        </div>
+
+                        <!-- Click-to-select mode banner -->
+                        <div id="bkt-select-banner"
+                            style="display:none;background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:2px solid #1976d2;border-radius:6px;padding:9px 12px;margin-bottom:8px;text-align:center;">
+                            <div style="font-weight:700;color:#0d47a1;font-size:12px;">📍 Click a bar/point on the
+                                plot</div>
+                            <div id="bkt-select-hint" style="font-size:10.5px;color:#1565c0;margin-top:3px;">Click
+                                the <b>first</b> group</div>
+                            <div id="bkt-select-status"
+                                style="font-size:11px;color:#333;margin-top:4px;min-height:16px;"></div>
+                            <button onclick="cancelBracketSelect()"
+                                style="margin-top:6px;background:#e53935;color:white;border:none;border-radius:3px;padding:4px 12px;font-size:11px;cursor:pointer;width:auto;">✕
+                                Cancel</button>
+                        </div>
+
+                        <!-- Main bracket button -->
+                        <button id="bkt-start-btn" onclick="startBracketSelect()" class="btn-g"
+                            style="width:100%;margin-bottom:8px;padding:8px;font-size:12px;">
+                            🖱️ Click two bars/points to draw bracket
+                        </button>
+
+                        <!-- Style options (collapsed by default) -->
+                        <div id="bkt-style-section">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;cursor:pointer;"
+                                onclick="toggleBktStyle()">
+                                <span
+                                    style="font-size:10.5px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.4px;">Style
+                                    Options</span>
+                                <span id="bkt-style-arrow" style="font-size:10px;color:#888;">▼</span>
+                            </div>
+                            <div id="bkt-style-body" style="display:none;flex-direction:column;gap:6px;">
+                                <div class="g2">
+                                    <div><label style="font-size:10.5px;">Significance label</label>
+                                        <select id="bkt-label" style="font-size:11px;"
+                                            onchange="document.getElementById('bkt-custom-label').style.display=this.value==='custom'?'block':'none'">
+                                            <option value="auto">Auto from p-value</option>
+                                            <option value="ns">ns</option>
+                                            <option value="*">*</option>
+                                            <option value="**">**</option>
+                                            <option value="***">***</option>
+                                            <option value="****">****</option>
+                                            <option value="custom">Custom…</option>
+                                        </select>
+                                        <input type="text" id="bkt-custom-label" placeholder="e.g. p=0.023"
+                                            style="display:none;margin-top:3px;font-size:11px;">
+                                    </div>
+                                    <div><label style="font-size:10.5px;">Color</label>
+                                        <input type="color" id="bkt-color" value="#222222"
+                                            style="height:27px;cursor:pointer;width:100%;">
+                                    </div>
+                                </div>
+                                <div class="g2">
+                                    <div><label style="font-size:10.5px;">Font size (px)</label>
+                                        <input type="number" id="bkt-fontsize" value="13" min="8" max="28"
+                                            style="font-size:11px;">
+                                    </div>
+                                    <div><label style="font-size:10.5px;">Line width (px)</label>
+                                        <input type="number" id="bkt-linewidth" value="2" min="0.5" max="5" step="0.5"
+                                            style="font-size:11px;">
+                                    </div>
+                                </div>
+                                <div><label style="font-size:10.5px;">Pin Y <span
+                                            style="font-weight:400;color:#888;">(leave blank — auto positions above
+                                            bars)</span></label>
+                                    <input type="number" id="bkt-yoffset" value="" step="any"
+                                        placeholder="← leave blank for auto" style="font-size:11px;"
+                                        title="Only fill this if you want to manually override where the bracket line sits (in data Y units). Leave blank to auto-stack above bars.">
+                                </div>
+                                <div style="margin-top:2px;">
+                                    <button onclick="autoAddFromLastTest()" class="btn-b"
+                                        style="font-size:11px;padding:6px;">⚡ Fill from last statistical
+                                        test</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bracket list -->
+                        <div id="bkt-list" style="display:none;margin-top:8px;">
+                            <hr style="margin:6px 0;">
+                            <div
+                                style="font-size:10.5px;font-weight:700;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;">
+                                Active Brackets</div>
+                            <div id="bkt-list-inner"
+                                style="display:flex;flex-direction:column;gap:3px;max-height:160px;overflow-y:auto;">
+                            </div>
+                            <button onclick="clearAllBrackets()" class="btn-r"
+                                style="font-size:11px;padding:5px;margin-top:6px;">✖ Clear All</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ TAB: EXPORT ══ -->
+                <div class="tab-pane" id="tab-export">
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-image"></i>Save Plot as Image</div>
+                        <button
+                            onclick="const dims = getPlotExportDims(); Plotly.downloadImage('plotly-div',{format:'png',width:dims.w,height:dims.h,filename:'plot',scale:2})"
+                            class="btn-g" style="margin-bottom:5px;"><i class="fa-solid fa-image"></i> Save PNG
+                            (high-res 2×)</button>
+                        <button
+                            onclick="const dims = getPlotExportDims(); Plotly.downloadImage('plotly-div',{format:'png',width:dims.w,height:dims.h,filename:'plot'})"
+                            class="btn-b" style="margin-bottom:5px;"><i class="fa-solid fa-image"></i> Save PNG
+                            (screen)</button>
+                        <button onclick="copyPlotToClipboard()" class="btn-b"><i class="fa-solid fa-copy"></i> Copy
+                            to Clipboard</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-bezier-curve"></i>Export Vector / Data</div>
+                        <button onclick="exportSVG()" class="btn-b" style="margin-bottom:5px;"><i
+                                class="fa-solid fa-bezier-curve"></i> Save Plot as SVG</button>
+                        <button onclick="exportActiveCSV()" class="btn-b"><i class="fa-solid fa-file-csv"></i>
+                            Export Active Dataset (.csv)</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title" style="justify-content:space-between;">
+                            <span><i class="fa-solid fa-tags" style="color:#00796b;"></i> Custom Labels</span>
+                            <label
+                                style="margin:0;font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:4px;"><input
+                                    type="checkbox" id="showLabelsCheck" checked onchange="toggleAllLabels()"> Show
+                                all</label>
+                        </div>
+                        <button id="toggleLabelBtn" onclick="toggleLabelMode()" class="btn-b"
+                            style="margin-bottom:5px;">🏷️ Click anywhere to add label</button>
+                        <label
+                            style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0 0 6px;font-size:11px;padding:5px 8px;background:#f0f7f0;border-radius:4px;border:1px solid #c8e6c9;">
+                            <input type="checkbox" id="labelSnapCheck"> <span><strong>Snap to nearest data
+                                    point</strong> — auto-align label to trace</span>
+                        </label>
+                        <button onclick="openLabelManager()" class="btn-b" style="margin-bottom:5px;">📋 Manage
+                            Labels</button>
+                        <button onclick="clearLabels()" class="btn-r">✖ Clear All Labels</button>
+                    </div>
+                </div>
+
+            </div><!-- /tab-content-area -->
+        </div><!-- /controls-panel -->
+    </div><!-- /main-grid -->
     </div><!-- /container -->
 
     <!-- ═══════════════════════════════ IMAGE MODAL ═══════════════════════════════ -->
