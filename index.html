@@ -547,7 +547,7 @@
             <div style="display:flex;align-items:center;gap:14px;">
                 <div>
                     <h1 class="app-title">Advanced Data Analyzer <span
-                            style="font-size:13px;font-weight:400;color:#00796b;vertical-align:middle;background:#e0f2f1;border-radius:3px;padding:2px 7px;">v2.20</span>
+                            style="font-size:13px;font-weight:400;color:#00796b;vertical-align:middle;background:#e0f2f1;border-radius:3px;padding:2px 7px;">v2.30</span>
                     </h1>
                     <p class="app-subtitle">Universal interactive plotter &amp; data analysis tool — XY, bar, area, box,
                         histogram &amp; more.</p>
@@ -1703,17 +1703,38 @@
             </div>
 
             <!-- Upload zone -->
-            <div id="img-upload-zone"
-                style="border:2px dashed #b39ddb;border-radius:6px;padding:28px;text-align:center;cursor:pointer;background:#f9f4ff;color:#7b3fa0;margin-bottom:12px;"
-                onclick="document.getElementById('imageFileInput').click()"
-                ondragover="event.preventDefault();this.style.background='#ede7f6';"
-                ondragleave="this.style.background='#f9f4ff';"
-                ondrop="event.preventDefault();this.style.background='#f9f4ff';loadSpectrumImage(event.dataTransfer.files[0])">
-                <i class="fa-solid fa-image" style="font-size:26px;display:block;margin-bottom:7px;"></i>
-                <strong>Click or drag a spectrum image here</strong>
-                <p style="font-size:11px;margin:4px 0 0;">PNG, JPG, BMP supported</p>
-                <input type="file" id="imageFileInput" accept="image/*" style="display:none;"
-                    onchange="loadSpectrumImage(this.files[0])">
+            <div id="img-upload-zone" style="margin-bottom:12px;">
+                <!-- Drag / Drop + Click zone -->
+                <div id="img-drop-area"
+                    style="border:2px dashed #b39ddb;border-radius:6px;padding:22px 28px;text-align:center;cursor:pointer;background:#f9f4ff;color:#7b3fa0;transition:background .15s;"
+                    onclick="document.getElementById('imageFileInput').click()"
+                    ondragover="event.preventDefault();document.getElementById('img-drop-area').style.background='#ede7f6';"
+                    ondragleave="document.getElementById('img-drop-area').style.background='#f9f4ff';"
+                    ondrop="event.preventDefault();document.getElementById('img-drop-area').style.background='#f9f4ff';loadSpectrumImage(event.dataTransfer.files[0])">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px;display:block;margin-bottom:7px;"></i>
+                    <strong>Drag &amp; drop</strong> or <strong>click</strong> to browse
+                    <p style="font-size:11px;margin:5px 0 0;color:#9c6fc8;">PNG, JPG, BMP supported</p>
+                    <input type="file" id="imageFileInput" accept="image/*" style="display:none;"
+                        onchange="loadSpectrumImage(this.files[0])">
+                </div>
+
+                <!-- Divider -->
+                <div style="display:flex;align-items:center;gap:10px;margin:10px 0;">
+                    <hr style="flex:1;border-color:#d1c4e9;margin:0;">
+                    <span style="font-size:11px;color:#9c6fc8;font-weight:600;text-transform:uppercase;letter-spacing:.5px;">or</span>
+                    <hr style="flex:1;border-color:#d1c4e9;margin:0;">
+                </div>
+
+                <!-- Clipboard paste button -->
+                <button id="img-paste-btn"
+                    onclick="pasteSpectrumFromClipboard()"
+                    style="background:#7b3fa0;color:#fff;border:none;border-radius:6px;padding:10px 18px;font-size:13px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .18s;"
+                    onmouseover="this.style.background='#5e2d78'" onmouseout="this.style.background='#7b3fa0'">
+                    <i class="fa-solid fa-clipboard"></i>
+                    Paste from Clipboard
+                    <span style="font-size:11px;opacity:.75;font-weight:400;">(Ctrl+V / ⌘V)</span>
+                </button>
+                <div id="img-paste-hint" style="display:none;font-size:11px;color:#e53935;margin-top:5px;text-align:center;"></div>
             </div>
 
             <!-- Workspace (shown after image load) -->
@@ -1910,8 +1931,8 @@
                                 </div>
                                 <div class="sr">
                                     <div class="sr-hd"><label>Strength (%)</label><span
-                                            id="img-bg-strength-val">100</span></div>
-                                    <input type="range" id="img-bg-strength" min="0" max="100" value="100"
+                                            id="img-bg-strength-val">0</span></div>
+                                    <input type="range" id="img-bg-strength" min="0" max="100" value="0"
                                         oninput="document.getElementById('img-bg-strength-val').textContent=this.value;extractAndPreview()">
                                 </div>
                             </div>
@@ -2102,7 +2123,7 @@
         <p style="margin: 5px 0;"><strong>License:</strong> All rights reserved. MIT License 2026.</p>
         <p style="margin: 5px 0;"><strong>Citation:</strong> If you use Advanced Data Analyzer software in your
             research, presentations, or publications, please cite it. See the Source Code link for details.</p>
-        <p style="margin: 5px 0; font-size: 11px; color: #777;"><strong>Disclaimer:</strong> This tool is for research
+        <p style="margin: 5px 0;"><strong>Disclaimer:</strong> This tool is for research
             and planning purposes only. The user is solely responsible for verifying all calculations and results before
             use.</p>
     </footer>
@@ -3420,7 +3441,7 @@
                     axisLabels: { x: xLabel || initialX, y: yLabel || initialY, y2: 'Secondary Y' },
                     enableY2: false,
                     visible: true,
-                    bgCorrection: { method: 'none', params: { radius: 50, order: 2, lam: 1e5, strength: 1.0 }, showBaseline: false },
+                    bgCorrection: { method: 'none', params: { radius: 50, order: 2, lam: 1e5, strength: 0.0 }, showBaseline: false },
                     axisShift: { xOffset: 0, xScale: 1, yOffset: 0, yScale: 1 },
                     errorConfig: { show: false, type: 'symmetric', col: null, colPlus: null, colMinus: null, constant: 0.1, percent: 5 },
                     opacity: 1.0,
@@ -3643,7 +3664,7 @@
                         const _bgL = document.getElementById('bg-lam');
                         if (_bgL) { const lv = Math.round(Math.log10(_p.lam || 1e5)); _bgL.value = lv; const e = document.getElementById('bg-lam-val'); if (e) e.textContent = lv; }
                         const _bgS = document.getElementById('bg-strength');
-                        if (_bgS) { const sv = Math.round((_p.strength || 1) * 100); _bgS.value = sv; const e = document.getElementById('bg-strength-val'); if (e) e.textContent = sv; }
+                        if (_bgS) { const sv = Math.round((_p.strength || 0) * 100); _bgS.value = sv; const e = document.getElementById('bg-strength-val'); if (e) e.textContent = sv; }
                         document.getElementById('bg-radius-row').style.display = (['rollingball', 'als'].includes(_bgM.value)) ? 'block' : 'none';
                         document.getElementById('bg-order-row').style.display = _bgM.value === 'polynomial' ? 'block' : 'none';
                         document.getElementById('bg-lam-row').style.display = _bgM.value === 'als' ? 'block' : 'none';
@@ -5069,6 +5090,42 @@
                 if (modal) modal.style.display = 'block';
                 document.getElementById('img-upload-zone').style.display = 'block';
                 document.getElementById('img-workspace').style.display = 'none';
+            };
+
+            // ── Clipboard paste handler (Ctrl+V / ⌘V while modal is open) ──
+            document.addEventListener('paste', (e) => {
+                const modal = document.getElementById('imageAnalysisModal');
+                if (!modal || modal.style.display === 'none') return;
+                const items = e.clipboardData && e.clipboardData.items;
+                if (!items) return;
+                for (const item of items) {
+                    if (item.type.startsWith('image/')) {
+                        const blob = item.getAsFile();
+                        if (blob) { loadSpectrumImage(blob); return; }
+                    }
+                }
+            });
+
+            // ── Clipboard button handler ──
+            window.pasteSpectrumFromClipboard = async () => {
+                const hint = document.getElementById('img-paste-hint');
+                hint.style.display = 'none';
+                try {
+                    const items = await navigator.clipboard.read();
+                    for (const item of items) {
+                        const imgType = item.types.find(t => t.startsWith('image/'));
+                        if (imgType) {
+                            const blob = await item.getType(imgType);
+                            loadSpectrumImage(blob);
+                            return;
+                        }
+                    }
+                    hint.textContent = 'No image found in clipboard. Copy an image first, then try again.';
+                    hint.style.display = 'block';
+                } catch (err) {
+                    hint.textContent = 'Clipboard access unavailable. Please press Ctrl+V (or \u2318V) while this window is open to paste directly.';
+                    hint.style.display = 'block';
+                }
             };
 
             window.closeImageModal = () => {
